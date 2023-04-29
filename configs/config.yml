@@ -1,0 +1,11 @@
+port: "8000"
+
+credentials_path: "./credentials.json"
+
+test : "12345"
+
+oauthStateString:
+
+google:
+  clientID: "510239907988-rvkr6rj5eqssdr1f6q5o540gna27gnjj.apps.googleusercontent.com"
+  clientSecret: "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"
