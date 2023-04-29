@@ -5,6 +5,7 @@ import (
 	"github.com/spf13/viper"
 	"server/internal/handler"
 	"server/internal/local"
+	"server/internal/repository"
 	"server/internal/service"
 )
 
@@ -15,9 +16,13 @@ func main() {
 
 	srv := new(local.Server)
 
-	handlers := new(handler.Handler)
+	//handlers := new(handler.Handler)
 	// Инциализируем подклбчение к Google Oauth2 API
 	service.InitializeOAuthGoogle()
+
+	repos := repository.New("TODO PUT DB")
+	services := service.NewService(repos)
+	handlers := handler.NewHandler(services)
 
 	if err := srv.Run(viper.GetString("port"), handlers.InitRoutes()); err != nil {
 		logrus.Fatalf("error loading env variables: %s", err.Error())

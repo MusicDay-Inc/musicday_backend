@@ -12,7 +12,7 @@ var (
 	GoogleAuth *oauth2.Service
 )
 
-func IdToken(idToken string) (string, error) {
+func GetGmail(idToken string) (string, error) {
 	tokenInfo, err := verifyIdToken(idToken)
 	if err != nil {
 		return "", ErrTokenInvalid

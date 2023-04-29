@@ -1,15 +1,17 @@
 package handler
 
-import "github.com/gin-gonic/gin"
+import (
+	"github.com/gin-gonic/gin"
+	"server/internal/service"
+)
 
 type Handler struct {
-	//services *service.Service
+	services *service.Service
 }
 
-//
-//func NewHandler(services *service.Service) *Handler {
-//	return &Handler{services: services}
-//}
+func NewHandler(services *service.Service) *Handler {
+	return &Handler{services: services}
+}
 
 func (h *Handler) InitRoutes() *gin.Engine {
 	router := gin.New()
@@ -19,6 +21,7 @@ func (h *Handler) InitRoutes() *gin.Engine {
 	auth := router.Group("/auth")
 	{
 		auth.POST("/start", h.start)
+		auth.POST("/sign_up", h.start)
 	}
 
 	//api := router.Group("/api", h.userIdentity)

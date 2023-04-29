@@ -21,17 +21,26 @@ func (h *Handler) start(c *gin.Context) {
 	}
 
 	// TODO вынести отдельно
-	userId, err := service.IdToken(t.IdToken)
+	gmail, err := service.GetGmail(t.IdToken)
 	if err != nil {
-		newErrorResponse(c, http.StatusNonAuthoritativeInfo, err.Error())
+		newErrorResponse(c, http.StatusBadRequest, err.Error())
 		logrus.Info("invalid Google token")
+		// TODO вынесли в DTO
+		c.JSON(http.StatusOK, map[string]interface{}{
+			"jwt_token": "",
+		})
+		return
+	}
+
+	jwt, err := h.services.GetJWT(gmail)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		logrus.Errorf("while generating JWT" + err.Error())
 	}
 
 	// TODO заменить на выдачу JWT токена
+	// TODO вынесли в DTO
 	c.JSON(http.StatusOK, map[string]interface{}{
-		"id": userId,
+		"jwt_token": jwt,
 	})
-
-	// TODO сделать добавление в БД
-
 }

@@ -5,17 +5,17 @@ import (
 	"server/internal/core"
 )
 
-type ReleaseItemRepo struct {
+type ReleaseRepo struct {
 	data []core.Song
 }
 
-func NewReleaseItemRepo() *ReleaseItemRepo {
+func NewReleaseRepo() *ReleaseRepo {
 	data := []core.Song{core.NewSong(0, "De Do Do", "The Police"), core.NewSong(1, "Message in a Bottle", "The Police")}
-	return &ReleaseItemRepo{data: data}
+	return &ReleaseRepo{data: data}
 }
 
-func (rep *ReleaseItemRepo) GetById(releaseId int) (core.Song, error) {
-	//err := ((releaseId < 0 || releaseId > len(rep.data)  "error": "ok")
+func (rep *ReleaseRepo) GetById(releaseId int) (core.Song, error) {
+	//err := ((releaseId < 0 || releaseId > len(rep.users)  "error": "ok")
 	//var err error
 	var item core.Song
 	if releaseId < 0 || releaseId >= len(rep.data) {
@@ -24,8 +24,4 @@ func (rep *ReleaseItemRepo) GetById(releaseId int) (core.Song, error) {
 	}
 	err := error(nil)
 	return rep.data[releaseId], err
-}
-
-func NewReleaseRepo() *ReleaseItemRepo {
-	return &ReleaseItemRepo{}
 }

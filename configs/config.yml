@@ -2,9 +2,7 @@ port: "8000"
 
 credentials_path: "./credentials.json"
 
-test : "12345"
-
-oauthStateString:
+signing_key : "jj@&48w3#ksSFpawd!W@SODFDKsskdajwdfgvc@%56ds"
 
 google:
   clientID: "510239907988-rvkr6rj5eqssdr1f6q5o540gna27gnjj.apps.googleusercontent.com"
