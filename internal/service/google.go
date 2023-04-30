@@ -14,7 +14,7 @@ func InitializeOAuthGoogle() {
 	OauthConfGl.ClientSecret = viper.GetString("google.clientSecret")
 	logrus.Info(OauthConfGl.ClientSecret)
 
-	InitializeAuthService()
+	initializeAuthService()
 }
 
 var (

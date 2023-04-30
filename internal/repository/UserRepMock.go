@@ -10,6 +10,14 @@ type UserRepo struct {
 	users []core.User
 }
 
+func (rep *UserRepo) GetByUsername(username string) (core.User, error) {
+	ind := findUsername(rep.users, username)
+	if ind == len(rep.users) {
+		return core.User{}, errors.New("username doesn't exist")
+	}
+	return rep.users[ind], nil
+}
+
 func NewUserRepo() *UserRepo {
 	data := []core.User{{0, "mock@gmail.ru", "Mock", "mock", true, false}}
 	return &UserRepo{users: data}
@@ -22,7 +30,7 @@ func (rep *UserRepo) Create(gmail string) (int, error) {
 }
 
 func (rep *UserRepo) Exists(gmail string) bool {
-	ind := find(rep.users, gmail)
+	ind := findGmail(rep.users, gmail)
 	return ind < len(rep.users)
 }
 
@@ -42,7 +50,7 @@ func (rep *UserRepo) GetByGmail(gmail string) (core.User, error) {
 	//err := ((releaseId < 0 || releaseId > len(rep.users)  "error": "ok")
 	//var err error
 	var item core.User
-	ind := find(rep.users, gmail)
+	ind := findGmail(rep.users, gmail)
 	if ind >= len(rep.users) {
 		err := errors.New("incorrect  UserID")
 		return item, err
@@ -51,9 +59,25 @@ func (rep *UserRepo) GetByGmail(gmail string) (core.User, error) {
 	return rep.users[ind], err
 }
 
-func find(users []core.User, gmail string) int {
+func (rep *UserRepo) Change(userId int, u core.User) core.User {
+	rep.users[userId].Username = u.Username
+	rep.users[userId].Nickname = u.Nickname
+	rep.users[userId].IsRegistered = true
+	rep.users[userId].HasProfilePic = u.HasProfilePic
+	return rep.users[userId]
+}
+
+func findGmail(users []core.User, gmail string) int {
 	for i, u := range users {
 		if gmail == u.Gmail {
+			return i
+		}
+	}
+	return len(users)
+}
+func findUsername(users []core.User, username string) int {
+	for i, u := range users {
+		if username == u.Username {
 			return i
 		}
 	}

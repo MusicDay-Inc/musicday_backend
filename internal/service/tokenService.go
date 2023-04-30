@@ -74,7 +74,7 @@ func GenerateJWT(userId int, isRegistered bool) (string, error) {
 
 }
 
-func (s *TokenService) ParseToken(token string) (int, bool, error) {
+func (s *TokenService) ParseToken(token string) (int, error) {
 	t, err := jwt.ParseWithClaims(token, &tokenClaims{}, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, errors.New("invalid signing method")
@@ -83,13 +83,16 @@ func (s *TokenService) ParseToken(token string) (int, bool, error) {
 		return []byte(signingKey), nil
 	})
 	if err != nil {
-		return 0, false, err
+		return -1, err
 	}
 
 	claims, ok := t.Claims.(*tokenClaims)
 	if !ok {
-		return 0, false, errors.New("token claims are not of type *tokenClaims")
+		return -1, errors.New("token claims are not of type *tokenClaims")
 	}
-
-	return claims.UserId, claims.IsRegistered, nil
+	usr, err := s.userRepo.GetById(claims.UserId)
+	if claims.IsRegistered != usr.IsRegistered {
+		return -1, errors.New("registration flags with token and user do not match")
+	}
+	return claims.UserId, nil
 }

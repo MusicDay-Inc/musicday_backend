@@ -1,24 +1,28 @@
 package service
 
-import "server/internal/repository"
+import (
+	"server/internal/core"
+	"server/internal/repository"
+)
 
 type Token interface {
 	GetJWT(gmail string) (string, error)
-	ParseToken(token string) (int, bool, error)
+	ParseToken(token string) (int, error)
 }
 
 type User interface {
-	CreateNew(gmail string) (int, error)
-	Register()
+	RegisterUser(userId int, user core.User) (core.User, error)
 }
 
 type Service struct {
 	Token
+	User
 }
 
 func NewService(repos *repository.Repository) *Service {
 	return &Service{
 		Token: NewTokenService(repos.User),
+		User:  NewUserService(repos.User),
 	}
 }
 

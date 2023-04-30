@@ -18,6 +18,8 @@ type User interface {
 	Exists(gmail string) bool
 	GetById(userId int) (core.User, error)
 	GetByGmail(gmail string) (core.User, error)
+	Change(userId int, user core.User) core.User
+	GetByUsername(username string) (core.User, error)
 }
 
 type Repository struct {

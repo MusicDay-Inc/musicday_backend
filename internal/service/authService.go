@@ -39,7 +39,7 @@ type Oauth2Service struct {
 	service *oauth2.Service
 }
 
-func InitializeAuthService() {
+func initializeAuthService() {
 	serv, err := oauth2.New(httpClient)
 	if err != nil {
 		logrus.Error(err)
