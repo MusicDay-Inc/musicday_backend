@@ -20,7 +20,7 @@ func (s *UserService) RegisterUser(id int, user core.User) (core.User, error) {
 	if ok, err := s.validateUserFields(user); err != nil {
 		return core.User{}, err
 	} else if !ok {
-		return core.User{}, errors.New("incorrect user fields")
+		return core.User{}, core.ErrIncorrectBody
 	}
 
 	return s.repo.Change(id, user), nil

@@ -6,7 +6,7 @@ import (
 )
 
 type Token interface {
-	GetJWT(gmail string) (string, error)
+	GetJWT(gmail string) (core.JWT, error)
 	ParseToken(token string) (int, error)
 }
 

@@ -1,10 +1,10 @@
 package service
 
 import (
-	"errors"
 	"github.com/sirupsen/logrus"
 	"google.golang.org/api/oauth2/v2"
 	"net/http"
+	"server/internal/core"
 )
 
 var (
@@ -15,15 +15,10 @@ var (
 func GetGmail(idToken string) (string, error) {
 	tokenInfo, err := verifyIdToken(idToken)
 	if err != nil {
-		return "", ErrTokenInvalid
+		return "", core.ErrTokenInvalid
 	}
 	return tokenInfo.Email, nil
 }
-
-// ErrTokenInvalid TODO вынести в другое место
-var (
-	ErrTokenInvalid = errors.New("token invalid")
-)
 
 func verifyIdToken(idToken string) (*oauth2.Tokeninfo, error) {
 	tokenInfoCall := GoogleAuth.Tokeninfo()

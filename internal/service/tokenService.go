@@ -4,6 +4,7 @@ import (
 	"errors"
 	"github.com/golang-jwt/jwt"
 	"github.com/spf13/viper"
+	"server/internal/core"
 	"server/internal/repository"
 	"time"
 )
@@ -36,23 +37,23 @@ func NewTokenService(userRepo repository.User) *TokenService {
 	return &TokenService{userRepo: userRepo}
 }
 
-func (s *TokenService) GetJWT(gmail string) (string, error) {
+func (s *TokenService) GetJWT(gmail string) (core.JWT, error) {
 	if !s.userRepo.Exists(gmail) {
 		userId, err := s.userRepo.Create(gmail)
 		if err != nil {
-			return "", err
+			return core.JWT{}, err
 		}
 		return GenerateJWT(userId, false)
 	}
 	user, err := s.userRepo.GetByGmail(gmail)
 	if err != nil {
-		return "", err
+		return core.JWT{}, err
 	}
 	return GenerateJWT(user.Id, user.IsRegistered)
 }
 
-func GenerateJWT(userId int, isRegistered bool) (string, error) {
-	if isRegistered {
+func GenerateJWT(userId int, registered bool) (core.JWT, error) {
+	if registered {
 		token := jwt.NewWithClaims(jwt.SigningMethodHS256, &tokenClaims{
 			jwt.StandardClaims{
 				ExpiresAt: time.Now().AddDate(registeredTTLYears, 0, 0).Unix(),
@@ -60,7 +61,8 @@ func GenerateJWT(userId int, isRegistered bool) (string, error) {
 			userId,
 			true,
 		})
-		return token.SignedString([]byte(signingKey))
+		str, err := token.SignedString([]byte(signingKey))
+		return core.JWT{Token: str, IsRegistered: registered}, err
 	} else {
 		token := jwt.NewWithClaims(jwt.SigningMethodHS256, &tokenClaims{
 			jwt.StandardClaims{
@@ -69,7 +71,8 @@ func GenerateJWT(userId int, isRegistered bool) (string, error) {
 			userId,
 			false,
 		})
-		return token.SignedString([]byte(signingKey))
+		str, err := token.SignedString([]byte(signingKey))
+		return core.JWT{Token: str, IsRegistered: registered}, err
 	}
 
 }
