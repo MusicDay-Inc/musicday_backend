@@ -13,10 +13,12 @@ var (
 	ErrTokenInvalid  = errors.New("token invalid")
 	ErrIncorrectBody = errors.New("incorrect json body")
 	ErrInternal      = errors.New("server internal error")
+	ErrNotFound      = errors.New("not found")
 )
 
 const (
 	CodeTokenInvalid  = 1
 	CodeIncorrectBody = 2
 	CodeInternalError = 3
+	CodeNotFound      = 4
 )

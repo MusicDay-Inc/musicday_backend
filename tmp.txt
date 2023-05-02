@@ -1,3 +1,72 @@
 git remote add origin https://github.com/MusicDay-Inc/musicday_backend.git
 git branch -M main
 git push -u origin main
+
+-- CREATE TABLE songs
+-- (
+--     id           uuid primary key default gen_random_uuid(),
+--     song_name    varchar(510) not null,
+--     song_author  varchar(255) not null,
+--     release_data date         not null
+-- );
+--
+-- CREATE TABLE albums
+-- (
+--     id           uuid primary key default gen_random_uuid(),
+--     song_name    varchar(510) not null,
+--     song_author  varchar(255) not null,
+--     release_data date         not null,
+--     songs_arr    uuid ARRAY
+-- );
+
+-- CREATE TABLE album_songs
+-- (
+--     id       uuid primary key default gen_random_uuid(),
+--     album_id uuid unique not null,
+--     song_id  uuid unique not null,
+--     constraint album_fk foreign key (album_id) references albums (id),
+--     constraint song_fk foreign key (song_id) references songs (id)
+-- );
+
+
+// NEW
+
+CREATE TABLE users
+(
+    id            uuid primary key default gen_random_uuid(),
+    nickname      varchar(255) not null,
+    username      varchar(255) not null unique,
+    gmail         varchar(255) not null unique,
+    is_registered boolean,
+    has_picture   boolean
+);
+
+CREATE TABLE releases
+(
+    id           uuid primary key default gen_random_uuid(),
+    song_name    varchar(510) not null,
+    song_author  varchar(255) not null,
+    release_data date         not null,
+    is_album     boolean
+);
+
+CREATE TABLE album_songs
+(
+    id       uuid primary key default gen_random_uuid(),
+    album_id uuid        not null,
+    song_id  uuid unique not null,
+    constraint album_fk foreign key (album_id) references releases (id),
+    constraint song_fk foreign key (song_id) references releases (id),
+    constraint album_song_unique UNIQUE (album_id, song_id)
+);
+
+CREATE TABLE reviews
+(
+    id           uuid primary key default gen_random_uuid(),
+    release_id   uuid unique   not null,
+    song_id      uuid unique   not null,
+    published_at timestamp     not null,
+    score        int8          not null,
+    body         varchar(2000) not null,
+    constraint user_fk foreign key (release_id) references releases (id)
+);

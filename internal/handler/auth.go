@@ -29,7 +29,7 @@ func (h *Handler) start(c *gin.Context) {
 
 	jwt, err := h.services.GetJWT(gmail)
 	if err != nil {
-		newErrorResponse(c, http.StatusInternalServerError, core.CodeInternalError, err.Error())
+		newErrorResponse(c, http.StatusInternalServerError, core.CodeInternalError, core.ErrInternal.Error())
 		logrus.Errorf("while generating JWT" + err.Error())
 	}
 

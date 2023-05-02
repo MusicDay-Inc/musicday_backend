@@ -10,7 +10,7 @@ type ReleaseRepo struct {
 }
 
 func NewReleaseRepo() *ReleaseRepo {
-	data := []core.Song{core.NewSong(0, "De Do Do", "The Police"), core.NewSong(1, "Message in a Bottle", "The Police")}
+	var data []core.Song
 	return &ReleaseRepo{data: data}
 }
 
