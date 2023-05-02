@@ -1,12 +1,12 @@
-DROP TABLE users;
-
--- DROP TABLE songs;
---
--- DROP TABLE albums;
-
--- DROP TABLE album_songs;
-DROP TABLE single_releases;
-DROP TABLE song_reviews;
-
+DROP TABLE user_likes;
+DROP TABLE stories;
+DROP TABLE reviews;
 DROP TABLE album_reviews;
-
+DROP TABLE song_reviews;
+DROP TABLE single_releases;
+DROP TABLE album_songs;
+DROP TABLE albums;
+DROP TABLE songs;
+DROP TABLE authors;
+DROP TABLE subscriptions;
+DROP TABLE users;

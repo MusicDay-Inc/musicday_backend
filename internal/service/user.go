@@ -41,6 +41,9 @@ func (s *UserService) validateUserFields(user core.User) (bool, error) {
 }
 
 func validateName(username string) bool {
+	if len(username) < 5 || len(username) > 30 {
+		return false
+	}
 	for _, s := range username {
 		if !strings.ContainsRune(goodSymbols, s) {
 			return false

@@ -7,10 +7,10 @@ import (
 
 type SongDAO struct {
 	Id       uuid.UUID     `db:"id"`
-	Name     string        `db:"song_name"`
-	Author   string        `db:"song_author"`
-	Date     time.Time     `db:"song_date"`
-	Duration time.Duration `db:"song_duration"`
+	Name     string        `db:"name"`
+	Author   string        `db:"author"`
+	Date     time.Time     `db:"date"`
+	Duration time.Duration `db:"duration"`
 }
 
 func (s *SongDAO) ToReleaseDomain() (r Release) {
@@ -34,11 +34,12 @@ func (s *SongDAO) ToDomain() (res Song) {
 
 type AlbumDAO struct {
 	Id         uuid.UUID     `db:"id"`
-	Name       string        `db:"album_name"`
-	Author     string        `db:"album_author"`
-	Date       time.Time     `db:"album_date"`
+	Name       string        `db:"name"`
+	Author     string        `db:"author"`
+	AuthorId   string        `db:"author_id"`
+	Date       time.Time     `db:"date"`
 	SongAmount int           `db:"song_amount"`
-	Duration   time.Duration `db:"album_duration"`
+	Duration   time.Duration `db:"duration"`
 }
 
 func (a *AlbumDAO) ToReleaseDomain() (r Release) {
