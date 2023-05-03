@@ -20,11 +20,23 @@ func main() {
 	// Инциализируем подклбчение к Google Oauth2 API
 	service.InitializeOAuthGoogle()
 
-	repos := repository.New("TODO PUT DB")
+	db, err := repository.NewPostgresDB(repository.Config{
+		Host:     viper.GetString("db.host"),
+		Port:     viper.GetString("db.port"),
+		Username: viper.GetString("db.username"),
+		DBName:   viper.GetString("db.dbname"),
+		Password: viper.GetString("db.password"),
+		SSLMode:  viper.GetString("db.sslmode"),
+	})
+	if err != nil {
+		logrus.Fatal(err)
+	}
+
+	repos := repository.New(db)
 	services := service.NewService(repos)
 	handlers := handler.NewHandler(services)
 
-	if err := srv.Run(viper.GetString("port"), handlers.InitRoutes()); err != nil {
+	if err = srv.Run(viper.GetString("port"), handlers.InitRoutes()); err != nil {
 		logrus.Fatalf("error loading env variables: %s", err.Error())
 	}
 }

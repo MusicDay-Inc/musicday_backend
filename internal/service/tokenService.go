@@ -3,6 +3,7 @@ package service
 import (
 	"errors"
 	"github.com/golang-jwt/jwt"
+	"github.com/google/uuid"
 	"github.com/spf13/viper"
 	"server/internal/core"
 	"server/internal/repository"
@@ -24,8 +25,8 @@ const (
 
 type tokenClaims struct {
 	jwt.StandardClaims
-	UserId       int  `json:"user_id"`
-	IsRegistered bool `json:"is_registered"`
+	UserId       uuid.UUID `json:"user_id"`
+	IsRegistered bool      `json:"is_registered"`
 }
 
 func initializeSecret() {
@@ -43,16 +44,16 @@ func (s *TokenService) GetJWT(gmail string) (core.JWT, error) {
 		if err != nil {
 			return core.JWT{}, err
 		}
-		return GenerateJWT(userId, false)
+		return s.GenerateJWT(userId, false)
 	}
 	user, err := s.userRepo.GetByGmail(gmail)
 	if err != nil {
 		return core.JWT{}, err
 	}
-	return GenerateJWT(user.Id, user.IsRegistered)
+	return s.GenerateJWT(user.Id, user.IsRegistered)
 }
 
-func GenerateJWT(userId int, registered bool) (core.JWT, error) {
+func (s *TokenService) GenerateJWT(userId uuid.UUID, registered bool) (core.JWT, error) {
 	if registered {
 		token := jwt.NewWithClaims(jwt.SigningMethodHS256, &tokenClaims{
 			jwt.StandardClaims{
@@ -77,7 +78,7 @@ func GenerateJWT(userId int, registered bool) (core.JWT, error) {
 
 }
 
-func (s *TokenService) ParseToken(token string) (int, error) {
+func (s *TokenService) ParseToken(token string) (uuid.UUID, bool, error) {
 	t, err := jwt.ParseWithClaims(token, &tokenClaims{}, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, errors.New("invalid signing method")
@@ -86,16 +87,16 @@ func (s *TokenService) ParseToken(token string) (int, error) {
 		return []byte(signingKey), nil
 	})
 	if err != nil {
-		return -1, err
+		return uuid.UUID{0}, false, err
 	}
 
 	claims, ok := t.Claims.(*tokenClaims)
 	if !ok {
-		return -1, errors.New("token claims are not of type *tokenClaims")
+		return uuid.UUID{0}, false, errors.New("token claims are not of type *tokenClaims")
 	}
 	usr, err := s.userRepo.GetById(claims.UserId)
 	if claims.IsRegistered != usr.IsRegistered {
-		return -1, errors.New("registration flags with token and user do not match")
+		return uuid.UUID{0}, false, errors.New("registration flags with token and user do not match")
 	}
-	return claims.UserId, nil
+	return claims.UserId, claims.IsRegistered, nil
 }

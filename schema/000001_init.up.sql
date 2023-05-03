@@ -1,11 +1,11 @@
 CREATE TABLE users
 (
-    id            uuid PRIMARY KEY default gen_random_uuid(),
-    nickname      varchar(30)  not null,
-    username      varchar(30)  not null unique,
+    id            uuid PRIMARY KEY      default gen_random_uuid(),
     gmail         varchar(255) not null unique,
-    is_registered boolean,
-    has_picture   boolean
+    username      varchar(30)  unique,
+    nickname      varchar(30)  not null default '',
+    is_registered boolean      not null DEFAULT false,
+    has_picture   boolean      not null DEFAULT false
 );
 
 CREATE TABLE subscriptions
@@ -19,13 +19,13 @@ CREATE TABLE subscriptions
 
 CREATE TABLE authors
 (
-    id          uuid PRIMARY KEY default gen_random_uuid(),
+    id   uuid PRIMARY KEY default gen_random_uuid(),
     name varchar(255) not null
 );
 
 CREATE TABLE songs
 (
-    id             uuid PRIMARY KEY default gen_random_uuid(),
+    id        uuid PRIMARY KEY default gen_random_uuid(),
     author    varchar(255),
     name      varchar(510) not null,
     date      date         not null,
@@ -36,13 +36,13 @@ CREATE TABLE songs
 
 CREATE TABLE albums
 (
-    id              uuid PRIMARY KEY      default gen_random_uuid(),
-    name      varchar(510) not null,
-    author    varchar(255),
-    date      date         not null,
-    song_amount     int,
-    duration  time         not null default '0:0:0',
-    author_id uuid         not null,
+    id          uuid PRIMARY KEY      default gen_random_uuid(),
+    name        varchar(510) not null,
+    author      varchar(255),
+    date        date         not null,
+    song_amount int,
+    duration    time         not null default '0:0:0',
+    author_id   uuid         not null,
     constraint author_fk foreign key (author_id) references authors (id)
 );
 

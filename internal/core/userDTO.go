@@ -1,10 +1,26 @@
 package core
 
+import "github.com/google/uuid"
+
 type UserDTO struct {
-	Id            string `json:"user_id,omitempty"`
-	Gmail         string `json:"gmail,omitempty"`
-	Nickname      string `json:"nickname" binding:"required"`
-	Username      string `json:"username" binding:"required"`
-	IsRegistered  bool   `json:"is_registered"`
-	HasProfilePic bool   `json:"has_profile_pic,omitempty"`
+	Id            uuid.UUID `json:"id,omitempty"`
+	Gmail         string    `json:"gmail,omitempty"`
+	Username      string    `json:"username"`
+	Nickname      string    `json:"nickname"`
+	IsRegistered  bool      `json:"is_registered"`
+	HasProfilePic bool      `json:"has_picture"`
+}
+
+func (u *UserDTO) ToDomain() (user User) {
+	//id, err := uuid.Parse(u.Id)
+	//if err != nil {
+	//	return
+	//}
+	user.Id = u.Id
+	user.Gmail = u.Gmail
+	user.Nickname = u.Nickname
+	user.Username = u.Username
+	user.IsRegistered = u.IsRegistered
+	user.HasProfilePic = u.HasProfilePic
+	return
 }

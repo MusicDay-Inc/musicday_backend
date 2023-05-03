@@ -14,6 +14,7 @@ var (
 	ErrIncorrectBody = errors.New("incorrect json body")
 	ErrInternal      = errors.New("server internal error")
 	ErrNotFound      = errors.New("not found")
+	ErrAccessDenied  = errors.New("access denied")
 )
 
 const (
@@ -21,4 +22,5 @@ const (
 	CodeIncorrectBody = 2
 	CodeInternalError = 3
 	CodeNotFound      = 4
+	CodeAccessDenied  = 5
 )

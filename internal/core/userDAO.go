@@ -1,15 +1,27 @@
 package core
 
-// TODO
+import "github.com/google/uuid"
+
 type UserDAO struct {
-	Id            int    `db:"user_id"`
-	Gmail         string `db:"gmail"`
-	Nickname      string `db:"nickname"`
-	Username      string `db:"username"`
-	IsRegistered  bool   `db:"is_registered"`
-	HasProfilePic bool   `db:"has_profile_pic"`
+	Id            uuid.UUID `db:"id"`
+	Gmail         string    `db:"gmail"`
+	Username      string    `db:"username"`
+	Nickname      string    `db:"nickname"`
+	IsRegistered  bool      `db:"is_registered"`
+	HasProfilePic bool      `db:"has_picture"`
 }
 
-func (user *UserDAO) ToDomain() {
-	// TODO
+func (u *UserDAO) ToDomain() (user User) {
+	user.Id = u.Id
+	user.Gmail = u.Gmail
+	//if u.Username == nil {
+	//	user.Username = ""
+	//} else {
+	//	user.Username = *u.Username
+	//}
+	user.Username = u.Username
+	user.Nickname = u.Nickname
+	user.IsRegistered = u.IsRegistered
+	user.HasProfilePic = u.HasProfilePic
+	return
 }

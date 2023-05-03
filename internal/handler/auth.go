@@ -31,28 +31,52 @@ func (h *Handler) start(c *gin.Context) {
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, core.CodeInternalError, core.ErrInternal.Error())
 		logrus.Errorf("while generating JWT" + err.Error())
+		return
 	}
 
 	c.JSON(http.StatusOK, jwt.ToResponse())
 }
 
 func (h *Handler) signUp(c *gin.Context) {
+	// DELETE
+	//var temp core.UserDTO
+	//bindRequestBody(c, &temp)
+	//c.JSON(http.StatusOK, temp)
+	//return
 	type req struct {
-		core.User
+		Username string `json:"username" binding:"required"`
+		Nickname string `json:"nickname" binding:"required"`
 		core.JWT
 	}
 
-	var requestBody req
-	bindRequestBody(c, &requestBody)
-	id, err := h.services.ParseToken(requestBody.JWT.Token)
+	var rBody req
+	bindRequestBody(c, &rBody)
+	id, registered, err := h.services.ParseToken(rBody.JWT.Token)
 	if err != nil {
 		newErrorResponse(c, http.StatusUnauthorized, core.CodeTokenInvalid, err.Error())
 		return
 	}
-	newUser, err := h.services.User.RegisterUser(id, requestBody.User)
+	if registered {
+		newErrorResponse(c, http.StatusBadRequest, core.CodeAccessDenied, "user already registered")
+		return
+	}
+	newUser, err := h.services.User.RegisterUser(id, core.User{Username: rBody.Username, Nickname: rBody.Nickname})
 	if err != nil {
 		newErrorResponse(c, http.StatusBadRequest, core.CodeIncorrectBody, err.Error())
 		return
 	}
-	c.JSON(http.StatusOK, newUser)
+
+	jwt, err := h.services.GenerateJWT(newUser.Id, true)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, core.CodeInternalError, core.ErrInternal.Error())
+		logrus.Errorf("while generating JWT" + err.Error())
+		return
+	}
+
+	type response struct {
+		core.UserDTO
+		core.JWT
+	}
+
+	c.JSON(http.StatusOK, response{UserDTO: newUser.ToDTO(), JWT: jwt})
 }

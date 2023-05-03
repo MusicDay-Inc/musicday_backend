@@ -1,37 +1,37 @@
 package repository
 
 import (
+	"github.com/google/uuid"
+	"github.com/jmoiron/sqlx"
 	"server/internal/core"
 )
 
-type Authorization interface {
-	SingIn(user core.User) (int, error)
-}
-
 type ReleaseItem interface {
-	GetById(releaseId int) (core.Song, error)
+	GetSongById(song uuid.UUID) (core.SongDAO, error)
+	GetAlbumById(album uuid.UUID) (core.AlbumDAO, error)
 }
 
 type User interface {
 	// Create returns id of new user, and changes his id
-	Create(gmail string) (int, error)
+	Create(gmail string) (uuid.UUID, error)
 	Exists(gmail string) bool
-	GetById(userId int) (core.User, error)
-	GetByGmail(gmail string) (core.User, error)
-	Change(userId int, user core.User) core.User
-	GetByUsername(username string) (core.User, error)
+	GetById(userId uuid.UUID) (user core.UserDAO, err error)
+	GetByUsername(username string) (core.UserDAO, error)
+	GetByGmail(gmail string) (user core.UserDAO, err error)
+	Register(u core.User) (user core.UserDAO, err error)
+	ChangeUsername(u core.User) (user core.UserDAO, err error)
+	ChangeNickname(u core.User) (user core.UserDAO, err error)
+	InstallPicture(id uuid.UUID) (user core.UserDAO, err error)
 }
 
 type Repository struct {
-	//Authorization
 	ReleaseItem
 	User
 }
 
-func New(DB string) *Repository {
+func New(db *sqlx.DB) *Repository {
 	return &Repository{
-		ReleaseItem: NewReleaseRepo(),
-		User:        NewUserRepo(),
-		//Authorization: ,
+		ReleaseItem: NewReleaseRepo(db),
+		User:        NewUserRepository(db),
 	}
 }

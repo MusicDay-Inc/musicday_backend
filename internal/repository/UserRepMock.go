@@ -2,15 +2,15 @@ package repository
 
 import (
 	"errors"
+	"github.com/google/uuid"
 	"server/internal/core"
-	"strconv"
 )
 
-type UserRepo struct {
+type UserMockRepository struct {
 	users []core.User
 }
 
-func (rep *UserRepo) GetByUsername(username string) (core.User, error) {
+func (rep *UserMockRepository) GetByUsername(username string) (core.User, error) {
 	ind := findUsername(rep.users, username)
 	if ind == len(rep.users) {
 		return core.User{}, errors.New("username doesn't exist")
@@ -18,23 +18,24 @@ func (rep *UserRepo) GetByUsername(username string) (core.User, error) {
 	return rep.users[ind], nil
 }
 
-func NewUserRepo() *UserRepo {
-	data := []core.User{{0, "mock@gmail.ru", "Mock", "mock", true, false}}
-	return &UserRepo{users: data}
+func NewUserMockRepo() *UserMockRepository {
+	//data := []core.User{{0, "mock@gmail.ru", "Mock", "mock", true, false}}
+	data := []core.User{{uuid.UUID{}, "mock@gmail.ru", "Mock", "mock", true, false}}
+	return &UserMockRepository{users: data}
 }
 
-func (rep *UserRepo) Create(gmail string) (int, error) {
-	user := core.User{Id: len(rep.users), Gmail: gmail, Nickname: "NewUser", Username: "mock" + strconv.Itoa(len(rep.users)), IsRegistered: false, HasProfilePic: false}
-	rep.users = append(rep.users, user)
-	return user.Id, nil
-}
+//func (rep *UserMockRepository) Create(gmail string) (int, error) {
+//	user := core.User{Id: len(rep.users), Gmail: gmail, Nickname: "NewUser", Username: "mock" + strconv.Itoa(len(rep.users)), IsRegistered: false, HasProfilePic: false}
+//	rep.users = append(rep.users, user)
+//	return user.Id, nil
+//}
 
-func (rep *UserRepo) Exists(gmail string) bool {
+func (rep *UserMockRepository) Exists(gmail string) bool {
 	ind := findGmail(rep.users, gmail)
 	return ind < len(rep.users)
 }
 
-func (rep *UserRepo) GetById(userId int) (core.User, error) {
+func (rep *UserMockRepository) GetById(userId int) (core.User, error) {
 	//err := ((releaseId < 0 || releaseId > len(rep.users)  "error": "ok")
 	//var err error
 	var item core.User
@@ -46,7 +47,7 @@ func (rep *UserRepo) GetById(userId int) (core.User, error) {
 	return rep.users[userId], err
 }
 
-func (rep *UserRepo) GetByGmail(gmail string) (core.User, error) {
+func (rep *UserMockRepository) GetByGmail(gmail string) (core.User, error) {
 	//err := ((releaseId < 0 || releaseId > len(rep.users)  "error": "ok")
 	//var err error
 	var item core.User
@@ -59,7 +60,7 @@ func (rep *UserRepo) GetByGmail(gmail string) (core.User, error) {
 	return rep.users[ind], err
 }
 
-func (rep *UserRepo) Change(userId int, u core.User) core.User {
+func (rep *UserMockRepository) Change(userId int, u core.User) core.User {
 	rep.users[userId].Username = u.Username
 	rep.users[userId].Nickname = u.Nickname
 	rep.users[userId].IsRegistered = true
