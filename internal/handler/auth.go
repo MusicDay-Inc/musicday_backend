@@ -39,7 +39,6 @@ func (h *Handler) signUp(c *gin.Context) {
 		Nickname string `json:"nickname" binding:"required"`
 		core.JWT
 	}
-
 	var rBody req
 	bindRequestBody(c, &rBody)
 	id, registered, err := h.services.ParseToken(rBody.JWT.Token)

@@ -44,7 +44,7 @@ func main() {
 func initViperConfig() {
 	viper.AddConfigPath("configs")
 	viper.SetConfigName("config")
-	// Enable VIPER to read Environment Variables
+	// Enable VIPER to read Environment Variables 😱🥹🔥
 	viper.AutomaticEnv()
 
 	viper.SetConfigType("yml")

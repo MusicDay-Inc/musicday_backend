@@ -24,14 +24,26 @@ type User interface {
 	InstallPicture(id uuid.UUID) (user core.UserDAO, err error)
 }
 
+type Song interface {
+	GetById(songId uuid.UUID) (core.SongDAO, error)
+}
+
+type Album interface {
+	GetById(album uuid.UUID) (core.AlbumDAO, error)
+	GetSongsFromAlbum(id uuid.UUID) ([]core.SongDAO, error)
+}
+
 type Repository struct {
 	ReleaseItem
 	User
+	Song
+	Album
 }
 
 func New(db *sqlx.DB) *Repository {
 	return &Repository{
-		ReleaseItem: NewReleaseRepo(db),
-		User:        NewUserRepository(db),
+		User:  NewUserRepository(db),
+		Song:  NewSongRepository(db),
+		Album: NewAlbumRepository(db),
 	}
 }

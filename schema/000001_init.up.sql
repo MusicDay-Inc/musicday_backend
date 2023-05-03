@@ -1,11 +1,11 @@
 CREATE TABLE users
 (
-    id             uuid PRIMARY KEY      default gen_random_uuid(),
-    gmail          varchar(255) not null unique,
-    username       varchar(30) unique,
-    nickname       varchar(30)  not null default '',
-    is_registered  boolean      not null DEFAULT false,
-    has_picture    boolean      not null DEFAULT false,
+    id              uuid PRIMARY KEY      default gen_random_uuid(),
+    gmail           varchar(255) not null unique,
+    username        varchar(30) unique,
+    nickname        varchar(30)  not null default '',
+    is_registered   boolean      not null DEFAULT false,
+    has_picture     boolean      not null DEFAULT false,
     subscribers_c   int          not null default 0,
     subscriptions_c int          not null default 0
 
@@ -31,7 +31,7 @@ CREATE TABLE songs
     id        uuid PRIMARY KEY default gen_random_uuid(),
     author    varchar(255),
     name      varchar(510) not null,
-    date      date         not null,
+    date      timestamp    not null,
     duration  time         not null,
     author_id uuid         not null,
     constraint author_fk foreign key (author_id) references authors (id)

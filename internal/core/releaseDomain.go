@@ -7,8 +7,8 @@ import (
 
 type Song struct {
 	Id       uuid.UUID
-	Name     string
 	Author   string
+	Name     string
 	Date     time.Time
 	Duration time.Duration
 }
@@ -20,7 +20,8 @@ func (s *Song) ToDAO() (res SongDAO) {
 	res.Name = s.Name
 	res.Author = s.Author
 	res.Date = s.Date
-	res.Duration = s.Duration
+	res.DurationTime = zeroTime.Add(s.Duration)
+	//res.DurationTime = s.DurationTime
 	return
 }
 
@@ -50,7 +51,7 @@ func (a *Album) ToDAO() (res AlbumDAO) {
 	res.Author = a.Author
 	res.Date = a.Date
 	res.SongAmount = a.SongAmount
-	res.Duration = a.Duration
+	res.DurationTime = zeroTime.Add(a.Duration)
 	return
 }
 
@@ -78,6 +79,7 @@ func (a *Album) ToFullDTO(s []Song) (res AlbumDTO) {
 	return
 }
 
+// TODO DELETE, ONLY REVIEW WILL CONTAIN SONG AND ALBUM
 type Release struct {
 	Id         uuid.UUID
 	IsAlbum    bool
@@ -97,6 +99,7 @@ func (r *Release) ToSmallDTO() (res ReleaseDTO) {
 	res.Duration = r.Duration
 	return
 }
+
 func (r *Release) ToFullDTO(s []Song) (res ReleaseDTO) {
 	res.Id = r.Id
 	res.IsAlbum = r.IsAlbum

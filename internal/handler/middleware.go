@@ -2,19 +2,26 @@ package handler
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/sirupsen/logrus"
 	"net/http"
 	"server/internal/core"
 )
 
-func bindRequestBody(c *gin.Context, obj any) {
-	if err := c.BindJSON(&obj); err != nil {
-		newErrorResponse(c, http.StatusBadRequest, core.CodeIncorrectBody, core.ErrIncorrectBody.Error())
+const (
+	authHeader     = "Authorization"
+	userContextKey = "clientId"
+)
+
+func (h *Handler) authenticateUser(c *gin.Context) {
+	header := c.GetHeader(authHeader)
+	id, registered, err := h.services.ParseToken(header)
+	if err != nil {
+		newErrorResponse(c, http.StatusUnauthorized, core.CodeTokenInvalid, err.Error())
 		return
 	}
-}
-
-func newErrorResponse(c *gin.Context, statusCode int, code int, message string) {
-	logrus.Infof("%d: %s", statusCode, message)
-	c.AbortWithStatusJSON(statusCode, core.ErrorBody{Message: message, Code: code})
+	if !registered {
+		newErrorResponse(c, http.StatusForbidden, core.CodeAccessDenied, core.ErrAccessDenied.Error())
+		return
+	}
+	c.Set(userContextKey, id)
+	return
 }
