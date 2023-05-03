@@ -1,11 +1,14 @@
 CREATE TABLE users
 (
-    id            uuid PRIMARY KEY      default gen_random_uuid(),
-    gmail         varchar(255) not null unique,
-    username      varchar(30)  unique,
-    nickname      varchar(30)  not null default '',
-    is_registered boolean      not null DEFAULT false,
-    has_picture   boolean      not null DEFAULT false
+    id             uuid PRIMARY KEY      default gen_random_uuid(),
+    gmail          varchar(255) not null unique,
+    username       varchar(30) unique,
+    nickname       varchar(30)  not null default '',
+    is_registered  boolean      not null DEFAULT false,
+    has_picture    boolean      not null DEFAULT false,
+    subscribers_c   int          not null default 0,
+    subscriptions_c int          not null default 0
+
 );
 
 CREATE TABLE subscriptions

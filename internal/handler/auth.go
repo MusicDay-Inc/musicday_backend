@@ -15,10 +15,6 @@ type idToken struct {
 func (h *Handler) start(c *gin.Context) {
 	var t idToken
 	bindRequestBody(c, &t)
-	//if err := c.BindJSON(&t); err != nil {
-	//	newErrorResponse(c, http.StatusBadRequest, CodeIncorrectBody, err.Error())
-	//	return
-	//}
 
 	gmail, err := service.GetGmail(t.IdToken)
 	if err != nil {
@@ -38,11 +34,6 @@ func (h *Handler) start(c *gin.Context) {
 }
 
 func (h *Handler) signUp(c *gin.Context) {
-	// DELETE
-	//var temp core.UserDTO
-	//bindRequestBody(c, &temp)
-	//c.JSON(http.StatusOK, temp)
-	//return
 	type req struct {
 		Username string `json:"username" binding:"required"`
 		Nickname string `json:"nickname" binding:"required"`
