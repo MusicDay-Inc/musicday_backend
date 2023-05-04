@@ -24,3 +24,14 @@ func (u *UserDTO) ToDomain() (user User) {
 	user.SubscriptionAmount = u.SubscriptionAmount
 	return
 }
+
+type ReviewDTO struct {
+	Id             uuid.UUID `json:"id,omitempty"`
+	UserId         uuid.UUID `json:"user_id,omitempty"`
+	IsSongReviewed bool      `json:"is_song_reviewed,omitempty"`
+	Song           Song      `json:"song,omitempty"`
+	Album          Album     `json:"album,omitempty"`
+	PublishedAt    bool      `json:"published_at,omitempty"`
+	Score          uint8     `json:"score,omitempty"`
+	Text           string    `json:"review_text,omitempty"`
+}

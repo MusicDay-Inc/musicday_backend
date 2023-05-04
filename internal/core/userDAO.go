@@ -24,3 +24,24 @@ func (u *UserDAO) ToDomain() (user User) {
 	user.SubscriptionAmount = u.SubscriptionAmount
 	return
 }
+
+type ReviewDAO struct {
+	Id             uuid.UUID `db:"id"`
+	UserId         uuid.UUID `db:"user_id"`
+	IsSongReviewed bool      `db:"is_song_reviewed"`
+	ReleaseId      uuid.UUID `db:"release_id"`
+	PublishedAt    bool      `db:"published_at"`
+	Score          uint8     `db:"score"`
+	Text           string    `db:"review_text"`
+}
+
+func (r *ReviewDAO) ToDomain() (review Review) {
+	review.Id = r.Id
+	review.UserId = r.UserId
+	review.IsSongReviewed = r.IsSongReviewed
+	review.ReleaseId = r.ReleaseId
+	review.PublishedAt = r.PublishedAt
+	review.Score = r.Score
+	review.Text = r.Text
+	return
+}

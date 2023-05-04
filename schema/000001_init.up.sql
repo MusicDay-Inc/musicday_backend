@@ -93,7 +93,7 @@ CREATE TABLE reviews
     id               uuid PRIMARY KEY default gen_random_uuid(),
     user_id          uuid          not null,
     is_song_reviewed bool          not null,
-    song_or_album_id uuid          not null,
+    release_id uuid          not null,
     published_at     timestamp     not null,
     score            int8          not null,
     review_text      varchar(2000) not null,

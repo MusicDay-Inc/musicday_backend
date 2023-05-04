@@ -6,10 +6,10 @@ import (
 	"server/internal/core"
 )
 
-type ReleaseItem interface {
-	GetSongById(song uuid.UUID) (core.SongDAO, error)
-	GetAlbumById(album uuid.UUID) (core.AlbumDAO, error)
-}
+//type ReleaseItem interface {
+//	GetSongById(song uuid.UUID) (core.SongDAO, error)
+//	GetAlbumById(album uuid.UUID) (core.AlbumDAO, error)
+//}
 
 type User interface {
 	// Create returns id of new user, and changes his id
@@ -33,17 +33,24 @@ type Album interface {
 	GetSongsFromAlbum(id uuid.UUID) ([]core.SongDAO, error)
 }
 
+type Review interface {
+	GetById(id uuid.UUID) (core.ReviewDAO, error)
+	GetReviewToRelease(releaseId uuid.UUID, userId uuid.UUID) (core.ReviewDAO, error)
+}
+
 type Repository struct {
-	ReleaseItem
+	//ReleaseItem
 	User
 	Song
 	Album
+	Review
 }
 
 func New(db *sqlx.DB) *Repository {
 	return &Repository{
-		User:  NewUserRepository(db),
-		Song:  NewSongRepository(db),
-		Album: NewAlbumRepository(db),
+		User:   NewUserRepository(db),
+		Song:   NewSongRepository(db),
+		Album:  NewAlbumRepository(db),
+		Review: NewReviewRepository(db),
 	}
 }

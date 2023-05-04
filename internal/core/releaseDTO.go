@@ -6,30 +6,30 @@ import (
 )
 
 type SongDTO struct {
-	Id       uuid.UUID     `json:"id"`
-	Name     string        `json:"name"`
-	Author   string        `json:"author"`
-	Date     time.Time     `json:"date"`
-	Duration time.Duration `json:"duration"`
+	Id       uuid.UUID     `json:"id,omitempty"`
+	Name     string        `json:"name,omitempty"`
+	Author   string        `json:"author,omitempty"`
+	Date     time.Time     `json:"date,omitempty"`
+	Duration time.Duration `json:"duration,omitempty"`
 }
 
 type AlbumDTO struct {
-	Id         uuid.UUID     `json:"id"`
-	Name       string        `json:"name"`
-	Author     string        `json:"author"`
-	Date       time.Time     `json:"date"`
-	SongAmount int           `json:"song_amount"`
-	Duration   time.Duration `json:"duration"`
+	Id         uuid.UUID     `json:"id,omitempty"`
+	Name       string        `json:"name,omitempty"`
+	Author     string        `json:"author,omitempty"`
+	Date       time.Time     `json:"date,omitempty"`
+	SongAmount int           `json:"song_amount,omitempty"`
+	Duration   time.Duration `json:"duration,omitempty"`
 	Songs      []SongDTO     `json:"songs,omitempty"`
 }
 
 type ReleaseDTO struct {
-	Id         uuid.UUID     `json:"id"`
-	IsAlbum    bool          `json:"is_album"`
-	Name       string        `json:"name"`
-	Author     string        `json:"author"`
-	Date       time.Time     `json:"date"`
-	Duration   time.Duration `json:"duration"`
-	SongAmount int           `json:"song_amount"`
+	Id         uuid.UUID     `json:"id,omitempty"`
+	IsAlbum    bool          `json:"is_album,omitempty"`
+	Name       string        `json:"name,omitempty"`
+	Author     string        `json:"author,omitempty"`
+	Date       time.Time     `json:"date,omitempty"`
+	Duration   time.Duration `json:"duration,omitempty"`
+	SongAmount int           `json:"song_amount,omitempty"`
 	Songs      []SongDTO     `json:"songs,omitempty"`
 }

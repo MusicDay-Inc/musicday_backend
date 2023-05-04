@@ -26,3 +26,42 @@ func (u *User) ToDTO() (user UserDTO) {
 	user.SubscriptionAmount = u.SubscriptionAmount
 	return
 }
+
+type Review struct {
+	Id             uuid.UUID
+	UserId         uuid.UUID
+	IsSongReviewed bool
+	ReleaseId      uuid.UUID
+	PublishedAt    bool
+	Score          uint8
+	Text           string
+}
+
+func (r *Review) ToEmptyDTO() (review ReviewDTO) {
+	review.Id = r.Id
+	review.UserId = r.UserId
+	review.PublishedAt = r.PublishedAt
+	review.Score = r.Score
+	review.Text = r.Text
+	return
+}
+func (r *Review) ToSongDTO(song Song) (review ReviewDTO) {
+	review.Id = r.Id
+	review.UserId = r.UserId
+	review.IsSongReviewed = r.IsSongReviewed
+	review.Song = song
+	review.PublishedAt = r.PublishedAt
+	review.Score = r.Score
+	review.Text = r.Text
+	return
+}
+func (r *Review) ToAlbumDTO(album Album) (review ReviewDTO) {
+	review.Id = r.Id
+	review.UserId = r.UserId
+	review.IsSongReviewed = r.IsSongReviewed
+	review.Album = album
+	review.PublishedAt = r.PublishedAt
+	review.Score = r.Score
+	review.Text = r.Text
+	return
+}

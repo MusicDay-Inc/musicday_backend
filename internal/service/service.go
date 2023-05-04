@@ -25,18 +25,25 @@ type Album interface {
 	GetSongsFromAlbum(id uuid.UUID) ([]core.Song, error)
 }
 
+type Review interface {
+	//GetById(id uuid.UUID) (core.Review, error)
+	GetReviewToRelease(releaseId uuid.UUID, userId uuid.UUID) (core.Review, error)
+}
+
 type Service struct {
 	Token
 	User
 	Song
 	Album
+	Review
 }
 
 func NewService(repos *repository.Repository) *Service {
 	return &Service{
-		Token: NewTokenService(repos.User),
-		User:  NewUserService(repos.User),
-		Song:  NewSongService(repos.Song),
-		Album: NewAlbumService(repos.Album),
+		Token:  NewTokenService(repos.User),
+		User:   NewUserService(repos.User),
+		Song:   NewSongService(repos.Song),
+		Album:  NewAlbumService(repos.Album),
+		Review: NewReviewService(repos.Review),
 	}
 }
