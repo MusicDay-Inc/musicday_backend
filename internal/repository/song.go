@@ -11,6 +11,22 @@ type SongRepository struct {
 	db *sqlx.DB
 }
 
+func (r SongRepository) SearchSongsWithReview(searchReq string, userId uuid.UUID) (songs []core.SongWithReviewDAO, err error) {
+	q := `
+	SELECT *
+	FROM songs
+         LEFT JOIN reviews on (songs.id = reviews.release_id AND reviews.user_id = $1)
+	WHERE name ILIKE $2 || '%';
+	`
+	logrus.Trace(formatQuery(q))
+	err = r.db.Select(&songs, q, userId, searchReq)
+	if err != nil {
+		logrus.Error(err)
+		return songs, err
+	}
+	return songs, nil
+}
+
 func NewSongRepository(db *sqlx.DB) *SongRepository {
 	return &SongRepository{db: db}
 }

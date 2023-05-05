@@ -93,9 +93,9 @@ CREATE TABLE reviews
     id               uuid PRIMARY KEY default gen_random_uuid(),
     user_id          uuid          not null,
     is_song_reviewed bool          not null,
-    release_id uuid          not null,
+    release_id       uuid          not null,
     published_at     timestamp     not null,
-    score            int8          not null,
+    score            int          not null,
     review_text      varchar(2000) not null,
     --     constraint song_fk foreign key (song_or_album_id) references songs (id)
     constraint user_fk foreign key (user_id) references users (id),

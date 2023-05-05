@@ -12,8 +12,8 @@ type User struct {
 	Nickname           string
 	IsRegistered       bool
 	HasProfilePic      bool
-	SubscriberAmount   int
-	SubscriptionAmount int
+	SubscriberAmount   int32
+	SubscriptionAmount int32
 }
 
 func (u *User) ToDTO() (user UserDTO) {
@@ -34,7 +34,7 @@ type Review struct {
 	IsSongReviewed bool
 	ReleaseId      uuid.UUID
 	PublishedAt    time.Time
-	Score          uint8
+	Score          int32
 	Text           string
 }
 

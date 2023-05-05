@@ -2,7 +2,6 @@ package service
 
 import (
 	"github.com/google/uuid"
-	"github.com/sirupsen/logrus"
 	"server/internal/core"
 	"server/internal/repository"
 )
@@ -17,7 +16,6 @@ func (s *ReviewService) PostReview(reviewReq core.Review) (core.ReviewDTO, error
 	if !reviewReq.ValidateScore() {
 		return core.ReviewDTO{}, core.ErrIncorrectBody
 	}
-	logrus.Warnf("CHECK: %s", reviewReq.ReleaseId.String())
 	albumFromRequest, err := s.album.GetById(reviewReq.ReleaseId)
 	if err != nil {
 		reviewReq.IsSongReviewed = true
@@ -27,6 +25,21 @@ func (s *ReviewService) PostReview(reviewReq core.Review) (core.ReviewDTO, error
 		if reviewReq.IsSongReviewed {
 			return core.ReviewDTO{}, core.ErrNotFound
 		}
+	}
+	exists, err := s.r.Exists(reviewReq.UserId, reviewReq.ReleaseId)
+	if err != nil {
+		return core.ReviewDTO{}, core.ErrInternal
+	}
+	if exists {
+		updateRes, errUpdate := s.r.UpdateReview(reviewReq)
+		if errUpdate != nil {
+			return core.ReviewDTO{}, core.ErrInternal
+		}
+		resDomain := updateRes.ToDomain()
+		if resDomain.IsSongReviewed {
+			return resDomain.ToSongDTO(songFromRequest.ToDomain()), nil
+		}
+		return resDomain.ToAlbumDTO(albumFromRequest.ToDomain()), nil
 	}
 	insertRes, err := s.r.InsertReview(reviewReq)
 	if err != nil {

@@ -12,6 +12,15 @@ type SongDTO struct {
 	Date     time.Time     `json:"date,omitempty"`
 	Duration time.Duration `json:"duration,omitempty"`
 }
+type SongReviewDTO struct {
+	SongDTO   `json:"song,omitempty"`
+	ReviewDTO `json:"review,omitempty"`
+}
+
+type AlbumReviewDTO struct {
+	AlbumDTO  `json:"album,omitempty"`
+	ReviewDTO `json:"review,omitempty"`
+}
 
 type AlbumDTO struct {
 	Id         uuid.UUID     `json:"id,omitempty"`

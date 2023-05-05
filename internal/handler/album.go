@@ -20,6 +20,7 @@ func (h *Handler) getAlbumWitSongsById(c *gin.Context) {
 	userId, err := h.getClientId(c)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, core.CodeInternalError, "couldn't get userId from ctx")
+		return
 	}
 
 	a, err := h.services.Album.GetById(albumId)

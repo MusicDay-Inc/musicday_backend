@@ -11,6 +11,38 @@ type ReviewRepository struct {
 	db *sqlx.DB
 }
 
+func (r ReviewRepository) UpdateReview(review core.Review) (res core.ReviewDAO, err error) {
+	q := `
+	UPDATE reviews
+	SET (published_at,
+     	score,
+     	review_text) 
+	    = ($1, $2, $3)
+	WHERE (user_id, release_id) = ($4, $5)
+	RETURNING *
+	`
+	logrus.Trace(formatQuery(q))
+	err = r.db.Get(&res, q, review.PublishedAt, review.Score, review.Text, review.UserId, review.ReleaseId)
+	if err != nil {
+		logrus.Error(err)
+	}
+	return
+}
+
+func (r ReviewRepository) Exists(userId uuid.UUID, releaseId uuid.UUID) (res bool, err error) {
+	q := `
+	SELECT EXISTS(SELECT
+	FROM reviews
+	WHERE (user_id, release_id)= ($1, $2));
+	`
+	logrus.Trace(formatQuery(q))
+	err = r.db.Get(&res, q, userId, releaseId)
+	if err != nil {
+		return false, err
+	}
+	return res, err
+}
+
 func (r ReviewRepository) InsertReview(review core.Review) (res core.ReviewDAO, err error) {
 	q := `
 	INSERT INTO reviews 

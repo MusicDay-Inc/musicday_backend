@@ -17,7 +17,7 @@ type User interface {
 	Exists(gmail string) bool
 	GetById(userId uuid.UUID) (user core.UserDAO, err error)
 	GetByUsername(username string) (core.UserDAO, error)
-	GetByGmail(gmail string) (user core.UserDAO, err error)
+	GetByGmail(gmail string) (user core.User, err error)
 	Register(u core.User) (user core.UserDAO, err error)
 	ChangeUsername(u core.User) (user core.UserDAO, err error)
 	ChangeNickname(u core.User) (user core.UserDAO, err error)
@@ -26,6 +26,7 @@ type User interface {
 
 type Song interface {
 	GetById(songId uuid.UUID) (core.SongDAO, error)
+	SearchSongsWithReview(searchReq string, userId uuid.UUID) ([]core.SongWithReviewDAO, error)
 }
 
 type Album interface {
@@ -37,6 +38,8 @@ type Review interface {
 	GetById(id uuid.UUID) (core.ReviewDAO, error)
 	GetReviewToRelease(releaseId uuid.UUID, userId uuid.UUID) (core.ReviewDAO, error)
 	InsertReview(review core.Review) (core.ReviewDAO, error)
+	Exists(userId uuid.UUID, releaseId uuid.UUID) (bool, error)
+	UpdateReview(review core.Review) (core.ReviewDAO, error)
 }
 
 type Repository struct {

@@ -8,11 +8,12 @@ import (
 	"server/internal/core"
 )
 
-func bindRequestBody(c *gin.Context, obj any) {
+func bindRequestBody(c *gin.Context, obj any) bool {
 	if err := c.BindJSON(&obj); err != nil {
 		newErrorResponse(c, http.StatusBadRequest, core.CodeIncorrectBody, core.ErrIncorrectBody.Error())
-		return
+		return false
 	}
+	return true
 }
 
 func newErrorResponse(c *gin.Context, statusCode int, code int, message string) {

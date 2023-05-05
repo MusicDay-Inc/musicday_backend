@@ -11,9 +11,12 @@ func (h *Handler) reviewRelease(c *gin.Context) {
 	userId, err := h.getClientId(c)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, core.CodeInternalError, "couldn't get userId from ctx")
+		return
 	}
 	var reviewInput core.ReviewDTO
-	bindRequestBody(c, &reviewInput)
+	if !bindRequestBody(c, &reviewInput) {
+		return
+	}
 	if len(reviewInput.Text) > 2000 {
 		newErrorResponse(c, http.StatusBadRequest, core.CodeIncorrectBody, "review text is too long")
 		return
@@ -24,5 +27,4 @@ func (h *Handler) reviewRelease(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, r)
-
 }

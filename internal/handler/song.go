@@ -12,6 +12,7 @@ func (h *Handler) getSongById(c *gin.Context) {
 	userId, err := h.getClientId(c)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, core.CodeInternalError, "couldn't get userId from ctx")
+		return
 	}
 
 	s, err := h.services.Song.GetById(songId)
@@ -21,16 +22,30 @@ func (h *Handler) getSongById(c *gin.Context) {
 	}
 
 	review, err := h.services.GetReviewToRelease(s.Id, userId)
-	type response struct {
-		core.SongDTO   `json:"song,omitempty"`
-		core.ReviewDTO `json:"review,omitempty"`
-	}
-	c.JSON(http.StatusOK, response{
+	c.JSON(http.StatusOK, core.SongReviewDTO{
 		SongDTO:   s.ToDTO(),
 		ReviewDTO: review.ToEmptyDTO(),
 	})
 }
 
 func (h *Handler) SearchSongs(c *gin.Context) {
-
+	userId, err := h.getClientId(c)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, core.CodeInternalError, "couldn't get userId from ctx")
+		return
+	}
+	var searchInput core.SearchDTO
+	if !bindRequestBody(c, &searchInput) {
+		return
+	}
+	if len(searchInput.Request) > 510 {
+		newErrorResponse(c, http.StatusBadRequest, core.CodeIncorrectBody, "search string is too long")
+		return
+	}
+	res, err := h.services.Song.SearchSongsWithReview(searchInput.Request, userId)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, core.CodeInternalError, "server search error")
+		return
+	}
+	c.JSON(http.StatusOK, res)
 }

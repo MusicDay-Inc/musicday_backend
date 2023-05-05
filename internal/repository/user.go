@@ -69,18 +69,19 @@ func (r UserRepository) GetByUsername(username string) (user core.UserDAO, err e
 	return user, nil
 }
 
-func (r UserRepository) GetByGmail(gmail string) (user core.UserDAO, err error) {
+func (r UserRepository) GetByGmail(gmail string) (core.User, error) {
 	q := `
 	SELECT * FROM users WHERE gmail = $1
 	`
 	logrus.Trace(formatQuery(q))
-	err = r.db.Get(&user, q, gmail)
+	var user core.UserNullableDAO
+	err := r.db.Get(&user, q, gmail)
 	//row := r.db.QueryRow(q, gmail)
 	//err = row.Scan(&user)
 	if err != nil {
-		return core.UserDAO{}, err
+		return core.User{}, err
 	}
-	return user, nil
+	return user.ToDomain(), nil
 }
 
 func (r UserRepository) Register(u core.User) (user core.UserDAO, err error) {

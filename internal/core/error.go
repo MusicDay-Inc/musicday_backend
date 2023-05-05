@@ -15,6 +15,7 @@ var (
 	ErrInternal      = errors.New("server internal error")
 	ErrNotFound      = errors.New("not found")
 	ErrAccessDenied  = errors.New("access denied")
+	ErrAlreadyExists = errors.New("element already exists")
 )
 
 const (
@@ -23,4 +24,5 @@ const (
 	CodeInternalError = 3
 	CodeNotFound      = 4
 	CodeAccessDenied  = 5
+	CodeAlreadyExists = 6
 )

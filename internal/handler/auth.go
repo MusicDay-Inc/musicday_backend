@@ -14,7 +14,9 @@ type idToken struct {
 
 func (h *Handler) start(c *gin.Context) {
 	var t idToken
-	bindRequestBody(c, &t)
+	if !bindRequestBody(c, &t) {
+		return
+	}
 
 	gmail, err := service.GetGmail(t.IdToken)
 	if err != nil {
@@ -40,7 +42,9 @@ func (h *Handler) signUp(c *gin.Context) {
 		core.JWT
 	}
 	var rBody req
-	bindRequestBody(c, &rBody)
+	if !bindRequestBody(c, &rBody) {
+		return
+	}
 	id, registered, err := h.services.ParseToken(rBody.JWT.Token)
 	if err != nil {
 		newErrorResponse(c, http.StatusUnauthorized, core.CodeTokenInvalid, err.Error())

@@ -16,6 +16,11 @@ type SongDAO struct {
 	AuthorId     uuid.UUID `db:"author_id"`
 }
 
+type SongWithReviewDAO struct {
+	SongDAO
+	ReviewNullableDAO
+}
+
 func (s *SongDAO) ToReleaseDomain() (r Release) {
 	r.Id = s.Id
 	r.IsAlbum = false
