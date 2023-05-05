@@ -1,8 +1,8 @@
 DROP TABLE user_likes;
 DROP TABLE stories;
 DROP TABLE reviews;
-DROP TABLE album_reviews;
-DROP TABLE song_reviews;
+-- DROP TABLE album_reviews;
+-- DROP TABLE song_reviews;
 DROP TABLE single_releases;
 DROP TABLE album_songs;
 DROP TABLE albums;

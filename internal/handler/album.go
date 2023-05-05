@@ -16,13 +16,18 @@ func (h *Handler) getAlbumById(c *gin.Context) {
 	c.JSON(http.StatusOK, a.ToDTO())
 }
 func (h *Handler) getAlbumWitSongsById(c *gin.Context) {
-	userId := h.parseUUIDFromParam(c)
-	a, err := h.services.Album.GetById(userId)
+	albumId := h.parseUUIDFromParam(c)
+	userId, err := h.getClientId(c)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, core.CodeInternalError, "couldn't get userId from ctx")
+	}
+
+	a, err := h.services.Album.GetById(albumId)
 	if err != nil {
 		newErrorResponse(c, http.StatusNotFound, core.CodeNotFound, core.ErrNotFound.Error())
 		return
 	}
-	songs, err := h.services.Album.GetSongsFromAlbum(userId)
+	songs, err := h.services.Album.GetSongsFromAlbum(albumId)
 	review, err := h.services.GetReviewToRelease(a.Id, userId)
 	type response struct {
 		core.AlbumDTO  `json:"album,omitempty"`

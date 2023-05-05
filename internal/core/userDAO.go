@@ -1,6 +1,9 @@
 package core
 
-import "github.com/google/uuid"
+import (
+	"github.com/google/uuid"
+	"time"
+)
 
 type UserDAO struct {
 	Id                 uuid.UUID `db:"id"`
@@ -30,7 +33,7 @@ type ReviewDAO struct {
 	UserId         uuid.UUID `db:"user_id"`
 	IsSongReviewed bool      `db:"is_song_reviewed"`
 	ReleaseId      uuid.UUID `db:"release_id"`
-	PublishedAt    bool      `db:"published_at"`
+	PublishedAt    time.Time `db:"published_at"`
 	Score          uint8     `db:"score"`
 	Text           string    `db:"review_text"`
 }

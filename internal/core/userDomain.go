@@ -2,6 +2,7 @@ package core
 
 import (
 	"github.com/google/uuid"
+	"time"
 )
 
 type User struct {
@@ -32,9 +33,13 @@ type Review struct {
 	UserId         uuid.UUID
 	IsSongReviewed bool
 	ReleaseId      uuid.UUID
-	PublishedAt    bool
+	PublishedAt    time.Time
 	Score          uint8
 	Text           string
+}
+
+func (r *Review) ValidateScore() bool {
+	return r.Score > 0 && r.Score <= 10
 }
 
 func (r *Review) ToEmptyDTO() (review ReviewDTO) {

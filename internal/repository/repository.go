@@ -36,6 +36,7 @@ type Album interface {
 type Review interface {
 	GetById(id uuid.UUID) (core.ReviewDAO, error)
 	GetReviewToRelease(releaseId uuid.UUID, userId uuid.UUID) (core.ReviewDAO, error)
+	InsertReview(review core.Review) (core.ReviewDAO, error)
 }
 
 type Repository struct {

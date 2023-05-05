@@ -28,6 +28,7 @@ type Album interface {
 type Review interface {
 	//GetById(id uuid.UUID) (core.Review, error)
 	GetReviewToRelease(releaseId uuid.UUID, userId uuid.UUID) (core.Review, error)
+	PostReview(review core.Review) (core.ReviewDTO, error)
 }
 
 type Service struct {
@@ -44,6 +45,6 @@ func NewService(repos *repository.Repository) *Service {
 		User:   NewUserService(repos.User),
 		Song:   NewSongService(repos.Song),
 		Album:  NewAlbumService(repos.Album),
-		Review: NewReviewService(repos.Review),
+		Review: NewReviewService(repos.Review, repos.Song, repos.Album),
 	}
 }

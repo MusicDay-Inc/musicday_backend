@@ -32,17 +32,19 @@ func (h *Handler) InitRoutes() *gin.Engine {
 		lib.GET("/album_full/:id", h.getAlbumWitSongsById)
 
 		// Отправляю без оценки
-		lib.GET("/song/search", h.SearchSongs)
-		lib.GET("/album/search", h.SearchAlbums)
-		lib.GET("/user/search", h.SearchUsers)
+		// TODO
+		lib.GET("/search_song", h.SearchSongs)
+		lib.GET("/search_album", h.SearchAlbums)
+		lib.GET("/search_user", h.SearchUsers)
 	}
 	//api := router.Group("/api", h.userIdentity)
-	api := router.Group("/api", h.authenticateUser)
+	api := router.Group("/action", h.authenticateUser)
 	{
-		api.POST("/user/:id", h.subscribe)
-		api.POST("/story/:id", h.likeStory)
-		api.POST("/song/:id", h.reviewSong)
-		api.POST("/album/:id", h.reviewAlbum)
+		api.POST("/sub_to_user/:id", h.subscribe)
+		api.POST("/like_story/:id", h.likeStory)
+		api.POST("/post_story/:id", h.likeStory)
+		// Done
+		api.POST("/review/:id", h.reviewRelease)
 	}
 	return router
 }

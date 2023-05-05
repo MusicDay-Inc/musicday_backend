@@ -25,7 +25,6 @@ func (s *SongDAO) ToReleaseDomain() (r Release) {
 	r.SongAmount = -1
 	r.Duration = s.DurationTime.Sub(zeroTime)
 	//r.DurationTime = s.DurationTime
-
 	return
 }
 func (s *SongDAO) ToDomain() (res Song) {

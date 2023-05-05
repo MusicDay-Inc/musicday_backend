@@ -2,6 +2,7 @@ package handler
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 	"net/http"
 	"server/internal/core"
 )
@@ -22,6 +23,11 @@ func (h *Handler) authenticateUser(c *gin.Context) {
 		newErrorResponse(c, http.StatusForbidden, core.CodeAccessDenied, core.ErrAccessDenied.Error())
 		return
 	}
-	c.Set(userContextKey, id)
+	c.Set(userContextKey, id.String())
 	return
+}
+
+func (h *Handler) getClientId(c *gin.Context) (uuid.UUID, error) {
+	idStr := c.GetString(userContextKey)
+	return uuid.Parse(idStr)
 }
