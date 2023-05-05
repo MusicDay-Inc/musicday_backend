@@ -15,7 +15,7 @@ type User interface {
 	// Create returns id of new user, and changes his id
 	Create(gmail string) (uuid.UUID, error)
 	Exists(gmail string) bool
-	GetById(userId uuid.UUID) (user core.UserDAO, err error)
+	GetById(userId uuid.UUID) (user core.User, err error)
 	GetByUsername(username string) (core.UserDAO, error)
 	GetByGmail(gmail string) (user core.User, err error)
 	Register(u core.User) (user core.UserDAO, err error)

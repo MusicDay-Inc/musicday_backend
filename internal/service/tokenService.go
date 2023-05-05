@@ -96,6 +96,9 @@ func (s *TokenService) ParseToken(token string) (uuid.UUID, bool, error) {
 	}
 	usr, err := s.userRepo.GetById(claims.UserId)
 	if claims.IsRegistered != usr.IsRegistered {
+		if err != nil {
+			return uuid.UUID{0}, false, err
+		}
 		return uuid.UUID{0}, false, errors.New("registration flags with token and user do not match")
 	}
 	return claims.UserId, claims.IsRegistered, nil

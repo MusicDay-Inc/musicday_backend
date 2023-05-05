@@ -45,16 +45,17 @@ func (r UserRepository) Exists(gmail string) (res bool) {
 	return res
 }
 
-func (r UserRepository) GetById(userId uuid.UUID) (user core.UserDAO, err error) {
+func (r UserRepository) GetById(userId uuid.UUID) (core.User, error) {
 	q := `
 	SELECT * FROM users WHERE id = $1
 	`
 	logrus.Trace(formatQuery(q))
-	err = r.db.Get(&user, q, userId)
+	var user core.UserNullableDAO
+	err := r.db.Get(&user, q, userId)
 	if err != nil {
-		return user, err
+		return core.User{}, err
 	}
-	return
+	return user.ToDomain(), nil
 }
 
 func (r UserRepository) GetByUsername(username string) (user core.UserDAO, err error) {
