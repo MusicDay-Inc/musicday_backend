@@ -7,14 +7,25 @@ import (
 )
 
 func (h *Handler) getAlbumById(c *gin.Context) {
-	id := h.parseUUIDFromParam(c)
-	a, err := h.services.Album.GetById(id)
+	albumId := h.parseUUIDFromParam(c)
+	userId, err := h.getClientId(c)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, core.CodeInternalError, "couldn't get userId from ctx")
+		return
+	}
+
+	a, err := h.services.Album.GetById(albumId)
 	if err != nil {
 		newErrorResponse(c, http.StatusNotFound, core.CodeNotFound, core.ErrNotFound.Error())
 		return
 	}
-	c.JSON(http.StatusOK, a.ToDTO())
+	review, err := h.services.GetReviewToRelease(a.Id, userId)
+	c.JSON(http.StatusOK, core.AlbumReviewDTO{
+		AlbumDTO:  a.ToDTO(),
+		ReviewDTO: review.ToEmptyDTO(),
+	})
 }
+
 func (h *Handler) getAlbumWitSongsById(c *gin.Context) {
 	albumId := h.parseUUIDFromParam(c)
 	userId, err := h.getClientId(c)

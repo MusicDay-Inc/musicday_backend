@@ -10,8 +10,8 @@ type SongService struct {
 	r repository.Song
 }
 
-func (s SongService) SearchSongsWithReview(searchReq string, userId uuid.UUID) (res []core.SongReviewDTO, err error) {
-	songs, err := s.r.SearchSongsWithReview(searchReq, userId)
+func (s SongService) SearchSongsWithReview(searchReq string, userId uuid.UUID, limit int, offset int) (res []core.SongReviewDTO, err error) {
+	songs, err := s.r.SearchSongsWithReview(searchReq, userId, limit, offset)
 	if err != nil {
 		return
 	}

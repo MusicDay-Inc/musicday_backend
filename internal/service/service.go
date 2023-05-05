@@ -18,7 +18,7 @@ type User interface {
 
 type Song interface {
 	GetById(songId uuid.UUID) (core.Song, error)
-	SearchSongsWithReview(searchReq string, userId uuid.UUID) ([]core.SongReviewDTO, error)
+	SearchSongsWithReview(searchReq string, userId uuid.UUID, limit int, offset int) ([]core.SongReviewDTO, error)
 }
 
 type Album interface {

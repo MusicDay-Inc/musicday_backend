@@ -30,13 +30,15 @@ func (u *UserDTO) ToDomain() (user User) {
 
 type SearchDTO struct {
 	Request string `json:"search,omitempty" binding:"required"`
+	Limit   int    `json:"limit,omitempty" binding:"required"`
+	Offset  int    `json:"offset,omitempty" binding:"required"`
 }
 
 type ReviewDTO struct {
 	Id             uuid.UUID `json:"id,omitempty"`
 	UserId         uuid.UUID `json:"user_id,omitempty"`
 	IsSongReviewed bool      `json:"is_song_reviewed,omitempty"`
-	ReleaseId      uuid.UUID `json:"release_id,omitempty" binding:"required"`
+	ReleaseId      uuid.UUID `json:"release_id,omitempty"`
 	Song           Song      `json:"song,omitempty"`
 	Album          Album     `json:"album,omitempty"`
 	PublishedAt    time.Time `json:"published_at,omitempty"`
