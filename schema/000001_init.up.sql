@@ -64,30 +64,6 @@ CREATE TABLE single_releases
     constraint song_fk foreign key (song_id) references songs (id)
 );
 
--- CREATE TABLE song_reviews
--- (
---     id           uuid PRIMARY KEY default gen_random_uuid(),
---     user_id      uuid          not null,
---     song_id      uuid          not null,
---     published_at timestamp     not null,
---     score        int8          not null,
---     review_text  varchar(2000) not null,
---     constraint song_fk foreign key (song_id) references songs (id),
---     constraint user_fk foreign key (user_id) references users (id)
--- );
---
--- CREATE TABLE album_reviews
--- (
---     id           uuid PRIMARY KEY default gen_random_uuid(),
---     user_id      uuid          not null,
---     album_id     uuid          not null,
---     published_at timestamp     not null,
---     score        int8          not null,
---     review_text  varchar(2000) not null,
---     constraint album_fk foreign key (album_id) references albums (id),
---     constraint user_fk foreign key (user_id) references users (id)
--- );
-
 CREATE TABLE reviews
 (
     id               uuid PRIMARY KEY default gen_random_uuid(),

@@ -11,6 +11,21 @@ type UserRepository struct {
 	db *sqlx.DB
 }
 
+func (r UserRepository) Subscribe(clientId uuid.UUID, userId uuid.UUID) (user core.User, err error) {
+	q := `
+	INSERT INTO subscriptions VALUES 
+	 ($1, $2)
+	RETURNING (SELECT * FROM users WHERE users.id = $2)
+	`
+	// TODO Write transaction that increments userId followers
+	logrus.Trace(formatQuery(q))
+	err = r.db.Get(&user, q, clientId, userId)
+	if err != nil {
+		logrus.Error(err)
+	}
+	return
+}
+
 func NewUserRepository(db *sqlx.DB) *UserRepository {
 	return &UserRepository{db: db}
 }

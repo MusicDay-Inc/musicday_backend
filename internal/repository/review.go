@@ -11,6 +11,25 @@ type ReviewRepository struct {
 	db *sqlx.DB
 }
 
+func (r ReviewRepository) GetSubscriptionReviews(releaseId uuid.UUID, userId uuid.UUID, limit int, offset int) (reviews []core.ReviewDAO, err error) {
+	q := `
+	SELECT id, user_id, is_song_reviewed, release_id, published_at, score, review_text
+	FROM reviews
+         JOIN subscriptions on subscriptions.subscriber_id = $1
+	WHERE (subscriptions.subscription_id = reviews.user_id 
+	           AND reviews.release_id = $2)
+	ORDER BY published_at
+	LIMIT $3 OFFSET $4;
+	`
+	logrus.Trace(formatQuery(q))
+	err = r.db.Select(&reviews, q, userId, releaseId, limit, offset)
+	if err != nil {
+		logrus.Error(err)
+		return reviews, err
+	}
+	return reviews, nil
+}
+
 func (r ReviewRepository) UpdateReview(review core.Review) (res core.ReviewDAO, err error) {
 	q := `
 	UPDATE reviews
@@ -56,16 +75,6 @@ func (r ReviewRepository) InsertReview(review core.Review) (res core.ReviewDAO, 
 	RETURNING *
 	`
 	logrus.Trace(formatQuery(q))
-	//row := r.db.QueryRow(q,
-	//	review.Id,
-	//	review.UserId,
-	//	review.IsSongReviewed,
-	//	review.ReleaseId,
-	//	review.PublishedAt,
-	//	review.Score,
-	//	review.Text,
-	//)
-	//err = row.Scan(&res)
 	err = r.db.Get(&res, q,
 		review.UserId,
 		review.IsSongReviewed,

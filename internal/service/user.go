@@ -12,11 +12,19 @@ const UsernameSymbols = "qwertyuiopasdfghjklzxcvbnm_-.0123456789"
 const NicknameSymbols = " qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM_-.0123456789"
 
 type UserService struct {
-	repo repository.User
+	r repository.User
+}
+
+func (s *UserService) Subscribe(clientId uuid.UUID, userId uuid.UUID) (core.UserDTO, error) {
+	updatedUser, err := s.r.Subscribe(clientId, userId)
+	if err != nil {
+		return core.UserDTO{}, err
+	}
+	return updatedUser.ToDTO(), nil
 }
 
 func NewUserService(repository repository.User) *UserService {
-	return &UserService{repo: repository}
+	return &UserService{r: repository}
 }
 func (s *UserService) RegisterUser(id uuid.UUID, user core.User) (core.User, error) {
 	if ok, err := s.validateUserFields(user); err != nil {
@@ -26,12 +34,12 @@ func (s *UserService) RegisterUser(id uuid.UUID, user core.User) (core.User, err
 	}
 
 	user.Id = id
-	u, err := s.repo.Register(user)
+	u, err := s.r.Register(user)
 	return u.ToDomain(), err
 }
 
 func (s *UserService) validateUserFields(user core.User) (bool, error) {
-	_, err := s.repo.GetByUsername(user.Username)
+	_, err := s.r.GetByUsername(user.Username)
 	if err == nil {
 		return false, errors.New("username already exists")
 	}

@@ -10,6 +10,22 @@ type AlbumService struct {
 	r repository.Album
 }
 
+func (s AlbumService) SearchAlbumsWithReview(query string, userId uuid.UUID, limit int, offset int) (res []core.AlbumReviewDTO, err error) {
+	albums, err := s.r.SearchAlbumsWithReview(query, userId, limit, offset)
+	if err != nil {
+		return
+	}
+	res = make([]core.AlbumReviewDTO, len(albums))
+	for i, album := range albums {
+		sDomain, rDomain := album.AlbumDAO.ToDomain(), album.ReviewNullableDAO.ToDomain()
+		res[i] = core.AlbumReviewDTO{
+			AlbumDTO:  sDomain.ToDTO(),
+			ReviewDTO: rDomain.ToEmptyDTO(),
+		}
+	}
+	return res, nil
+}
+
 func (s AlbumService) GetSongsFromAlbum(id uuid.UUID) ([]core.Song, error) {
 	songs, err := s.r.GetSongsFromAlbum(id)
 	if err != nil {

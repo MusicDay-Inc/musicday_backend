@@ -15,36 +15,67 @@ func NewHandler(services *service.Service) *Handler {
 
 func (h *Handler) InitRoutes() *gin.Engine {
 	router := gin.New()
-
 	//router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
-	// TODO прикрутить хедер авторизации
 	auth := router.Group("/auth")
 	{
 		auth.POST("/start", h.start)
 		auth.POST("/sign_up", h.signUp)
 	}
-	lib := router.Group("/library", h.authenticateUser)
+	user := router.Group("/user", h.authenticateUser)
 	{
 		// Отправляю ответ вместе с оценкой
-		lib.GET("/song/:id", h.getSongById)
-		lib.GET("/album_info/:id", h.getAlbumById)
-		lib.GET("/album_full/:id", h.getAlbumWitSongsById)
+		user.GET("/song/:id", h.getSongById)
+		user.GET("/album_info/:id", h.getAlbumById)
+		user.GET("/album_full/:id", h.getAlbumWitSongsById)
+		user.GET("/subscription_reviews/:id", h.getSongById)
 
-		// Отправляю без оценки
 		// TODO
-		lib.GET("/search_song", h.SearchSongs)
-		lib.GET("/search_album", h.SearchAlbums)
-		lib.GET("/search_user", h.SearchUsers)
+		user.GET("/activity", h.SearchSongs)
+		user.GET("/stories", h.SearchSongs)
+
+		// TODO
+		// Профиль человека
+		profile := router.Group("/profile")
+		{
+			profile.GET("/", h.SearchSongs)
+			profile.GET("/:id", h.SearchSongs)
+		}
+
 	}
-	//api := router.Group("/api", h.userIdentity)
-	api := router.Group("/action", h.authenticateUser)
+	search := router.Group("/search", h.authenticateUser)
 	{
-		api.POST("/sub_to_user/:id", h.subscribe)
-		api.POST("/like_story/:id", h.likeStory)
-		api.POST("/post_story/:id", h.likeStory)
 		// Done
-		api.POST("/review/:id", h.reviewRelease)
+		search.GET("/song", h.SearchSongs)
+		search.GET("/album", h.SearchAlbums)
+		// TODO next 2
+		search.GET("/user", h.SearchUsers)
+	}
+	action := router.Group("/action", h.authenticateUser)
+	{
+		// Done
+		action.POST("/review/:id", h.reviewRelease)
+
+		// TODO next 1
+		action.POST("/subscribe/:id", h.subscribe)
+		action.POST("/post_story/:id", h.postStory)
+	}
+	// DONE!
+	reviews := router.Group("/reviews", h.authenticateUser)
+	{
+		reviews.GET("/to_release/:id", h.ReviewsOfSubscribers)
+	}
+	// Песни человека с его оценками
+	// Альбомы человека с его оценками
+	library := router.Group("/library", h.authenticateUser)
+	{
+		// TODO
+		// все для профиля
+		library.GET("all/:id", h.SearchUsers)
+		// все песни
+		library.GET("/songs/:id", h.SearchSongs)
+		// все альбомы
+		library.GET("/albums/:id", h.SearchAlbums)
 	}
 	return router
 }

@@ -11,6 +11,24 @@ type AlbumRepository struct {
 	db *sqlx.DB
 }
 
+func (r AlbumRepository) SearchAlbumsWithReview(searchReq string, userId uuid.UUID, limit int, offset int) (albums []core.AlbumWithReviewDAO, err error) {
+	q := `
+	SELECT *
+	FROM albums
+         LEFT JOIN reviews on (albums.id = reviews.release_id AND reviews.user_id = $1)
+	WHERE name ILIKE $2 || '%'
+	ORDER BY albums.name
+	LIMIT $3 OFFSET $4;
+	`
+	logrus.Trace(formatQuery(q))
+	err = r.db.Select(&albums, q, userId, searchReq, limit, offset)
+	if err != nil {
+		logrus.Error(err)
+		return albums, err
+	}
+	return albums, nil
+}
+
 func (r AlbumRepository) GetSongsFromAlbum(id uuid.UUID) ([]core.SongDAO, error) {
 	q := `
 	SELECT id, author, name, date, duration, author_id

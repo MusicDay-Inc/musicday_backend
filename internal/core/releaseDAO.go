@@ -51,6 +51,10 @@ type AlbumDAO struct {
 	DurationTime time.Time `db:"duration"`
 	AuthorId     string    `db:"author_id"`
 }
+type AlbumWithReviewDAO struct {
+	AlbumDAO
+	ReviewNullableDAO
+}
 
 func (a *AlbumDAO) ToReleaseDomain() (r Release) {
 	r.Id = a.Id

@@ -50,6 +50,14 @@ func (r *Review) ToEmptyDTO() (review ReviewDTO) {
 	review.Text = r.Text
 	return
 }
+func (r *Review) ToUserDTO(user User) (review ReviewOfUserDTO) {
+	review.Id = r.Id
+	review.User = user
+	review.PublishedAt = r.PublishedAt
+	review.Score = r.Score
+	review.Text = r.Text
+	return
+}
 func (r *Review) ToSongDTO(song Song) (review ReviewDTO) {
 	review.Id = r.Id
 	review.UserId = r.UserId

@@ -24,7 +24,6 @@ func (s SongService) SearchSongsWithReview(searchReq string, userId uuid.UUID, l
 		}
 	}
 	return res, nil
-
 }
 
 func (s SongService) GetById(songId uuid.UUID) (core.Song, error) {

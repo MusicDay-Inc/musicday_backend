@@ -22,7 +22,12 @@ func (h *Handler) getSongById(c *gin.Context) {
 		return
 	}
 
-	review, err := h.services.GetReviewToRelease(s.Id, userId)
+	review, err := h.services.Review.GetReviewToRelease(s.Id, userId)
+	//c.JSON(http.StatusOK, core.SongReviewDTO{
+	//	SongDTO:   s.ToDTO(),
+	//	ReviewDTO: review.ToEmptyDTO(),
+	//})
+
 	c.JSON(http.StatusOK, core.SongReviewDTO{
 		SongDTO:   s.ToDTO(),
 		ReviewDTO: review.ToEmptyDTO(),
@@ -53,10 +58,6 @@ func (h *Handler) SearchSongs(c *gin.Context) {
 		newErrorResponse(c, http.StatusInternalServerError, core.CodeInternalError, "couldn't get userId from ctx")
 		return
 	}
-	//var searchInput core.SearchDTO
-	//if !bindRequestBody(c, &searchInput) {
-	//	return
-	//}
 	if len(query) > 510 {
 		newErrorResponse(c, http.StatusBadRequest, core.CodeIncorrectBody, "search string is too long")
 		return

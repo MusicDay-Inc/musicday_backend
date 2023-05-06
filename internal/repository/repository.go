@@ -22,6 +22,7 @@ type User interface {
 	ChangeUsername(u core.User) (user core.UserDAO, err error)
 	ChangeNickname(u core.User) (user core.UserDAO, err error)
 	InstallPicture(id uuid.UUID) (user core.UserDAO, err error)
+	Subscribe(clientId uuid.UUID, userId uuid.UUID) (core.User, error)
 }
 
 type Song interface {
@@ -32,6 +33,7 @@ type Song interface {
 type Album interface {
 	GetById(album uuid.UUID) (core.AlbumDAO, error)
 	GetSongsFromAlbum(id uuid.UUID) ([]core.SongDAO, error)
+	SearchAlbumsWithReview(query string, userId uuid.UUID, limit int, offset int) ([]core.AlbumWithReviewDAO, error)
 }
 
 type Review interface {
@@ -40,6 +42,7 @@ type Review interface {
 	InsertReview(review core.Review) (core.ReviewDAO, error)
 	Exists(userId uuid.UUID, releaseId uuid.UUID) (bool, error)
 	UpdateReview(review core.Review) (core.ReviewDAO, error)
+	GetSubscriptionReviews(releaseId uuid.UUID, userId uuid.UUID, limit int, offset int) ([]core.ReviewDAO, error)
 }
 
 type Repository struct {

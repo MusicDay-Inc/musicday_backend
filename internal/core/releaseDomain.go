@@ -90,27 +90,27 @@ type Release struct {
 	Duration   time.Duration
 }
 
-func (r *Release) ToSmallDTO() (res ReleaseDTO) {
-	res.Id = r.Id
-	res.Name = r.Name
-	res.Author = r.Author
-	res.Date = r.Date
-	res.SongAmount = r.SongAmount
-	res.Duration = r.Duration
-	return
-}
-
-func (r *Release) ToFullDTO(s []Song) (res ReleaseDTO) {
-	res.Id = r.Id
-	res.IsAlbum = r.IsAlbum
-	res.Name = r.Name
-	res.Author = r.Author
-	res.Date = r.Date
-	res.SongAmount = r.SongAmount
-	res.Duration = r.Duration
-	res.Songs = make([]SongDTO, len(s))
-	for i, song := range s {
-		res.Songs[i] = song.ToDTO()
-	}
-	return
-}
+//func (r *Release) ToSmallDTO() (res ReleaseDTO) {
+//	res.Id = r.Id
+//	res.Name = r.Name
+//	res.Author = r.Author
+//	res.Date = r.Date
+//	res.SongAmount = r.SongAmount
+//	res.Duration = r.Duration
+//	return
+//}
+//
+//func (r *Release) ToFullDTO(s []Song) (res ReleaseDTO) {
+//	res.Id = r.Id
+//	res.IsAlbum = r.IsAlbum
+//	res.Name = r.Name
+//	res.Author = r.Author
+//	res.Date = r.Date
+//	res.SongAmount = r.SongAmount
+//	res.Duration = r.Duration
+//	res.Songs = make([]SongDTO, len(s))
+//	for i, song := range s {
+//		res.Songs[i] = song.ToDTO()
+//	}
+//	return
+//}
