@@ -15,6 +15,8 @@ type Token interface {
 type User interface {
 	RegisterUser(userId uuid.UUID, user core.User) (core.User, error)
 	Subscribe(clientId uuid.UUID, userId uuid.UUID) (core.UserDTO, error)
+	ChangeUsername(clientId uuid.UUID, username string) (core.User, error)
+	ChangeNickname(clientId uuid.UUID, nickname string) (core.User, error)
 }
 
 type Song interface {

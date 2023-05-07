@@ -15,6 +15,32 @@ type UserService struct {
 	r repository.User
 }
 
+func (s *UserService) ChangeNickname(clientId uuid.UUID, nickname string) (core.User, error) {
+	if !s.validateNickname(nickname) {
+		return core.User{}, errors.New("username is invalid")
+	}
+	newClient, err := s.r.ChangeNickname(clientId, nickname)
+	if err != nil {
+		return core.User{}, core.ErrInternal
+	}
+	return newClient.ToDomain(), nil
+}
+
+func (s *UserService) ChangeUsername(clientId uuid.UUID, username string) (core.User, error) {
+	tmpUser, err := s.r.GetByUsername(username)
+	if err == nil && tmpUser.IsRegistered {
+		return core.User{}, errors.New("user with this nickname already exists")
+	}
+	if !s.validateUsername(username) {
+		return core.User{}, errors.New("username is invalid")
+	}
+	newClient, err := s.r.ChangeUsername(clientId, username)
+	if err != nil {
+		return core.User{}, core.ErrInternal
+	}
+	return newClient.ToDomain(), nil
+}
+
 func (s *UserService) Subscribe(clientId uuid.UUID, userId uuid.UUID) (core.UserDTO, error) {
 	updatedUser, err := s.r.Subscribe(clientId, userId)
 	if err != nil {
@@ -43,16 +69,16 @@ func (s *UserService) validateUserFields(user core.User) (bool, error) {
 	if err == nil {
 		return false, errors.New("username already exists")
 	}
-	if !validateUsername(user.Username) {
+	if !s.validateUsername(user.Username) {
 		return false, errors.New("invalid username")
 	}
-	if !validateNickname(user.Nickname) {
+	if !s.validateNickname(user.Nickname) {
 		return false, errors.New("invalid nickname")
 	}
 	return true, nil
 }
 
-func validateUsername(username string) bool {
+func (s *UserService) validateUsername(username string) bool {
 	if len(username) < 5 || len(username) > 30 {
 		return false
 	}
@@ -63,7 +89,7 @@ func validateUsername(username string) bool {
 	}
 	return true
 }
-func validateNickname(nickname string) bool {
+func (s *UserService) validateNickname(nickname string) bool {
 	if len(nickname) < 5 || len(nickname) > 30 {
 		return false
 	}

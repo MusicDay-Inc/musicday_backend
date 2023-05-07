@@ -11,7 +11,7 @@ func (h *Handler) reviewRelease(c *gin.Context) {
 	releaseId := h.parseUUIDFromParam(c)
 	userId, err := h.getClientId(c)
 	if err != nil {
-		newErrorResponse(c, http.StatusInternalServerError, core.CodeInternalError, "couldn't get userId from ctx")
+		newErrorResponse(c, http.StatusInternalServerError, core.CodeInternalError, "couldn't get clientId from context")
 		return
 	}
 	var reviewInput core.ReviewDTO
@@ -51,7 +51,7 @@ func (h *Handler) ReviewsOfSubscribers(c *gin.Context) {
 	songId := h.parseUUIDFromParam(c)
 	userId, err := h.getClientId(c)
 	if err != nil {
-		newErrorResponse(c, http.StatusInternalServerError, core.CodeInternalError, "couldn't get userId from ctx")
+		newErrorResponse(c, http.StatusInternalServerError, core.CodeInternalError, "couldn't get clientId from context")
 		return
 	}
 	subReviews, err := h.services.Review.GetSubscriptionReviews(songId, userId, limit, offset)

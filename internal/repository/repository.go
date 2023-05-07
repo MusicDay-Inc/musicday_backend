@@ -19,8 +19,8 @@ type User interface {
 	GetByUsername(username string) (core.UserDAO, error)
 	GetByGmail(gmail string) (user core.User, err error)
 	Register(u core.User) (user core.UserDAO, err error)
-	ChangeUsername(u core.User) (user core.UserDAO, err error)
-	ChangeNickname(u core.User) (user core.UserDAO, err error)
+	ChangeUsername(id uuid.UUID, username string) (user core.UserDAO, err error)
+	ChangeNickname(id uuid.UUID, nickname string) (user core.UserDAO, err error)
 	InstallPicture(id uuid.UUID) (user core.UserDAO, err error)
 	Subscribe(clientId uuid.UUID, userId uuid.UUID) (core.User, error)
 }

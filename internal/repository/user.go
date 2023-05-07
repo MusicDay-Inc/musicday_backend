@@ -144,19 +144,18 @@ func (r UserRepository) Register(u core.User) (user core.UserDAO, err error) {
 	return user, err
 }
 
-func (r UserRepository) ChangeUsername(u core.User) (user core.UserDAO, err error) {
+func (r UserRepository) ChangeUsername(userId uuid.UUID, username string) (user core.UserDAO, err error) {
 	q := `
 	UPDATE users
-	SET (username) = ($1)
+	SET username = $1
 	WHERE id = $2
 	RETURNING *
 	`
 	logrus.Trace(formatQuery(q))
-	row := r.db.QueryRow(q, u.Username, u.Id)
-	err = row.Scan(&user)
-	return user, err
+	err = r.db.Get(&user, q, username, userId)
+	return
 }
-func (r UserRepository) ChangeNickname(u core.User) (user core.UserDAO, err error) {
+func (r UserRepository) ChangeNickname(userId uuid.UUID, nickname string) (user core.UserDAO, err error) {
 	q := `
 	UPDATE users
 	SET nickname = $1
@@ -164,9 +163,8 @@ func (r UserRepository) ChangeNickname(u core.User) (user core.UserDAO, err erro
 	RETURNING *
 	`
 	logrus.Trace(formatQuery(q))
-	row := r.db.QueryRow(q, u.Nickname, u.Id)
-	err = row.Scan(&user)
-	return user, err
+	err = r.db.Get(&user, q, nickname, userId)
+	return
 }
 func (r UserRepository) InstallPicture(id uuid.UUID) (user core.UserDAO, err error) {
 	q := `

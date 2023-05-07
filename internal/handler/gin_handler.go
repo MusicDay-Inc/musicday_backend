@@ -48,16 +48,19 @@ func (h *Handler) InitRoutes() *gin.Engine {
 		// Done
 		search.GET("/song", h.SearchSongs)
 		search.GET("/album", h.SearchAlbums)
-		// TODO next 2
+		// TODO next 1
 		search.GET("/user", h.SearchUsers)
 	}
 	action := router.Group("/action", h.authenticateUser)
 	{
 		// Done
 		action.POST("/review/:id", h.reviewRelease)
-
-		// TODO next 1
 		action.POST("/subscribe/:id", h.subscribe)
+
+		// TODO
+		action.POST("/username", h.changeUsername)
+		action.POST("/nickname", h.changeNickname)
+
 		action.POST("/post_story/:id", h.postStory)
 	}
 	// DONE!
@@ -65,6 +68,7 @@ func (h *Handler) InitRoutes() *gin.Engine {
 	{
 		reviews.GET("/to_release/:id", h.ReviewsOfSubscribers)
 	}
+
 	// Песни человека с его оценками
 	// Альбомы человека с его оценками
 	library := router.Group("/library", h.authenticateUser)
