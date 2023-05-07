@@ -23,6 +23,7 @@ type User interface {
 	ChangeNickname(id uuid.UUID, nickname string) (user core.UserDAO, err error)
 	InstallPicture(id uuid.UUID) (user core.UserDAO, err error)
 	Subscribe(clientId uuid.UUID, userId uuid.UUID) (core.User, error)
+	SearchUsers(query string, clientId uuid.UUID, limit int, offset int) ([]core.UserDAO, error)
 }
 
 type Song interface {

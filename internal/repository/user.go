@@ -11,6 +11,19 @@ type UserRepository struct {
 	db *sqlx.DB
 }
 
+func (r UserRepository) SearchUsers(query string, clientId uuid.UUID, limit int, offset int) (users []core.UserDAO, err error) {
+	q := `
+	SELECT *
+		FROM users
+	WHERE users.username ILIKE $1 || '%'
+	ORDER BY username
+	LIMIT $2 OFFSET $3;
+	`
+	logrus.Trace(formatQuery(q))
+	err = r.db.Select(&users, q, query, limit, offset)
+	return
+}
+
 func (r UserRepository) Subscribe(clientId uuid.UUID, userId uuid.UUID) (user core.User, err error) {
 	tx, err := r.db.Begin()
 	if err != nil {

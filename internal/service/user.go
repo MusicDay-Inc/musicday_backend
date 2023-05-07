@@ -15,6 +15,19 @@ type UserService struct {
 	r repository.User
 }
 
+func (s *UserService) SearchUsers(query string, clientId uuid.UUID, limit int, offset int) (res []core.UserDTO, err error) {
+	users, err := s.r.SearchUsers(query, clientId, limit, offset)
+	if err != nil {
+		return
+	}
+	res = make([]core.UserDTO, len(users))
+	for i, user := range users {
+		uDomain := user.ToDomain()
+		res[i] = uDomain.ToDTO()
+	}
+	return res, nil
+}
+
 func (s *UserService) ChangeNickname(clientId uuid.UUID, nickname string) (core.User, error) {
 	if !s.validateNickname(nickname) {
 		return core.User{}, errors.New("username is invalid")

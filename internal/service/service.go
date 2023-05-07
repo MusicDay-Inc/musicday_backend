@@ -17,6 +17,7 @@ type User interface {
 	Subscribe(clientId uuid.UUID, userId uuid.UUID) (core.UserDTO, error)
 	ChangeUsername(clientId uuid.UUID, username string) (core.User, error)
 	ChangeNickname(clientId uuid.UUID, nickname string) (core.User, error)
+	SearchUsers(query string, clientId uuid.UUID, limit int, offset int) ([]core.UserDTO, error)
 }
 
 type Song interface {
