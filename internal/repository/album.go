@@ -13,7 +13,8 @@ type AlbumRepository struct {
 
 func (r AlbumRepository) SearchAlbumsWithReview(searchReq string, userId uuid.UUID, limit int, offset int) (albums []core.AlbumWithReviewDAO, err error) {
 	q := `
-	SELECT *
+	SELECT albums.id AS "album_id", name, author, date, song_amount, duration, author_id, 
+	       reviews.id AS "review_id", user_id, is_song_reviewed, release_id, published_at, score, review_text
 	FROM albums
          LEFT JOIN reviews on (albums.id = reviews.release_id AND reviews.user_id = $1)
 	WHERE name ILIKE $2 || '%'
@@ -25,6 +26,10 @@ func (r AlbumRepository) SearchAlbumsWithReview(searchReq string, userId uuid.UU
 	if err != nil {
 		logrus.Error(err)
 		return albums, err
+	}
+	for i, awr := range albums {
+		albums[i].AlbumDAO.Id = awr.AlbumId
+		albums[i].ReviewNullableDAO.Id = awr.ReviewId
 	}
 	return albums, nil
 }

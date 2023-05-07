@@ -19,6 +19,8 @@ type SongDAO struct {
 type SongWithReviewDAO struct {
 	SongDAO
 	ReviewNullableDAO
+	SongId   uuid.UUID `db:"song_id"`
+	ReviewId uuid.UUID `db:"review_id"`
 }
 
 func (s *SongDAO) ToReleaseDomain() (r Release) {
@@ -54,6 +56,8 @@ type AlbumDAO struct {
 type AlbumWithReviewDAO struct {
 	AlbumDAO
 	ReviewNullableDAO
+	AlbumId  uuid.UUID `db:"album_id"`
+	ReviewId uuid.UUID `db:"review_id"`
 }
 
 func (a *AlbumDAO) ToReleaseDomain() (r Release) {
