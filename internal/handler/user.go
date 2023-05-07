@@ -22,7 +22,7 @@ func (h *Handler) subscribe(c *gin.Context) {
 	}
 	updatedUserSubscription, err := h.services.User.Subscribe(clientId, userId)
 	if err != nil {
-		newErrorResponse(c, http.StatusBadRequest, core.CodeIncorrectBody, core.ErrIncorrectBody.Error())
+		newErrorResponse(c, http.StatusBadRequest, core.CodeIncorrectBody, "already subscribed")
 		return
 	}
 	c.JSON(http.StatusOK, updatedUserSubscription)

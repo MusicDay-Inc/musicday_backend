@@ -12,18 +12,48 @@ type UserRepository struct {
 }
 
 func (r UserRepository) Subscribe(clientId uuid.UUID, userId uuid.UUID) (user core.User, err error) {
+	tx, err := r.db.Begin()
+	if err != nil {
+		return core.User{}, err
+	}
 	q := `
 	INSERT INTO subscriptions VALUES 
 	 ($1, $2)
-	RETURNING (SELECT * FROM users WHERE users.id = $2)
 	`
-	// TODO Write transaction that increments userId followers
 	logrus.Trace(formatQuery(q))
-	err = r.db.Get(&user, q, clientId, userId)
+	_, err = tx.Exec(q, clientId, userId)
+	if err != nil {
+		errRollback := tx.Rollback()
+		logrus.Error(errRollback)
+		return core.User{}, err
+	}
+	q = `
+	UPDATE users 
+   	SET subscriptions_c = subscriptions_c + 1
+		WHERE id = $1;
+	`
+	_, err = tx.Exec(q, clientId)
+	if err != nil {
+		errRollback := tx.Rollback()
+		logrus.Error(errRollback)
+		return core.User{}, err
+	}
+	q = `
+	UPDATE users 
+   	SET subscribers_c = subscribers_c + 1
+		WHERE id = $1
+	RETURNING id, gmail, username, nickname, is_registered, has_picture, subscribers_c, subscriptions_c;
+	`
+	logrus.Trace(formatQuery(q))
+	row := tx.QueryRow(q, userId)
+	err = row.Scan(&user.Id, &user.Gmail, &user.Username, &user.Nickname,
+		&user.IsRegistered, &user.HasProfilePic, &user.SubscriberAmount, &user.SubscriptionAmount)
 	if err != nil {
 		logrus.Error(err)
+		tx.Rollback()
+		return core.User{}, err
 	}
-	return
+	return user, tx.Commit()
 }
 
 func NewUserRepository(db *sqlx.DB) *UserRepository {

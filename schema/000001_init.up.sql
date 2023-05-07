@@ -1,20 +1,20 @@
 CREATE TABLE users
 (
-    id              uuid PRIMARY KEY      default gen_random_uuid(),
-    gmail           varchar(255) not null unique,
-    username        varchar(30) unique,
-    nickname        varchar(30)  not null default '',
-    is_registered   boolean      not null DEFAULT false,
-    has_picture     boolean      not null DEFAULT false,
-    subscribers_c   int          not null default 0,
-    subscriptions_c int          not null default 0
+    id              UUID PRIMARY KEY      DEFAULT gen_random_uuid(),
+    gmail           VARCHAR(255) not null UNIQUE,
+    username        VARCHAR(30) UNIQUE,
+    nickname        VARCHAR(30)  not null DEFAULT '',
+    is_registered   BOOLEAN      not null DEFAULT false,
+    has_picture     BOOLEAN      not null DEFAULT false,
+    subscribers_c   INT          not null DEFAULT 0,
+    subscriptions_c INT          not null DEFAULT 0
 
 );
 
 CREATE TABLE subscriptions
 (
-    subscriber_id   uuid PRIMARY KEY not null,
-    subscription_id uuid             not null,
+    subscriber_id   UUID PRIMARY KEY not null,
+    subscription_id UUID             not null,
     constraint subscriber_fk foreign key (subscriber_id) references users (id),
     constraint subscription_fk foreign key (subscription_id) references users (id),
     constraint subscription_unique UNIQUE (subscriber_id, subscription_id)
@@ -22,37 +22,37 @@ CREATE TABLE subscriptions
 
 CREATE TABLE authors
 (
-    id   uuid PRIMARY KEY default gen_random_uuid(),
-    name varchar(255) not null
+    id   UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    name VARCHAR(255) not null
 );
 
 CREATE TABLE songs
 (
-    id        uuid PRIMARY KEY default gen_random_uuid(),
-    author    varchar(255),
-    name      varchar(510) not null,
-    date      timestamp    not null,
-    duration  time         not null,
-    author_id uuid         not null,
+    id        UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    author    VARCHAR(255),
+    name      VARCHAR(510) not null,
+    date      TIMESTAMP    not null,
+    duration  TIME         not null,
+    author_id UUID         not null,
     constraint author_fk foreign key (author_id) references authors (id)
 );
 
 CREATE TABLE albums
 (
-    id          uuid PRIMARY KEY      default gen_random_uuid(),
-    name        varchar(510) not null,
-    author      varchar(255),
-    date        date         not null,
-    song_amount int,
-    duration    time         not null default '0:0:0',
-    author_id   uuid         not null,
+    id          UUID PRIMARY KEY      DEFAULT gen_random_uuid(),
+    name        VARCHAR(510) not null,
+    author      VARCHAR(255),
+    date        DATE         not null,
+    song_amount INT,
+    duration    TIME         not null DEFAULT '0:0:0',
+    author_id   UUID         not null,
     constraint author_fk foreign key (author_id) references authors (id)
 );
 
 CREATE TABLE album_songs
 (
-    album_id uuid        not null,
-    song_id  uuid unique not null,
+    album_id UUID        not null,
+    song_id  UUID UNIQUE not null,
     constraint album_fk foreign key (album_id) references albums (id),
     constraint song_fk foreign key (song_id) references songs (id),
     constraint album_song_unique UNIQUE (album_id, song_id)
@@ -60,40 +60,38 @@ CREATE TABLE album_songs
 
 CREATE TABLE single_releases
 (
-    song_id uuid unique not null PRIMARY KEY,
+    song_id UUID UNIQUE not null PRIMARY KEY,
     constraint song_fk foreign key (song_id) references songs (id)
 );
 
 CREATE TABLE reviews
 (
-    id               uuid PRIMARY KEY default gen_random_uuid(),
-    user_id          uuid          not null,
-    is_song_reviewed bool          not null,
-    release_id       uuid          not null,
-    published_at     timestamp     not null,
-    score            int          not null,
-    review_text      varchar(2000) not null,
-    --     constraint song_fk foreign key (song_or_album_id) references songs (id)
+    id               UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id          UUID          not null,
+    is_song_reviewed BOOL          not null,
+    release_id       UUID          not null,
+    published_at     TIMESTAMP     not null,
+    score            INT           not null,
+    review_text      VARCHAR(2000) not null,
     constraint user_fk foreign key (user_id) references users (id),
     constraint user_review_unique UNIQUE (user_id, release_id)
 );
 
 CREATE TABLE stories
 (
-    id             uuid PRIMARY KEY default gen_random_uuid(),
-    user_id        uuid       not null,
-    has_background bool       not null,
-    items          uuid array not null,
-    published_at   timestamp  not null,
-    story_text     varchar(1200),
-    likes_amount   int,
+    id               UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id          UUID      not null,
+    background_color INT       not null,
+    song_id          UUID      not null,
+    published_at     TIMESTAMP not null,
+    story_text       VARCHAR(1200),
     constraint user_fk foreign key (user_id) references users (id)
 );
 
 CREATE TABLE user_likes
 (
-    user_id  uuid PRIMARY KEY not null,
-    story_id uuid             not null,
+    user_id  UUID PRIMARY KEY not null,
+    story_id UUID             not null,
     constraint user_fk foreign key (user_id) references users (id),
     constraint story_fk foreign key (story_id) references users (id),
     constraint user_story_unique UNIQUE (user_id, story_id)
