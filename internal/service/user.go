@@ -15,6 +15,10 @@ type UserService struct {
 	r repository.User
 }
 
+func (s *UserService) Exists(id uuid.UUID) bool {
+	return s.r.ExistsWithId(id)
+}
+
 func (s *UserService) SearchUsers(query string, clientId uuid.UUID, limit int, offset int) (res []core.UserDTO, err error) {
 	users, err := s.r.SearchUsers(query, clientId, limit, offset)
 	if err != nil {

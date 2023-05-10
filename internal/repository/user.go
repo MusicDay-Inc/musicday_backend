@@ -11,6 +11,20 @@ type UserRepository struct {
 	db *sqlx.DB
 }
 
+func (r UserRepository) ExistsWithId(id uuid.UUID) (res bool) {
+	q := `
+	SELECT EXISTS(SELECT
+	FROM users
+	WHERE id = $1);
+	`
+	logrus.Trace(formatQuery(q))
+	err := r.db.Get(&res, q, id)
+	if err != nil {
+		return false
+	}
+	return res
+}
+
 func (r UserRepository) SearchUsers(query string, clientId uuid.UUID, limit int, offset int) (users []core.UserDAO, err error) {
 	q := `
 	SELECT *

@@ -12,7 +12,7 @@ const (
 	userContextKey = "clientId"
 )
 
-func (h *Handler) authenticateUser(c *gin.Context) {
+func (h *Handler) authenticateClient(c *gin.Context) {
 	header := c.GetHeader(authHeader)
 	id, registered, err := h.services.ParseToken(header)
 	if err != nil {

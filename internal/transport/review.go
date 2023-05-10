@@ -8,6 +8,100 @@ import (
 	"strconv"
 )
 
+func (h *Handler) UserAllReviews(c *gin.Context) {
+	userId := h.parseUUIDFromParam(c)
+	userOk := h.services.User.Exists(userId)
+	if !userOk {
+		newErrorResponse(c, http.StatusNotFound, core.CodeNotFound, "couldn't find this user")
+		return
+	}
+	// TODO In the future add ascending/descending param
+	limitP := c.Query("limit")
+	offsetP := c.Query("offset")
+	limit, err := strconv.Atoi(limitP)
+	if err != nil {
+		newErrorResponse(c, http.StatusBadRequest, core.CodeIncorrectBody, "couldn't get limit from parameter")
+		return
+	}
+	offset, err := strconv.Atoi(offsetP)
+	if err != nil {
+		newErrorResponse(c, http.StatusBadRequest, core.CodeIncorrectBody, "couldn't get offset from parameter")
+		return
+	}
+	if limit > 50 {
+		newErrorResponse(c, http.StatusBadRequest, core.CodeIncorrectBody, "limit is too big")
+		return
+	}
+	reviews, err := h.services.Review.GetAllUserReviews(userId, limit, offset)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, core.CodeInternalError, core.ErrInternal.Error())
+		return
+	}
+	c.JSON(http.StatusOK, reviews)
+}
+
+func (h *Handler) UserSongReviews(c *gin.Context) {
+	userId := h.parseUUIDFromParam(c)
+	userOk := h.services.User.Exists(userId)
+	if !userOk {
+		newErrorResponse(c, http.StatusNotFound, core.CodeNotFound, "couldn't find this user")
+		return
+	}
+	limitP := c.Query("limit")
+	offsetP := c.Query("offset")
+	limit, err := strconv.Atoi(limitP)
+	if err != nil {
+		newErrorResponse(c, http.StatusBadRequest, core.CodeIncorrectBody, "couldn't get limit from parameter")
+		return
+	}
+	offset, err := strconv.Atoi(offsetP)
+	if err != nil {
+		newErrorResponse(c, http.StatusBadRequest, core.CodeIncorrectBody, "couldn't get offset from parameter")
+		return
+	}
+	if limit > 50 {
+		newErrorResponse(c, http.StatusBadRequest, core.CodeIncorrectBody, "limit is too big")
+		return
+	}
+	reviews, err := h.services.Review.GetSongReviewsOfUser(userId, limit, offset)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, core.CodeInternalError, core.ErrInternal.Error())
+		return
+	}
+	c.JSON(http.StatusOK, reviews)
+}
+
+func (h *Handler) UserAlbumReviews(c *gin.Context) {
+	userId := h.parseUUIDFromParam(c)
+	userOk := h.services.User.Exists(userId)
+	if !userOk {
+		newErrorResponse(c, http.StatusNotFound, core.CodeNotFound, "couldn't find this user")
+		return
+	}
+	limitP := c.Query("limit")
+	offsetP := c.Query("offset")
+	limit, err := strconv.Atoi(limitP)
+	if err != nil {
+		newErrorResponse(c, http.StatusBadRequest, core.CodeIncorrectBody, "couldn't get limit from parameter")
+		return
+	}
+	offset, err := strconv.Atoi(offsetP)
+	if err != nil {
+		newErrorResponse(c, http.StatusBadRequest, core.CodeIncorrectBody, "couldn't get offset from parameter")
+		return
+	}
+	if limit > 50 {
+		newErrorResponse(c, http.StatusBadRequest, core.CodeIncorrectBody, "limit is too big")
+		return
+	}
+	reviews, err := h.services.Review.GetAlbumReviewsOfUser(userId, limit, offset)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, core.CodeInternalError, core.ErrInternal.Error())
+		return
+	}
+	c.JSON(http.StatusOK, reviews)
+}
+
 func (h *Handler) reviewRelease(c *gin.Context) {
 	releaseId := h.parseUUIDFromParam(c)
 	userId, err := h.getClientId(c)
@@ -31,7 +125,7 @@ func (h *Handler) reviewRelease(c *gin.Context) {
 	c.JSON(http.StatusOK, r)
 }
 
-func (h *Handler) ReviewsOfSubscribers(c *gin.Context) {
+func (h *Handler) ReviewsOfSubscriptions(c *gin.Context) {
 	limitP := c.Query("limit")
 	offsetP := c.Query("offset")
 	limit, err := strconv.Atoi(limitP)

@@ -24,6 +24,7 @@ type User interface {
 	InstallPicture(id uuid.UUID) (user core.UserDAO, err error)
 	Subscribe(clientId uuid.UUID, userId uuid.UUID) (core.User, error)
 	SearchUsers(query string, clientId uuid.UUID, limit int, offset int) ([]core.UserDAO, error)
+	ExistsWithId(id uuid.UUID) bool
 }
 
 type Song interface {
@@ -46,6 +47,9 @@ type Review interface {
 	UpdateReview(review core.Review) (core.ReviewDAO, error)
 	GetSubscriptionReviews(releaseId uuid.UUID, userId uuid.UUID, limit int, offset int) ([]core.ReviewDAO, error)
 	Delete(id uuid.UUID) error
+	GetSongReviewsFromUser(userId uuid.UUID, limit int, offset int) ([]core.ReviewDAO, error)
+	GetAlbumReviewsFromUser(userId uuid.UUID, limit int, offset int) ([]core.ReviewDAO, error)
+	GetReviewsFromUser(userId uuid.UUID, limit int, offset int) ([]core.ReviewDAO, error)
 }
 
 type Repository struct {

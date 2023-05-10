@@ -79,16 +79,16 @@ func (a *Album) ToFullDTO(s []Song) (res AlbumDTO) {
 	return
 }
 
-// TODO DELETE, ONLY REVIEW WILL CONTAIN SONG AND ALBUM
-type Release struct {
-	Id         uuid.UUID
-	IsAlbum    bool
-	Name       string
-	Author     string
-	Date       time.Time
-	SongAmount int
-	Duration   time.Duration
-}
+//// TODO DELETE, ONLY REVIEW WILL CONTAIN SONG AND ALBUM
+//type Release struct {
+//	Id         uuid.UUID
+//	IsAlbum    bool
+//	Name       string
+//	Author     string
+//	Date       time.Time
+//	SongAmount int
+//	Duration   time.Duration
+//}
 
 //func (r *Release) ToSmallDTO() (res ReleaseDTO) {
 //	res.Id = r.Id

@@ -10,15 +10,15 @@ type SongService struct {
 	r repository.Song
 }
 
-func (s SongService) SearchSongsWithReview(searchReq string, userId uuid.UUID, limit int, offset int) (res []core.SongReviewDTO, err error) {
+func (s SongService) SearchSongsWithReview(searchReq string, userId uuid.UUID, limit int, offset int) (res []core.SongWithReviewDTO, err error) {
 	songs, err := s.r.SearchSongsWithReview(searchReq, userId, limit, offset)
 	if err != nil {
 		return
 	}
-	res = make([]core.SongReviewDTO, len(songs))
+	res = make([]core.SongWithReviewDTO, len(songs))
 	for i, song := range songs {
 		sDomain, rDomain := song.SongDAO.ToDomain(), song.ReviewNullableDAO.ToDomain()
-		res[i] = core.SongReviewDTO{
+		res[i] = core.SongWithReviewDTO{
 			SongDTO:   sDomain.ToDTO(),
 			ReviewDTO: rDomain.ToEmptyDTO(),
 		}

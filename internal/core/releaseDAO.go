@@ -23,17 +23,6 @@ type SongWithReviewDAO struct {
 	ReviewId uuid.UUID `db:"review_id"`
 }
 
-func (s *SongDAO) ToReleaseDomain() (r Release) {
-	r.Id = s.Id
-	r.IsAlbum = false
-	r.Name = s.Name
-	r.Author = s.Author
-	r.Date = s.Date
-	r.SongAmount = -1
-	r.Duration = s.DurationTime.Sub(zeroTime)
-	//r.DurationTime = s.DurationTime
-	return
-}
 func (s *SongDAO) ToDomain() (res Song) {
 	res.Id = s.Id
 	res.Author = s.Author
@@ -60,17 +49,6 @@ type AlbumWithReviewDAO struct {
 	ReviewId uuid.UUID `db:"review_id"`
 }
 
-func (a *AlbumDAO) ToReleaseDomain() (r Release) {
-	r.Id = a.Id
-	r.IsAlbum = true
-	r.Name = a.Name
-	r.Author = a.Author
-	r.Date = a.Date
-	r.SongAmount = a.SongAmount
-	r.Duration = a.DurationTime.Sub(zeroTime)
-	return
-}
-
 func (a *AlbumDAO) ToDomain() (res Album) {
 	res.Id = a.Id
 	res.Name = a.Name
@@ -80,3 +58,28 @@ func (a *AlbumDAO) ToDomain() (res Album) {
 	res.Duration = a.DurationTime.Sub(zeroTime)
 	return
 }
+
+// TODO DELETE
+
+//func (s *SongDAO) ToReleaseDomain() (r Release) {
+//	r.Id = s.Id
+//	r.IsAlbum = false
+//	r.Name = s.Name
+//	r.Author = s.Author
+//	r.Date = s.Date
+//	r.SongAmount = -1
+//	r.Duration = s.DurationTime.Sub(zeroTime)
+//	//r.DurationTime = s.DurationTime
+//	return
+//}
+
+//func (a *AlbumDAO) ToReleaseDomain() (r Release) {
+//	r.Id = a.Id
+//	r.IsAlbum = true
+//	r.Name = a.Name
+//	r.Author = a.Author
+//	r.Date = a.Date
+//	r.SongAmount = a.SongAmount
+//	r.Duration = a.DurationTime.Sub(zeroTime)
+//	return
+//}

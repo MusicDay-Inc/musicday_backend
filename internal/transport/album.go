@@ -21,7 +21,7 @@ func (h *Handler) getAlbumById(c *gin.Context) {
 		return
 	}
 	review, err := h.services.GetReviewToRelease(a.Id, userId)
-	c.JSON(http.StatusOK, core.AlbumReviewDTO{
+	c.JSON(http.StatusOK, core.AlbumWithReviewDTO{
 		AlbumDTO:  a.ToDTO(),
 		ReviewDTO: review.ToEmptyDTO(),
 	})

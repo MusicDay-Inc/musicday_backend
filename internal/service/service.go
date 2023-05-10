@@ -18,17 +18,18 @@ type User interface {
 	ChangeUsername(clientId uuid.UUID, username string) (core.User, error)
 	ChangeNickname(clientId uuid.UUID, nickname string) (core.User, error)
 	SearchUsers(query string, clientId uuid.UUID, limit int, offset int) ([]core.UserDTO, error)
+	Exists(id uuid.UUID) bool
 }
 
 type Song interface {
 	GetById(songId uuid.UUID) (core.Song, error)
-	SearchSongsWithReview(searchReq string, userId uuid.UUID, limit int, offset int) ([]core.SongReviewDTO, error)
+	SearchSongsWithReview(searchReq string, userId uuid.UUID, limit int, offset int) ([]core.SongWithReviewDTO, error)
 }
 
 type Album interface {
 	GetById(songId uuid.UUID) (core.Album, error)
 	GetSongsFromAlbum(id uuid.UUID) ([]core.Song, error)
-	SearchAlbumsWithReview(query string, userId uuid.UUID, limit int, offset int) ([]core.AlbumReviewDTO, error)
+	SearchAlbumsWithReview(query string, userId uuid.UUID, limit int, offset int) ([]core.AlbumWithReviewDTO, error)
 }
 
 type Review interface {
@@ -37,6 +38,9 @@ type Review interface {
 	PostReview(review core.Review) (core.ReviewDTO, error)
 	GetSubscriptionReviews(releaseId uuid.UUID, userId uuid.UUID, limit int, offset int) ([]core.ReviewOfUserDTO, error)
 	DeleteReviewFromUser(userId uuid.UUID, reviewId uuid.UUID) error
+	GetAllUserReviews(userId uuid.UUID, limit int, offset int) ([]core.ReviewDTO, error)
+	GetSongReviewsOfUser(userId uuid.UUID, limit int, offset int) ([]core.ReviewDTO, error)
+	GetAlbumReviewsOfUser(userId uuid.UUID, limit int, offset int) ([]core.ReviewDTO, error)
 }
 
 type Service struct {

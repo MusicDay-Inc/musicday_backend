@@ -12,12 +12,12 @@ type SongDTO struct {
 	Date     time.Time     `json:"date,omitempty"`
 	Duration time.Duration `json:"duration,omitempty"`
 }
-type SongReviewDTO struct {
+type SongWithReviewDTO struct {
 	SongDTO   `json:"song,omitempty"`
 	ReviewDTO `json:"review,omitempty"`
 }
 
-type AlbumReviewDTO struct {
+type AlbumWithReviewDTO struct {
 	AlbumDTO  `json:"album,omitempty"`
 	ReviewDTO `json:"review,omitempty"`
 }

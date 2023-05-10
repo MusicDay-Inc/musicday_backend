@@ -11,6 +11,48 @@ type ReviewRepository struct {
 	db *sqlx.DB
 }
 
+func (r ReviewRepository) GetReviewsFromUser(userId uuid.UUID, limit int, offset int) (reviews []core.ReviewDAO, err error) {
+	q := `
+	SELECT * FROM reviews WHERE user_id = $1
+	ORDER BY published_at DESC 
+	LIMIT $2 OFFSET $3
+	`
+	logrus.Trace(formatQuery(q))
+	err = r.db.Select(&reviews, q, userId, limit, offset)
+	if err != nil {
+		return reviews, err
+	}
+	return
+}
+
+func (r ReviewRepository) GetAlbumReviewsFromUser(userId uuid.UUID, limit int, offset int) (reviews []core.ReviewDAO, err error) {
+	q := `
+	SELECT * FROM reviews WHERE (user_id, is_song_reviewed) = ($1, false)
+	ORDER BY published_at DESC
+	LIMIT $2 OFFSET $3
+	`
+	logrus.Trace(formatQuery(q))
+	err = r.db.Select(&reviews, q, userId, limit, offset)
+	if err != nil {
+		return reviews, err
+	}
+	return
+}
+
+func (r ReviewRepository) GetSongReviewsFromUser(userId uuid.UUID, limit int, offset int) (reviews []core.ReviewDAO, err error) {
+	q := `
+	SELECT * FROM reviews WHERE (user_id, is_song_reviewed) = ($1, true)
+	ORDER BY published_at DESC
+	LIMIT $2 OFFSET $3
+	`
+	logrus.Trace(formatQuery(q))
+	err = r.db.Select(&reviews, q, userId, limit, offset)
+	if err != nil {
+		return reviews, err
+	}
+	return
+}
+
 func (r ReviewRepository) Delete(id uuid.UUID) error {
 	q := `
 	DELETE FROM reviews  WHERE id = $1;

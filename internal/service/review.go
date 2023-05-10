@@ -2,6 +2,7 @@ package service
 
 import (
 	"github.com/google/uuid"
+	"github.com/sirupsen/logrus"
 	"server/internal/core"
 	"server/internal/repository"
 )
@@ -11,6 +12,65 @@ type ReviewService struct {
 	song  repository.Song
 	album repository.Album
 	user  repository.User
+}
+
+func (s *ReviewService) GetAlbumReviewsOfUser(userId uuid.UUID, limit int, offset int) (res []core.ReviewDTO, err error) {
+	reviews, err := s.r.GetAlbumReviewsFromUser(userId, limit, offset)
+	if err != nil {
+		return
+	}
+	res = make([]core.ReviewDTO, len(reviews))
+	for i, review := range reviews {
+		rDomain := review.ToDomain()
+		album, errSong := s.album.GetById(rDomain.ReleaseId)
+		if errSong != nil {
+			logrus.Errorf("Unexpected error %v", errSong)
+		}
+		res[i] = rDomain.ToAlbumDTO(album.ToDomain())
+	}
+	return res, nil
+}
+
+func (s *ReviewService) GetAllUserReviews(userId uuid.UUID, limit int, offset int) (res []core.ReviewDTO, err error) {
+	reviews, err := s.r.GetReviewsFromUser(userId, limit, offset)
+	if err != nil {
+		return
+	}
+	res = make([]core.ReviewDTO, len(reviews))
+	for i, review := range reviews {
+		rDomain := review.ToDomain()
+		if rDomain.IsSongReviewed {
+			song, errSong := s.song.GetById(rDomain.ReleaseId)
+			if errSong != nil {
+				logrus.Errorf("Unexpected error %v", errSong)
+			}
+			res[i] = rDomain.ToSongDTO(song.ToDomain())
+		} else {
+			album, errSong := s.album.GetById(rDomain.ReleaseId)
+			if errSong != nil {
+				logrus.Errorf("Unexpected error %v", errSong)
+			}
+			res[i] = rDomain.ToAlbumDTO(album.ToDomain())
+		}
+	}
+	return res, nil
+}
+
+func (s *ReviewService) GetSongReviewsOfUser(userId uuid.UUID, limit int, offset int) (res []core.ReviewDTO, err error) {
+	reviews, err := s.r.GetSongReviewsFromUser(userId, limit, offset)
+	if err != nil {
+		return
+	}
+	res = make([]core.ReviewDTO, len(reviews))
+	for i, review := range reviews {
+		rDomain := review.ToDomain()
+		song, errSong := s.song.GetById(rDomain.ReleaseId)
+		if errSong != nil {
+			logrus.Errorf("Unexpected error %v", errSong)
+		}
+		res[i] = rDomain.ToSongDTO(song.ToDomain())
+	}
+	return res, nil
 }
 
 func (s *ReviewService) DeleteReviewFromUser(userId uuid.UUID, reviewId uuid.UUID) error {
