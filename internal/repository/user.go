@@ -1,6 +1,8 @@
 package repository
 
 import (
+	"database/sql"
+	"errors"
 	"github.com/google/uuid"
 	"github.com/jmoiron/sqlx"
 	"github.com/sirupsen/logrus"
@@ -9,6 +11,20 @@ import (
 
 type UserRepository struct {
 	db *sqlx.DB
+}
+
+func (r UserRepository) IsSubscriptionExists(clientId uuid.UUID, userId uuid.UUID) (res bool) {
+	q := `
+	SELECT EXISTS(SELECT
+	FROM subscriptions
+	WHERE (subscriber_id, subscription_id) = ($1, $2));
+	`
+	logrus.Trace(formatQuery(q))
+	err := r.db.Get(&res, q, clientId, userId)
+	if err != nil {
+		return false
+	}
+	return res
 }
 
 func (r UserRepository) ExistsWithId(id uuid.UUID) (res bool) {
@@ -125,6 +141,9 @@ func (r UserRepository) GetById(userId uuid.UUID) (core.User, error) {
 	var user core.UserNullableDAO
 	err := r.db.Get(&user, q, userId)
 	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return core.User{}, core.ErrNotFound
+		}
 		return core.User{}, err
 	}
 	return user.ToDomain(), nil

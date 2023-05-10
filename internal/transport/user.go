@@ -10,6 +10,34 @@ import (
 
 // GET
 
+func (h *Handler) getUserProfile(c *gin.Context) {
+	clientId, err := h.getClientId(c)
+	userId := h.parseUUIDFromParam(c)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, core.CodeInternalError, "couldn't get clientId from context")
+		return
+	}
+	ok := h.services.User.Exists(userId)
+	if !ok {
+		newErrorResponse(c, http.StatusNotFound, core.CodeNotFound, "couldn't find this user")
+		return
+	}
+	user, err := h.services.User.GetById(userId)
+	if err != nil {
+		if errors.Is(err, core.ErrNotFound) {
+			newErrorResponse(c, http.StatusNotFound, core.CodeNotFound, "couldn't find this user")
+			return
+		}
+		newErrorResponse(c, http.StatusInternalServerError, core.CodeInternalError, core.ErrInternal.Error())
+		return
+	}
+	isSubscribed := h.services.User.SubscriptionExists(clientId, userId)
+	c.JSON(http.StatusOK, map[string]interface{}{
+		"user":                 user,
+		"is_client_subscribed": isSubscribed,
+	})
+}
+
 func (h *Handler) SearchUsers(c *gin.Context) {
 	query := c.Query("query")
 	limitP := c.Query("limit")
@@ -104,8 +132,4 @@ func (h *Handler) subscribe(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, updatedUserSubscription)
-}
-
-func (h *Handler) postStory(c *gin.Context) {
-
 }

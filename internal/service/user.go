@@ -15,6 +15,15 @@ type UserService struct {
 	r repository.User
 }
 
+func (s *UserService) SubscriptionExists(clientId uuid.UUID, userId uuid.UUID) bool {
+	return s.r.IsSubscriptionExists(clientId, userId)
+}
+
+func (s *UserService) GetById(id uuid.UUID) (core.UserDTO, error) {
+	user, err := s.r.GetById(id)
+	return user.ToDTO(), err
+}
+
 func (s *UserService) Exists(id uuid.UUID) bool {
 	return s.r.ExistsWithId(id)
 }

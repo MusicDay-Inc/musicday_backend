@@ -43,7 +43,7 @@ func (h *Handler) InitRoutes() *gin.Engine {
 	profile := router.Group("/profile", h.authenticateClient)
 	{
 		//profile.GET("/", h.SearchSongs)
-		profile.GET("/:id", h.SearchSongs)
+		profile.GET("/:id", h.getUserProfile)
 		profile.GET("/subscribers/:id", h.SearchSongs)
 		profile.GET("/subscriptions/:id", h.SearchSongs)
 	}
@@ -54,7 +54,7 @@ func (h *Handler) InitRoutes() *gin.Engine {
 		search.GET("/album", h.SearchAlbums)
 		search.GET("/user", h.SearchUsers)
 	}
-	// Done
+	// DONE!
 	action := router.Group("/action", h.authenticateClient)
 	{
 		action.POST("/review/:id", h.reviewRelease)
@@ -62,6 +62,8 @@ func (h *Handler) InitRoutes() *gin.Engine {
 		action.POST("/username", h.changeUsername)
 		action.POST("/nickname", h.changeNickname)
 		action.POST("/delete_review/:id", h.deleteReviewById)
+		// TODO
+		action.POST("/unsubscribe/:id", h.subscribe)
 		// deleted
 		//action.POST("/post_story/:id", h.postStory)
 	}
@@ -71,9 +73,7 @@ func (h *Handler) InitRoutes() *gin.Engine {
 		reviews.GET("/to_release/:id", h.ReviewsOfSubscriptions)
 	}
 
-	// TODO
-	// Песни человека с его оценками
-	// Альбомы человека с его оценками
+	// DONE!
 	library := router.Group("/library", h.authenticateClient)
 	{
 		// все обзоры пользователя

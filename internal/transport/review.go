@@ -167,7 +167,7 @@ func (h *Handler) deleteReviewById(c *gin.Context) {
 		newErrorResponse(c, http.StatusInternalServerError, core.CodeInternalError, "couldn't get clientId from context")
 		return
 	}
-	err = h.services.Review.DeleteReviewFromUser(userId, reviewId)
+	review, err := h.services.Review.DeleteReviewFromUser(userId, reviewId)
 	if err != nil {
 		if errors.Is(err, core.ErrNotFound) {
 			newErrorResponse(c, http.StatusNotFound, core.CodeNotFound, "couldn't find this review")
@@ -180,5 +180,5 @@ func (h *Handler) deleteReviewById(c *gin.Context) {
 		newErrorResponse(c, http.StatusBadRequest, core.CodeIncorrectBody, core.ErrIncorrectBody.Error())
 		return
 	}
-
+	c.JSON(http.StatusOK, review)
 }

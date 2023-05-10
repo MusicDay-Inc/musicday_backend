@@ -19,6 +19,8 @@ type User interface {
 	ChangeNickname(clientId uuid.UUID, nickname string) (core.User, error)
 	SearchUsers(query string, clientId uuid.UUID, limit int, offset int) ([]core.UserDTO, error)
 	Exists(id uuid.UUID) bool
+	GetById(id uuid.UUID) (core.UserDTO, error)
+	SubscriptionExists(clientId uuid.UUID, userId uuid.UUID) bool
 }
 
 type Song interface {
@@ -37,7 +39,7 @@ type Review interface {
 	GetReviewToRelease(releaseId uuid.UUID, userId uuid.UUID) (core.Review, error)
 	PostReview(review core.Review) (core.ReviewDTO, error)
 	GetSubscriptionReviews(releaseId uuid.UUID, userId uuid.UUID, limit int, offset int) ([]core.ReviewOfUserDTO, error)
-	DeleteReviewFromUser(userId uuid.UUID, reviewId uuid.UUID) error
+	DeleteReviewFromUser(userId uuid.UUID, reviewId uuid.UUID) (core.ReviewDTO, error)
 	GetAllUserReviews(userId uuid.UUID, limit int, offset int) ([]core.ReviewDTO, error)
 	GetSongReviewsOfUser(userId uuid.UUID, limit int, offset int) ([]core.ReviewDTO, error)
 	GetAlbumReviewsOfUser(userId uuid.UUID, limit int, offset int) ([]core.ReviewDTO, error)

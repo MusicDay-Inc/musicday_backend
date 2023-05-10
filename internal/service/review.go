@@ -8,14 +8,14 @@ import (
 )
 
 type ReviewService struct {
-	r     repository.Review
+	rev   repository.Review
 	song  repository.Song
 	album repository.Album
 	user  repository.User
 }
 
 func (s *ReviewService) GetAlbumReviewsOfUser(userId uuid.UUID, limit int, offset int) (res []core.ReviewDTO, err error) {
-	reviews, err := s.r.GetAlbumReviewsFromUser(userId, limit, offset)
+	reviews, err := s.rev.GetAlbumReviewsFromUser(userId, limit, offset)
 	if err != nil {
 		return
 	}
@@ -32,7 +32,7 @@ func (s *ReviewService) GetAlbumReviewsOfUser(userId uuid.UUID, limit int, offse
 }
 
 func (s *ReviewService) GetAllUserReviews(userId uuid.UUID, limit int, offset int) (res []core.ReviewDTO, err error) {
-	reviews, err := s.r.GetReviewsFromUser(userId, limit, offset)
+	reviews, err := s.rev.GetReviewsFromUser(userId, limit, offset)
 	if err != nil {
 		return
 	}
@@ -57,7 +57,7 @@ func (s *ReviewService) GetAllUserReviews(userId uuid.UUID, limit int, offset in
 }
 
 func (s *ReviewService) GetSongReviewsOfUser(userId uuid.UUID, limit int, offset int) (res []core.ReviewDTO, err error) {
-	reviews, err := s.r.GetSongReviewsFromUser(userId, limit, offset)
+	reviews, err := s.rev.GetSongReviewsFromUser(userId, limit, offset)
 	if err != nil {
 		return
 	}
@@ -73,23 +73,39 @@ func (s *ReviewService) GetSongReviewsOfUser(userId uuid.UUID, limit int, offset
 	return res, nil
 }
 
-func (s *ReviewService) DeleteReviewFromUser(userId uuid.UUID, reviewId uuid.UUID) error {
-	exists, err := s.r.ExistsFromUser(userId, reviewId)
+func (s *ReviewService) DeleteReviewFromUser(userId uuid.UUID, reviewId uuid.UUID) (core.ReviewDTO, error) {
+	exists, err := s.rev.ExistsFromUser(userId, reviewId)
 	if err != nil {
-		return core.ErrInternal
+		return core.ReviewDTO{}, core.ErrInternal
 	}
 	if !exists {
-		return core.ErrNotFound
+		return core.ReviewDTO{}, core.ErrNotFound
 	}
-	err = s.r.Delete(reviewId)
+	r, err := s.rev.GetById(reviewId)
 	if err != nil {
-		return core.ErrInternal
+		return core.ReviewDTO{}, core.ErrNotFound
 	}
-	return nil
+	err = s.rev.Delete(reviewId)
+	if err != nil {
+		return core.ReviewDTO{}, core.ErrInternal
+	}
+	if r.IsSongReviewed {
+		song, errS := s.song.GetById(r.ReleaseId)
+		if errS != nil {
+			return core.ReviewDTO{}, core.ErrInternal
+		}
+		return core.ReviewDTO{Song: song.ToDomain()}, nil
+	} else {
+		a, errA := s.album.GetById(r.ReleaseId)
+		if errA != nil {
+			return core.ReviewDTO{}, core.ErrInternal
+		}
+		return core.ReviewDTO{Album: a.ToDomain()}, nil
+	}
 }
 
 func (s *ReviewService) GetSubscriptionReviews(releaseId uuid.UUID, userId uuid.UUID, limit int, offset int) (res []core.ReviewOfUserDTO, err error) {
-	reviews, err := s.r.GetSubscriptionReviews(releaseId, userId, limit, offset)
+	reviews, err := s.rev.GetSubscriptionReviews(releaseId, userId, limit, offset)
 	if err != nil {
 		return
 	}
@@ -119,12 +135,12 @@ func (s *ReviewService) PostReview(reviewReq core.Review) (core.ReviewDTO, error
 			return core.ReviewDTO{}, core.ErrNotFound
 		}
 	}
-	exists, err := s.r.ExistsToRelease(reviewReq.UserId, reviewReq.ReleaseId)
+	exists, err := s.rev.ExistsToRelease(reviewReq.UserId, reviewReq.ReleaseId)
 	if err != nil {
 		return core.ReviewDTO{}, core.ErrInternal
 	}
 	if exists {
-		updateRes, errUpdate := s.r.UpdateReview(reviewReq)
+		updateRes, errUpdate := s.rev.UpdateReview(reviewReq)
 		if errUpdate != nil {
 			return core.ReviewDTO{}, core.ErrInternal
 		}
@@ -134,7 +150,7 @@ func (s *ReviewService) PostReview(reviewReq core.Review) (core.ReviewDTO, error
 		}
 		return resDomain.ToAlbumDTO(albumFromRequest.ToDomain()), nil
 	}
-	insertRes, err := s.r.InsertReview(reviewReq)
+	insertRes, err := s.rev.InsertReview(reviewReq)
 	if err != nil {
 		return core.ReviewDTO{}, err
 	}
@@ -146,7 +162,7 @@ func (s *ReviewService) PostReview(reviewReq core.Review) (core.ReviewDTO, error
 }
 
 func (s *ReviewService) GetReviewToRelease(releaseId uuid.UUID, userId uuid.UUID) (core.Review, error) {
-	review, err := s.r.GetReviewToRelease(releaseId, userId)
+	review, err := s.rev.GetReviewToRelease(releaseId, userId)
 	if err != nil {
 		return core.Review{}, err
 	}
@@ -155,7 +171,7 @@ func (s *ReviewService) GetReviewToRelease(releaseId uuid.UUID, userId uuid.UUID
 
 func NewReviewService(r repository.Review, song repository.Song, album repository.Album, user repository.User) *ReviewService {
 	return &ReviewService{
-		r:     r,
+		rev:   r,
 		song:  song,
 		album: album,
 		user:  user,
