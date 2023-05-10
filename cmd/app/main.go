@@ -3,10 +3,10 @@ package main
 import (
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
-	"server/internal/handler"
 	"server/internal/local"
 	"server/internal/repository"
 	"server/internal/service"
+	"server/internal/transport"
 )
 
 func main() {
@@ -16,7 +16,7 @@ func main() {
 
 	srv := new(local.Server)
 
-	//handlers := new(handler.Handler)
+	//handlers := new(transport.Handler)
 	// Инциализируем подклбчение к Google Oauth2 API
 	service.InitializeOAuthGoogle()
 
@@ -34,7 +34,7 @@ func main() {
 
 	repos := repository.New(db)
 	services := service.NewService(repos)
-	handlers := handler.NewHandler(services)
+	handlers := transport.NewHandler(services)
 
 	if err = srv.Run(viper.GetString("port"), handlers.InitRoutes()); err != nil {
 		logrus.Fatalf("error loading env variables: %s", err.Error())
