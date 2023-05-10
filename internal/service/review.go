@@ -13,6 +13,21 @@ type ReviewService struct {
 	user  repository.User
 }
 
+func (s *ReviewService) DeleteReviewFromUser(userId uuid.UUID, reviewId uuid.UUID) error {
+	exists, err := s.r.ExistsFromUser(userId, reviewId)
+	if err != nil {
+		return core.ErrInternal
+	}
+	if !exists {
+		return core.ErrNotFound
+	}
+	err = s.r.Delete(reviewId)
+	if err != nil {
+		return core.ErrInternal
+	}
+	return nil
+}
+
 func (s *ReviewService) GetSubscriptionReviews(releaseId uuid.UUID, userId uuid.UUID, limit int, offset int) (res []core.ReviewOfUserDTO, err error) {
 	reviews, err := s.r.GetSubscriptionReviews(releaseId, userId, limit, offset)
 	if err != nil {
@@ -44,7 +59,7 @@ func (s *ReviewService) PostReview(reviewReq core.Review) (core.ReviewDTO, error
 			return core.ReviewDTO{}, core.ErrNotFound
 		}
 	}
-	exists, err := s.r.Exists(reviewReq.UserId, reviewReq.ReleaseId)
+	exists, err := s.r.ExistsToRelease(reviewReq.UserId, reviewReq.ReleaseId)
 	if err != nil {
 		return core.ReviewDTO{}, core.ErrInternal
 	}

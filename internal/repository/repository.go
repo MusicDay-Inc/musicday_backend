@@ -41,9 +41,11 @@ type Review interface {
 	GetById(id uuid.UUID) (core.ReviewDAO, error)
 	GetReviewToRelease(releaseId uuid.UUID, userId uuid.UUID) (core.ReviewDAO, error)
 	InsertReview(review core.Review) (core.ReviewDAO, error)
-	Exists(userId uuid.UUID, releaseId uuid.UUID) (bool, error)
+	ExistsToRelease(userId uuid.UUID, releaseId uuid.UUID) (bool, error)
+	ExistsFromUser(userId uuid.UUID, releaseId uuid.UUID) (bool, error)
 	UpdateReview(review core.Review) (core.ReviewDAO, error)
 	GetSubscriptionReviews(releaseId uuid.UUID, userId uuid.UUID, limit int, offset int) ([]core.ReviewDAO, error)
+	Delete(id uuid.UUID) error
 }
 
 type Repository struct {

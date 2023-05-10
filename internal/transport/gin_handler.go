@@ -58,8 +58,10 @@ func (h *Handler) InitRoutes() *gin.Engine {
 		action.POST("/username", h.changeUsername)
 		action.POST("/nickname", h.changeNickname)
 
-		// TODO
-		action.POST("/post_story/:id", h.postStory)
+		// TODO next 1
+		action.POST("/delete_review/:id", h.deleteReviewById)
+		// deleted
+		//action.POST("/post_story/:id", h.postStory)
 	}
 	// DONE!
 	reviews := router.Group("/reviews", h.authenticateUser)

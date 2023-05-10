@@ -11,6 +11,15 @@ type ReviewRepository struct {
 	db *sqlx.DB
 }
 
+func (r ReviewRepository) Delete(id uuid.UUID) error {
+	q := `
+	DELETE FROM reviews  WHERE id = $1;
+	`
+	logrus.Trace(formatQuery(q))
+	_, err := r.db.Exec(q, id)
+	return err
+}
+
 func (r ReviewRepository) GetSubscriptionReviews(releaseId uuid.UUID, userId uuid.UUID, limit int, offset int) (reviews []core.ReviewDAO, err error) {
 	q := `
 	SELECT id, user_id, is_song_reviewed, release_id, published_at, score, review_text
@@ -47,8 +56,21 @@ func (r ReviewRepository) UpdateReview(review core.Review) (res core.ReviewDAO, 
 	}
 	return
 }
+func (r ReviewRepository) ExistsFromUser(userId uuid.UUID, reviewId uuid.UUID) (res bool, err error) {
+	q := `
+	SELECT EXISTS(SELECT
+	FROM reviews
+	WHERE (id, user_id)= ($1, $2));
+	`
+	logrus.Trace(formatQuery(q))
+	err = r.db.Get(&res, q, reviewId, userId)
+	if err != nil {
+		return false, err
+	}
+	return res, err
+}
 
-func (r ReviewRepository) Exists(userId uuid.UUID, releaseId uuid.UUID) (res bool, err error) {
+func (r ReviewRepository) ExistsToRelease(userId uuid.UUID, releaseId uuid.UUID) (res bool, err error) {
 	q := `
 	SELECT EXISTS(SELECT
 	FROM reviews

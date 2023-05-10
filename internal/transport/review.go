@@ -1,6 +1,7 @@
 package transport
 
 import (
+	"errors"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"server/internal/core"
@@ -64,4 +65,26 @@ func (h *Handler) ReviewsOfSubscribers(c *gin.Context) {
 		"reviews":    subReviews,
 		"mean_score": float32(sum) / float32(len(subReviews)),
 	})
+}
+func (h *Handler) deleteReviewById(c *gin.Context) {
+	reviewId := h.parseUUIDFromParam(c)
+	userId, err := h.getClientId(c)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, core.CodeInternalError, "couldn't get clientId from context")
+		return
+	}
+	err = h.services.Review.DeleteReviewFromUser(userId, reviewId)
+	if err != nil {
+		if errors.Is(err, core.ErrNotFound) {
+			newErrorResponse(c, http.StatusNotFound, core.CodeNotFound, "couldn't find this review")
+			return
+		}
+		if errors.Is(err, core.ErrInternal) {
+			newErrorResponse(c, http.StatusInternalServerError, core.CodeInternalError, core.ErrInternal.Error())
+			return
+		}
+		newErrorResponse(c, http.StatusBadRequest, core.CodeIncorrectBody, core.ErrIncorrectBody.Error())
+		return
+	}
+
 }

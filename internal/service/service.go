@@ -36,6 +36,7 @@ type Review interface {
 	GetReviewToRelease(releaseId uuid.UUID, userId uuid.UUID) (core.Review, error)
 	PostReview(review core.Review) (core.ReviewDTO, error)
 	GetSubscriptionReviews(releaseId uuid.UUID, userId uuid.UUID, limit int, offset int) ([]core.ReviewOfUserDTO, error)
+	DeleteReviewFromUser(userId uuid.UUID, reviewId uuid.UUID) error
 }
 
 type Service struct {
