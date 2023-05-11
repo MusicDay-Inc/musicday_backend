@@ -62,7 +62,7 @@ func (r *Review) ToSongDTO(song Song) (review ReviewDTO) {
 	review.Id = r.Id
 	review.UserId = r.UserId
 	review.IsSongReviewed = r.IsSongReviewed
-	review.Song = song
+	review.Song = song.ToDTO()
 	review.PublishedAt = r.PublishedAt
 	review.Score = r.Score
 	review.Text = r.Text
@@ -72,7 +72,7 @@ func (r *Review) ToAlbumDTO(album Album) (review ReviewDTO) {
 	review.Id = r.Id
 	review.UserId = r.UserId
 	review.IsSongReviewed = r.IsSongReviewed
-	review.Album = album
+	review.Album = album.ToDTO()
 	review.PublishedAt = r.PublishedAt
 	review.Score = r.Score
 	review.Text = r.Text

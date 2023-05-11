@@ -38,12 +38,13 @@ func (h *Handler) InitRoutes() *gin.Engine {
 		//user.GET("/stories", h.SearchSongs)
 
 	}
-	// TODO
+
 	// Профиль человека
 	profile := router.Group("/profile", h.authenticateClient)
 	{
-		//profile.GET("/", h.SearchSongs)
+		// Done
 		profile.GET("/:id", h.getUserProfile)
+		// TODO
 		profile.GET("/subscribers/:id", h.SearchSongs)
 		profile.GET("/subscriptions/:id", h.SearchSongs)
 	}

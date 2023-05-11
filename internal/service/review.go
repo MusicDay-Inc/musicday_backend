@@ -91,16 +91,18 @@ func (s *ReviewService) DeleteReviewFromUser(userId uuid.UUID, reviewId uuid.UUI
 	}
 	if r.IsSongReviewed {
 		song, errS := s.song.GetById(r.ReleaseId)
+		sD := song.ToDomain()
 		if errS != nil {
 			return core.ReviewDTO{}, core.ErrInternal
 		}
-		return core.ReviewDTO{Song: song.ToDomain()}, nil
+		return core.ReviewDTO{Song: sD.ToDTO()}, nil
 	} else {
 		a, errA := s.album.GetById(r.ReleaseId)
+		aD := a.ToDomain()
 		if errA != nil {
 			return core.ReviewDTO{}, core.ErrInternal
 		}
-		return core.ReviewDTO{Album: a.ToDomain()}, nil
+		return core.ReviewDTO{Album: aD.ToDTO()}, nil
 	}
 }
 
