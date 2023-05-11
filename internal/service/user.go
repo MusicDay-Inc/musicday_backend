@@ -15,6 +15,40 @@ type UserService struct {
 	r repository.User
 }
 
+func (s *UserService) GetSubscriptions(userId uuid.UUID, limit int, offset int) (res []core.UserDTO, err error) {
+	ok := s.r.ExistsWithId(userId)
+	if !ok {
+		return []core.UserDTO{}, core.ErrNotFound
+	}
+	users, err := s.r.GetSubscriptionsOf(userId, limit, offset)
+	if err != nil {
+		return
+	}
+	res = make([]core.UserDTO, len(users))
+	for i, user := range users {
+		uDomain := user.ToDomain()
+		res[i] = uDomain.ToDTO()
+	}
+	return res, nil
+}
+
+func (s *UserService) GetSubscribers(userId uuid.UUID, limit int, offset int) (res []core.UserDTO, err error) {
+	ok := s.r.ExistsWithId(userId)
+	if !ok {
+		return []core.UserDTO{}, core.ErrNotFound
+	}
+	users, err := s.r.GetSubscribers(userId, limit, offset)
+	if err != nil {
+		return
+	}
+	res = make([]core.UserDTO, len(users))
+	for i, user := range users {
+		uDomain := user.ToDomain()
+		res[i] = uDomain.ToDTO()
+	}
+	return res, nil
+}
+
 func (s *UserService) SubscriptionExists(clientId uuid.UUID, userId uuid.UUID) bool {
 	return s.r.IsSubscriptionExists(clientId, userId)
 }
@@ -68,7 +102,25 @@ func (s *UserService) ChangeUsername(clientId uuid.UUID, username string) (core.
 }
 
 func (s *UserService) Subscribe(clientId uuid.UUID, userId uuid.UUID) (core.UserDTO, error) {
+	bad := s.r.IsSubscriptionExists(clientId, userId)
+	if bad {
+		user, err := s.r.GetById(userId)
+		return user.ToDTO(), err
+	}
 	updatedUser, err := s.r.Subscribe(clientId, userId)
+	if err != nil {
+		return core.UserDTO{}, err
+	}
+	return updatedUser.ToDTO(), nil
+}
+
+func (s *UserService) Unsubscribe(clientId uuid.UUID, userId uuid.UUID) (core.UserDTO, error) {
+	ok := s.r.IsSubscriptionExists(clientId, userId)
+	if !ok {
+		user, err := s.r.GetById(userId)
+		return user.ToDTO(), err
+	}
+	updatedUser, err := s.r.Unsubscribe(clientId, userId)
 	if err != nil {
 		return core.UserDTO{}, err
 	}

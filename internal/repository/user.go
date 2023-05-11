@@ -13,6 +13,34 @@ type UserRepository struct {
 	db *sqlx.DB
 }
 
+func (r UserRepository) GetSubscriptionsOf(userId uuid.UUID, limit int, offset int) (users []core.UserDAO, err error) {
+	q := `
+	SELECT id, gmail, username, nickname, is_registered, has_picture, subscribers_c, subscriptions_c
+	FROM users
+         INNER JOIN subscriptions on (users.id = subscriptions.subscription_id AND
+                                      subscriptions.subscriber_id = $1)
+	ORDER BY username 
+	LIMIT $2 OFFSET $3;
+	`
+	logrus.Trace(formatQuery(q))
+	err = r.db.Select(&users, q, userId, limit, offset)
+	return
+}
+
+func (r UserRepository) GetSubscribers(userId uuid.UUID, limit int, offset int) (users []core.UserDAO, err error) {
+	q := `
+	SELECT id, gmail, username, nickname, is_registered, has_picture, subscribers_c, subscriptions_c
+	FROM users
+         INNER JOIN subscriptions on (users.id = subscriptions.subscriber_id AND
+                                      subscriptions.subscription_id = $1)
+	ORDER BY username 
+	LIMIT $2 OFFSET $3;
+	`
+	logrus.Trace(formatQuery(q))
+	err = r.db.Select(&users, q, userId, limit, offset)
+	return
+}
+
 func (r UserRepository) IsSubscriptionExists(clientId uuid.UUID, userId uuid.UUID) (res bool) {
 	q := `
 	SELECT EXISTS(SELECT
@@ -54,11 +82,14 @@ func (r UserRepository) SearchUsers(query string, clientId uuid.UUID, limit int,
 	return
 }
 
-func (r UserRepository) Subscribe(clientId uuid.UUID, userId uuid.UUID) (user core.User, err error) {
+func (r UserRepository) Subscribe(clientId uuid.UUID, userId uuid.UUID) (core.User, error) {
 	tx, err := r.db.Begin()
 	if err != nil {
 		return core.User{}, err
 	}
+	var (
+		user core.UserDAO
+	)
 	q := `
 	INSERT INTO subscriptions VALUES 
 	 ($1, $2)
@@ -96,7 +127,54 @@ func (r UserRepository) Subscribe(clientId uuid.UUID, userId uuid.UUID) (user co
 		tx.Rollback()
 		return core.User{}, err
 	}
-	return user, tx.Commit()
+	return user.ToDomain(), tx.Commit()
+}
+
+func (r UserRepository) Unsubscribe(clientId uuid.UUID, userId uuid.UUID) (core.User, error) {
+	var (
+		user core.UserDAO
+	)
+	tx, err := r.db.Begin()
+	if err != nil {
+		return core.User{}, err
+	}
+	q := `
+	DELETE FROM subscriptions WHERE (subscriber_id, subscription_id) = ($1, $2) 
+	`
+	logrus.Trace(formatQuery(q))
+	_, err = tx.Exec(q, clientId, userId)
+	if err != nil {
+		errRollback := tx.Rollback()
+		logrus.Error(errRollback)
+		return core.User{}, err
+	}
+	q = `
+	UPDATE users 
+   	SET subscriptions_c = subscriptions_c - 1
+		WHERE id = $1;
+	`
+	_, err = tx.Exec(q, clientId)
+	if err != nil {
+		errRollback := tx.Rollback()
+		logrus.Error(errRollback)
+		return core.User{}, err
+	}
+	q = `
+	UPDATE users 
+   	SET subscribers_c = subscribers_c - 1
+		WHERE id = $1
+	RETURNING id, gmail, username, nickname, is_registered, has_picture, subscribers_c, subscriptions_c;
+	`
+	logrus.Trace(formatQuery(q))
+	row := tx.QueryRow(q, userId)
+	err = row.Scan(&user.Id, &user.Gmail, &user.Username, &user.Nickname,
+		&user.IsRegistered, &user.HasProfilePic, &user.SubscriberAmount, &user.SubscriptionAmount)
+	if err != nil {
+		logrus.Error(err)
+		tx.Rollback()
+		return core.User{}, err
+	}
+	return user.ToDomain(), tx.Commit()
 }
 
 func NewUserRepository(db *sqlx.DB) *UserRepository {

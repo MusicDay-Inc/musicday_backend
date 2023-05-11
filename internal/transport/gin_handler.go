@@ -36,7 +36,6 @@ func (h *Handler) InitRoutes() *gin.Engine {
 		user.GET("/activity", h.SearchSongs)
 		// deleted
 		//user.GET("/stories", h.SearchSongs)
-
 	}
 
 	// Профиль человека
@@ -44,9 +43,8 @@ func (h *Handler) InitRoutes() *gin.Engine {
 	{
 		// Done
 		profile.GET("/:id", h.getUserProfile)
-		// TODO
-		profile.GET("/subscribers/:id", h.SearchSongs)
-		profile.GET("/subscriptions/:id", h.SearchSongs)
+		profile.GET("/subscribers/:id", h.getUserSubscribers)
+		profile.GET("/subscriptions/:id", h.getUserSubscriptions)
 	}
 	// DONE!
 	search := router.Group("/search", h.authenticateClient)
@@ -63,8 +61,7 @@ func (h *Handler) InitRoutes() *gin.Engine {
 		action.POST("/username", h.changeUsername)
 		action.POST("/nickname", h.changeNickname)
 		action.POST("/delete_review/:id", h.deleteReviewById)
-		// TODO
-		action.POST("/unsubscribe/:id", h.subscribe)
+		action.POST("/unsubscribe/:id", h.unsubscribe)
 		// deleted
 		//action.POST("/post_story/:id", h.postStory)
 	}

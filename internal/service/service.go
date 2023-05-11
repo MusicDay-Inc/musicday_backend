@@ -21,6 +21,9 @@ type User interface {
 	Exists(id uuid.UUID) bool
 	GetById(id uuid.UUID) (core.UserDTO, error)
 	SubscriptionExists(clientId uuid.UUID, userId uuid.UUID) bool
+	Unsubscribe(clientId uuid.UUID, userId uuid.UUID) (core.UserDTO, error)
+	GetSubscribers(userId uuid.UUID, limit int, offset int) ([]core.UserDTO, error)
+	GetSubscriptions(userId uuid.UUID, limit int, offset int) ([]core.UserDTO, error)
 }
 
 type Song interface {

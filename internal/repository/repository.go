@@ -26,6 +26,9 @@ type User interface {
 	SearchUsers(query string, clientId uuid.UUID, limit int, offset int) ([]core.UserDAO, error)
 	ExistsWithId(id uuid.UUID) bool
 	IsSubscriptionExists(clientId uuid.UUID, userId uuid.UUID) bool
+	Unsubscribe(clientId uuid.UUID, userId uuid.UUID) (core.User, error)
+	GetSubscribers(userId uuid.UUID, limit int, offset int) ([]core.UserDAO, error)
+	GetSubscriptionsOf(userId uuid.UUID, limit int, offset int) ([]core.UserDAO, error)
 }
 
 type Song interface {
