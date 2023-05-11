@@ -52,7 +52,7 @@ func (r *Review) ToEmptyDTO() (review ReviewDTO) {
 }
 func (r *Review) ToUserDTO(user User) (review ReviewOfUserDTO) {
 	review.Id = r.Id
-	review.User = user
+	review.User = user.ToDTO()
 	review.PublishedAt = r.PublishedAt
 	review.Score = r.Score
 	review.Text = r.Text

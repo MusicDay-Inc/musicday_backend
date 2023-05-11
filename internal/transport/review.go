@@ -154,7 +154,13 @@ func (h *Handler) ReviewsOfSubscriptions(c *gin.Context) {
 	for _, r := range subReviews {
 		sum += r.Score
 	}
-	//c.JSON(http.StatusOK, subReviews)
+	if len(subReviews) == 0 {
+		c.JSON(http.StatusOK, map[string]interface{}{
+			"reviews":    subReviews,
+			"mean_score": float32(0),
+		})
+		return
+	}
 	c.JSON(http.StatusOK, map[string]interface{}{
 		"reviews":    subReviews,
 		"mean_score": float32(sum) / float32(len(subReviews)),
