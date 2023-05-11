@@ -123,8 +123,8 @@ func (s *ReviewService) DeleteReviewFromUser(userId uuid.UUID, reviewId uuid.UUI
 	}
 }
 
-func (s *ReviewService) GetSubscriptionReviews(releaseId uuid.UUID, userId uuid.UUID, limit int, offset int) (res []core.ReviewOfUserDTO, err error) {
-	reviews, err := s.rev.GetSubscriptionReviews(releaseId, userId)
+func (s *ReviewService) GetSubscriptionReviews(releaseId uuid.UUID, clientId uuid.UUID, limit int, offset int) (res []core.ReviewOfUserDTO, err error) {
+	reviews, err := s.rev.GetSubscriptionReviews(releaseId, clientId)
 	if err != nil {
 		return
 	}

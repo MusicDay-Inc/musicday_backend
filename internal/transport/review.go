@@ -144,12 +144,12 @@ func (h *Handler) ReviewsOfSubscriptions(c *gin.Context) {
 	//}
 
 	songId := h.parseUUIDFromParam(c)
-	userId, err := h.getClientId(c)
+	clientId, err := h.getClientId(c)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, core.CodeInternalError, "couldn't get clientId from context")
 		return
 	}
-	subReviews, err := h.services.Review.GetSubscriptionReviews(songId, userId, 0, 0)
+	subReviews, err := h.services.Review.GetSubscriptionReviews(songId, clientId, 0, 0)
 	var sum int32
 	for _, r := range subReviews {
 		sum += r.Score

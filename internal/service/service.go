@@ -41,7 +41,7 @@ type Review interface {
 	//GetById(id uuid.UUID) (core.Review, error)
 	GetReviewToRelease(releaseId uuid.UUID, userId uuid.UUID) (core.Review, error)
 	PostReview(review core.Review) (core.ReviewDTO, error)
-	GetSubscriptionReviews(releaseId uuid.UUID, userId uuid.UUID, limit int, offset int) ([]core.ReviewOfUserDTO, error)
+	GetSubscriptionReviews(releaseId uuid.UUID, clientId uuid.UUID, limit int, offset int) ([]core.ReviewOfUserDTO, error)
 	DeleteReviewFromUser(userId uuid.UUID, reviewId uuid.UUID) (core.ReviewDTO, error)
 	GetAllUserReviews(userId uuid.UUID, limit int, offset int) ([]core.ReviewDTO, error)
 	GetSongReviewsOfUser(userId uuid.UUID, limit int, offset int) ([]core.ReviewDTO, error)

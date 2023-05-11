@@ -79,17 +79,17 @@ func (r ReviewRepository) Delete(id uuid.UUID) error {
 	return err
 }
 
-func (r ReviewRepository) GetSubscriptionReviews(releaseId uuid.UUID, userId uuid.UUID) (reviews []core.ReviewDAO, err error) {
+func (r ReviewRepository) GetSubscriptionReviews(releaseId uuid.UUID, clientId uuid.UUID) (reviews []core.ReviewDAO, err error) {
 	q := `
 	SELECT id, user_id, is_song_reviewed, release_id, published_at, score, review_text
 	FROM reviews
-         JOIN subscriptions on subscriptions.subscriber_id = $1
-	WHERE (subscriptions.subscription_id = reviews.user_id 
-	           AND reviews.release_id = $2)
-	ORDER BY published_at
+         INNER JOIN subscriptions on (subscriptions.subscriber_id = $1 AND
+                                      reviews.release_id = $2 AND
+                                      reviews.user_id = subscriptions.subscription_id)
+	ORDER BY reviews.published_at;
 	`
 	logrus.Trace(formatQuery(q))
-	err = r.db.Select(&reviews, q, userId, releaseId)
+	err = r.db.Select(&reviews, q, clientId, releaseId)
 	if err != nil {
 		logrus.Error(err)
 		return reviews, err
