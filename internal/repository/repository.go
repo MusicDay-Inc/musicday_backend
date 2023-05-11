@@ -49,7 +49,7 @@ type Review interface {
 	ExistsToRelease(userId uuid.UUID, releaseId uuid.UUID) (bool, error)
 	ExistsFromUser(userId uuid.UUID, releaseId uuid.UUID) (bool, error)
 	UpdateReview(review core.Review) (core.ReviewDAO, error)
-	GetSubscriptionReviews(releaseId uuid.UUID, userId uuid.UUID, limit int, offset int) ([]core.ReviewDAO, error)
+	GetSubscriptionReviews(releaseId uuid.UUID, userId uuid.UUID) ([]core.ReviewDAO, error)
 	Delete(id uuid.UUID) error
 	GetSongReviewsFromUser(userId uuid.UUID, limit int, offset int) ([]core.ReviewDAO, error)
 	GetAlbumReviewsFromUser(userId uuid.UUID, limit int, offset int) ([]core.ReviewDAO, error)

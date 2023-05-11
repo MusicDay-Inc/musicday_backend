@@ -124,7 +124,7 @@ func (s *ReviewService) DeleteReviewFromUser(userId uuid.UUID, reviewId uuid.UUI
 }
 
 func (s *ReviewService) GetSubscriptionReviews(releaseId uuid.UUID, userId uuid.UUID, limit int, offset int) (res []core.ReviewOfUserDTO, err error) {
-	reviews, err := s.rev.GetSubscriptionReviews(releaseId, userId, limit, offset)
+	reviews, err := s.rev.GetSubscriptionReviews(releaseId, userId)
 	if err != nil {
 		return
 	}

@@ -28,13 +28,9 @@ func (h *Handler) InitRoutes() *gin.Engine {
 		user.GET("/song/:id", h.getSongById)
 		user.GET("/album_info/:id", h.getAlbumById)
 		user.GET("/album_full/:id", h.getAlbumWitSongsById)
-
-		// deleted
-		//user.GET("/subscription_reviews/:id", h.ReviewsOfSubscriptions)
-
-		// TODO
 		user.GET("/activity", h.getUserActivityFeed)
 		// deleted
+		//user.GET("/subscription_reviews/:id", h.ReviewsOfSubscriptions)
 		//user.GET("/stories", h.SearchSongs)
 	}
 

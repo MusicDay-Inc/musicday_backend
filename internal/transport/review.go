@@ -126,22 +126,22 @@ func (h *Handler) reviewRelease(c *gin.Context) {
 }
 
 func (h *Handler) ReviewsOfSubscriptions(c *gin.Context) {
-	limitP := c.Query("limit")
-	offsetP := c.Query("offset")
-	limit, err := strconv.Atoi(limitP)
-	if err != nil {
-		newErrorResponse(c, http.StatusBadRequest, core.CodeIncorrectBody, "couldn't get limit from parameter")
-		return
-	}
-	offset, err := strconv.Atoi(offsetP)
-	if err != nil {
-		newErrorResponse(c, http.StatusBadRequest, core.CodeIncorrectBody, "couldn't get offset from parameter")
-		return
-	}
-	if limit > 50 {
-		newErrorResponse(c, http.StatusBadRequest, core.CodeIncorrectBody, "limit is too big")
-		return
-	}
+	//limitP := c.Query("limit")
+	//offsetP := c.Query("offset")
+	//limit, err := strconv.Atoi(limitP)
+	//if err != nil {
+	//	newErrorResponse(c, http.StatusBadRequest, core.CodeIncorrectBody, "couldn't get limit from parameter")
+	//	return
+	//}
+	//offset, err := strconv.Atoi(offsetP)
+	//if err != nil {
+	//	newErrorResponse(c, http.StatusBadRequest, core.CodeIncorrectBody, "couldn't get offset from parameter")
+	//	return
+	//}
+	//if limit > 50 {
+	//	newErrorResponse(c, http.StatusBadRequest, core.CodeIncorrectBody, "limit is too big")
+	//	return
+	//}
 
 	songId := h.parseUUIDFromParam(c)
 	userId, err := h.getClientId(c)
@@ -149,7 +149,7 @@ func (h *Handler) ReviewsOfSubscriptions(c *gin.Context) {
 		newErrorResponse(c, http.StatusInternalServerError, core.CodeInternalError, "couldn't get clientId from context")
 		return
 	}
-	subReviews, err := h.services.Review.GetSubscriptionReviews(songId, userId, limit, offset)
+	subReviews, err := h.services.Review.GetSubscriptionReviews(songId, userId, 0, 0)
 	var sum int32
 	for _, r := range subReviews {
 		sum += r.Score
