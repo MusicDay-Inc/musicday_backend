@@ -9,6 +9,42 @@ import (
 )
 
 // GET
+
+func (h *Handler) getUserActivityFeed(c *gin.Context) {
+	limitP := c.Query("limit")
+	offsetP := c.Query("offset")
+	limit, err := strconv.Atoi(limitP)
+	if err != nil {
+		newErrorResponse(c, http.StatusBadRequest, core.CodeIncorrectBody, "couldn't get limit from parameter")
+		return
+	}
+	offset, err := strconv.Atoi(offsetP)
+	if err != nil {
+		newErrorResponse(c, http.StatusBadRequest, core.CodeIncorrectBody, "couldn't get offset from parameter")
+		return
+	}
+	if limit > 50 {
+		newErrorResponse(c, http.StatusBadRequest, core.CodeIncorrectBody, "limit is too big")
+		return
+	}
+	clientId, err := h.getClientId(c)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, core.CodeInternalError, "couldn't get clientId from context")
+		return
+	}
+
+	subscribers, err := h.services.Review.GetReviewsOfUserSubscriptions(clientId, limit, offset)
+	if err != nil {
+		if errors.Is(err, core.ErrNotFound) {
+			newErrorResponse(c, http.StatusNotFound, core.CodeNotFound, "couldn't find this user")
+			return
+		}
+		newErrorResponse(c, http.StatusInternalServerError, core.CodeInternalError, err.Error())
+		return
+	}
+	c.JSON(http.StatusOK, subscribers)
+}
+
 func (h *Handler) getUserSubscribers(c *gin.Context) {
 	limitP := c.Query("limit")
 	offsetP := c.Query("offset")
@@ -27,10 +63,7 @@ func (h *Handler) getUserSubscribers(c *gin.Context) {
 		return
 	}
 	userId := h.parseUUIDFromParam(c)
-	if err != nil {
-		newErrorResponse(c, http.StatusInternalServerError, core.CodeInternalError, "server search error")
-		return
-	}
+
 	subscribers, err := h.services.User.GetSubscribers(userId, limit, offset)
 	if err != nil {
 		if errors.Is(err, core.ErrNotFound) {
@@ -61,10 +94,7 @@ func (h *Handler) getUserSubscriptions(c *gin.Context) {
 		return
 	}
 	userId := h.parseUUIDFromParam(c)
-	if err != nil {
-		newErrorResponse(c, http.StatusInternalServerError, core.CodeInternalError, "server search error")
-		return
-	}
+
 	subscribers, err := h.services.User.GetSubscriptions(userId, limit, offset)
 	if err != nil {
 		if errors.Is(err, core.ErrNotFound) {

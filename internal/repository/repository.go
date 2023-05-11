@@ -54,6 +54,7 @@ type Review interface {
 	GetSongReviewsFromUser(userId uuid.UUID, limit int, offset int) ([]core.ReviewDAO, error)
 	GetAlbumReviewsFromUser(userId uuid.UUID, limit int, offset int) ([]core.ReviewDAO, error)
 	GetReviewsFromUser(userId uuid.UUID, limit int, offset int) ([]core.ReviewDAO, error)
+	GetReviewsOfUserSubscriptions(clientId uuid.UUID, limit int, offset int) ([]core.ReviewDAO, error)
 }
 
 type Repository struct {

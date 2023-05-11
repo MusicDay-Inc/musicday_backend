@@ -14,6 +14,23 @@ type ReviewService struct {
 	user  repository.User
 }
 
+func (s *ReviewService) GetReviewsOfUserSubscriptions(clientId uuid.UUID, limit int, offset int) (res []core.ReviewOfUserDTO, err error) {
+	reviews, err := s.rev.GetReviewsOfUserSubscriptions(clientId, limit, offset)
+	if err != nil {
+		return
+	}
+	res = make([]core.ReviewOfUserDTO, len(reviews))
+	for i, review := range reviews {
+		rDomain := review.ToDomain()
+		userItem, errUser := s.user.GetById(rDomain.UserId)
+		if errUser != nil {
+			return make([]core.ReviewOfUserDTO, 0), errUser
+		}
+		res[i] = rDomain.ToUserDTO(userItem)
+	}
+	return res, nil
+}
+
 func (s *ReviewService) GetAlbumReviewsOfUser(userId uuid.UUID, limit int, offset int) (res []core.ReviewDTO, err error) {
 	reviews, err := s.rev.GetAlbumReviewsFromUser(userId, limit, offset)
 	if err != nil {

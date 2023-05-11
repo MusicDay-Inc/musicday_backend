@@ -33,7 +33,7 @@ func (h *Handler) InitRoutes() *gin.Engine {
 		//user.GET("/subscription_reviews/:id", h.ReviewsOfSubscriptions)
 
 		// TODO
-		user.GET("/activity", h.SearchSongs)
+		user.GET("/activity", h.getUserActivityFeed)
 		// deleted
 		//user.GET("/stories", h.SearchSongs)
 	}
