@@ -1,13 +1,15 @@
 package transport
 
 import (
-	"github.com/chai2010/webp"
 	"github.com/gin-gonic/gin"
+	"github.com/kolesa-team/go-webp/encoder"
+	"github.com/kolesa-team/go-webp/webp"
 	"image"
 	"image/jpeg"
 	"image/png"
 	"io"
 	"io/ioutil"
+
 	"mime/multipart"
 	"net/http"
 	"os"
@@ -64,7 +66,12 @@ func (h *Handler) uploadAlbumCover(c *gin.Context) {
 	}
 	//defer webpFile.Close()
 	// Encode and save the image as WebP
-	if err = webp.Encode(webpFile, img, &webp.Options{}); err != nil {
+	options, err := encoder.NewLossyEncoderOptions(encoder.PresetDefault, 75)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, core.CodeInternalError, "couldn't get encoder")
+		return
+	}
+	if err = webp.Encode(webpFile, img, options); err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, core.CodeInternalError, "Failed to encode and save WebP file")
 		return
 	}
@@ -124,9 +131,13 @@ func (h *Handler) PostAvatar(c *gin.Context) {
 		return
 	}
 	//defer webpFile.Close()
-
+	options, err := encoder.NewLossyEncoderOptions(encoder.PresetDefault, 75)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, core.CodeInternalError, "couldn't get encoder")
+		return
+	}
 	// Encode and save the image as WebP
-	if err = webp.Encode(webpFile, img, &webp.Options{}); err != nil {
+	if err = webp.Encode(webpFile, img, options); err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, core.CodeInternalError, "Failed to encode and save WebP file")
 		return
 	}

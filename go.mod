@@ -26,6 +26,7 @@ require (
 	github.com/jmoiron/sqlx v1.3.5 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/klauspost/cpuid/v2 v2.2.4 // indirect
+	github.com/kolesa-team/go-webp v1.0.4 // indirect
 	github.com/leodido/go-urn v1.2.3 // indirect
 	github.com/lib/pq v1.10.9 // indirect
 	github.com/magiconair/properties v1.8.7 // indirect
