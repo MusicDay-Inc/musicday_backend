@@ -7,139 +7,96 @@ import (
 	"server/internal/core"
 )
 
-//func (h *Handler) uploadAlbumCover(c *gin.Context) {
-//	srcId := h.parseUUIDFromParam(c)
-//	coverId, err := h.services.Album.GetCoverId(srcId)
-//	if err != nil {
-//		s, errS := h.services.Song.GetById(srcId)
-//		if errS != nil {
-//			newErrorResponse(c, http.StatusBadRequest, core.CodeIncorrectBody, "incorrect release id")
-//			return
+//	func (h *Handler) uploadAlbumCover(c *gin.Context) {
+//		srcId := h.parseUUIDFromParam(c)
+//		coverId, err := h.services.Album.GetCoverId(srcId)
+//		if err != nil {
+//			s, errS := h.services.Song.GetById(srcId)
+//			if errS != nil {
+//				newErrorResponse(c, http.StatusBadRequest, core.CodeIncorrectBody, "incorrect release id")
+//				return
+//			}
+//			coverId = s.Id
 //		}
-//		coverId = s.Id
-//	}
-//	dest := "./img/" + coverId.String() + ".webp"
+//		dest := "./img/" + coverId.String() + ".webp"
 //
-//	file, header, err := c.Request.FormFile("cover")
-//	// Determine the file extension
-//	ext := filepath.Ext(header.Filename)
-//	var img image.Image
-//	if ext == ".jpeg" {
-//		img, err = jpeg.Decode(file)
-//	} else if ext == ".png" {
-//		img, err = png.Decode(file)
-//	} else if ext == ".webp" {
-//		defer func(file multipart.File) {
-//			_ = file.Close()
-//		}(file)
-//		dstF, errF := os.Create(dest)
-//		if errF != nil {
-//			newErrorResponse(c, http.StatusInternalServerError, core.CodeInternalError, core.ErrInternal.Error())
+//		file, header, err := c.Request.FormFile("cover")
+//		// Determine the file extension
+//		ext := filepath.Ext(header.Filename)
+//		var img image.Image
+//		if ext == ".jpeg" {
+//			img, err = jpeg.Decode(file)
+//		} else if ext == ".png" {
+//			img, err = png.Decode(file)
+//		} else if ext == ".webp" {
+//			defer func(file multipart.File) {
+//				_ = file.Close()
+//			}(file)
+//			dstF, errF := os.Create(dest)
+//			if errF != nil {
+//				newErrorResponse(c, http.StatusInternalServerError, core.CodeInternalError, core.ErrInternal.Error())
+//				return
+//			}
+//			if _, errC := io.Copy(dstF, file); errC != nil {
+//				newErrorResponse(c, http.StatusInternalServerError, core.CodeInternalError, core.ErrInternal.Error())
+//				return
+//			}
+//			c.JSON(http.StatusOK, coverId)
+//			return
+//		} else {
+//			newErrorResponse(c, http.StatusBadRequest, core.CodeIncorrectBody, "incorrect file format")
 //			return
 //		}
-//		if _, errC := io.Copy(dstF, file); errC != nil {
-//			newErrorResponse(c, http.StatusInternalServerError, core.CodeInternalError, core.ErrInternal.Error())
-//			return
-//		}
-//		c.JSON(http.StatusOK, coverId)
-//		return
-//	} else {
-//		newErrorResponse(c, http.StatusBadRequest, core.CodeIncorrectBody, "incorrect file format")
-//		return
-//	}
 //
-//	// Create the WebP file
-//	webpFile, err := os.Create(dest)
-//	if err != nil {
-//		newErrorResponse(c, http.StatusInternalServerError, core.CodeInternalError, "Failed to create WebP file")
-//		return
-//	}
-//	//defer webpFile.Close()
-//	// Encode and save the image as WebP
-//	options, err := encoder.NewLossyEncoderOptions(encoder.PresetDefault, 75)
-//	if err != nil {
-//		newErrorResponse(c, http.StatusInternalServerError, core.CodeInternalError, "couldn't get encoder")
-//		return
-//	}
-//	if err = webp.Encode(webpFile, img, options); err != nil {
-//		newErrorResponse(c, http.StatusInternalServerError, core.CodeInternalError, "Failed to encode and save WebP file")
-//		return
-//	}
-//	//c.Data(http.StatusOK, "application/octet-stream", data)
-//	c.JSON(http.StatusOK, coverId)
-//	return
-//}
-// TODO rework
-//func (h *Handler) PostAvatar(c *gin.Context) {
-//	clientId, err := h.getClientId(c)
-//	if err != nil {
-//		newErrorResponse(c, http.StatusInternalServerError, core.CodeInternalError, "couldn't get clientId from context")
-//		return
-//	}
-//	// Create the WebP file destination
-//	dest := "./img/" + clientId.String() + ".webp"
-//
-//	file, header, err := c.Request.FormFile("picture")
-//	// Determine the file extension
-//
-//	ext := filepath.Ext(header.Filename)
-//	var img image.Image
-//	if ext == ".jpeg" {
-//		img, err = jpeg.Decode(file)
-//	} else if ext == ".png" {
-//		img, err = png.Decode(file)
-//	} else if ext == ".webp" {
-//		defer func(file multipart.File) {
-//			_ = file.Close()
-//		}(file)
-//		dstF, errF := os.Create(dest)
-//		if errF != nil {
-//			newErrorResponse(c, http.StatusInternalServerError, core.CodeInternalError, core.ErrInternal.Error())
+//		// Create the WebP file
+//		webpFile, err := os.Create(dest)
+//		if err != nil {
+//			newErrorResponse(c, http.StatusInternalServerError, core.CodeInternalError, "Failed to create WebP file")
 //			return
 //		}
-//		if _, errC := io.Copy(dstF, file); errC != nil {
-//			newErrorResponse(c, http.StatusInternalServerError, core.CodeInternalError, core.ErrInternal.Error())
+//		//defer webpFile.Close()
+//		// Encode and save the image as WebP
+//		options, err := encoder.NewLossyEncoderOptions(encoder.PresetDefault, 75)
+//		if err != nil {
+//			newErrorResponse(c, http.StatusInternalServerError, core.CodeInternalError, "couldn't get encoder")
 //			return
 //		}
-//		user, errU := h.services.User.UploadAvatar(clientId)
-//		if errU != nil {
-//			newErrorResponse(c, http.StatusInternalServerError, core.CodeInternalError, core.ErrInternal.Error())
+//		if err = webp.Encode(webpFile, img, options); err != nil {
+//			newErrorResponse(c, http.StatusInternalServerError, core.CodeInternalError, "Failed to encode and save WebP file")
 //			return
 //		}
 //		//c.Data(http.StatusOK, "application/octet-stream", data)
-//		c.JSON(http.StatusOK, user)
-//		return
-//	} else {
-//		newErrorResponse(c, http.StatusBadRequest, core.CodeIncorrectBody, "incorrect file format")
+//		c.JSON(http.StatusOK, coverId)
 //		return
 //	}
 //
-//	// Create the WebP file
-//	webpFile, err := os.Create(dest)
-//	if err != nil {
-//		newErrorResponse(c, http.StatusInternalServerError, core.CodeInternalError, "Failed to create WebP file")
-//		return
-//	}
-//	//defer webpFile.Close()
-//	options, err := encoder.NewLossyEncoderOptions(encoder.PresetDefault, 75)
-//	if err != nil {
-//		newErrorResponse(c, http.StatusInternalServerError, core.CodeInternalError, "couldn't get encoder")
-//		return
-//	}
-//	// Encode and save the image as WebP
-//	if err = webp.Encode(webpFile, img, options); err != nil {
-//		newErrorResponse(c, http.StatusInternalServerError, core.CodeInternalError, "Failed to encode and save WebP file")
-//		return
-//	}
-//	user, err := h.services.User.UploadAvatar(clientId)
-//	if err != nil {
-//		newErrorResponse(c, http.StatusInternalServerError, core.CodeInternalError, core.ErrInternal.Error())
-//		return
-//	}
-//	//c.Data(http.StatusOK, "application/octet-stream", data)
-//	c.JSON(http.StatusOK, user)
-//	return
-//}
+// TODO
+func (h *Handler) PostAvatar(c *gin.Context) {
+	clientId, err := h.getClientId(c)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, core.CodeInternalError, "couldn't get clientId from context")
+		return
+	}
+
+	file, err := c.FormFile("picture")
+	if err != nil {
+		c.String(http.StatusBadRequest, "Failed to get file")
+		return
+	}
+	// Save the file to the server
+	if err = c.SaveUploadedFile(file, "./img/"+clientId.String()+".jpeg"); err != nil {
+		c.String(http.StatusInternalServerError, "Failed to save file")
+		return
+	}
+	user, err := h.services.User.UploadAvatar(clientId)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, core.CodeInternalError, core.ErrInternal.Error())
+		return
+	}
+	//c.Data(http.StatusOK, "application/octet-stream", data)
+	c.JSON(http.StatusOK, user)
+	return
+}
 
 func (h *Handler) getReleaseCover(c *gin.Context) {
 	srcId := h.parseUUIDFromParam(c)
