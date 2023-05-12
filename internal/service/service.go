@@ -24,6 +24,8 @@ type User interface {
 	Unsubscribe(clientId uuid.UUID, userId uuid.UUID) (core.UserDTO, error)
 	GetSubscribers(userId uuid.UUID, limit int, offset int) ([]core.UserDTO, error)
 	GetSubscriptions(userId uuid.UUID, limit int, offset int) ([]core.UserDTO, error)
+	GetBio(userId uuid.UUID) (string, error)
+	CreateBio(clientId uuid.UUID, bio string) (string, error)
 }
 
 type Song interface {
@@ -47,6 +49,8 @@ type Review interface {
 	GetSongReviewsOfUser(userId uuid.UUID, limit int, offset int) ([]core.ReviewDTO, error)
 	GetAlbumReviewsOfUser(userId uuid.UUID, limit int, offset int) ([]core.ReviewDTO, error)
 	GetReviewsOfUserSubscriptions(clientId uuid.UUID, limit int, offset int) ([]core.ReviewOfUserDTO, error)
+	CountSongReviewsOf(userId uuid.UUID) (int32, error)
+	CountAlbumReviewsOf(userId uuid.UUID) (int32, error)
 }
 
 type Service struct {

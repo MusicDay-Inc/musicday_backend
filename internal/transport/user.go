@@ -129,9 +129,25 @@ func (h *Handler) getUserProfile(c *gin.Context) {
 		return
 	}
 	isSubscribed := h.services.User.SubscriptionExists(clientId, userId)
+	sAmount, err := h.services.Review.CountSongReviewsOf(userId)
+	if err != nil {
+		sAmount = 0
+		newErrorResponse(c, http.StatusInternalServerError, core.CodeInternalError, core.ErrInternal.Error())
+		return
+	}
+	aAmount, err := h.services.Review.CountAlbumReviewsOf(userId)
+	if err != nil {
+		aAmount = 0
+		newErrorResponse(c, http.StatusInternalServerError, core.CodeInternalError, core.ErrInternal.Error())
+		return
+	}
+	bio, err := h.services.User.GetBio(userId)
 	c.JSON(http.StatusOK, map[string]interface{}{
 		"user":                 user,
 		"is_client_subscribed": isSubscribed,
+		"bio":                  bio,
+		"song_amount":          sAmount,
+		"album_amount":         aAmount,
 	})
 }
 
@@ -270,4 +286,26 @@ func (h *Handler) unsubscribe(c *gin.Context) {
 		"user":                 updatedUserSubscription,
 		"is_client_subscribed": false,
 	})
+}
+func (h *Handler) CreateClientBio(c *gin.Context) {
+	clientId, err := h.getClientId(c)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, core.CodeInternalError, "couldn't get clientId from context")
+		return
+	}
+	type userBio struct {
+		Bio string `json:"bio" binding:"required"`
+	}
+	var bio userBio
+	if !bindRequestBody(c, &bio) {
+		return
+	}
+
+	resBio, err := h.services.User.CreateBio(clientId, bio.Bio)
+	if err != nil {
+		newErrorResponse(c, http.StatusBadRequest, core.CodeAlreadyExists, "bio already exists")
+		return
+	}
+	bio.Bio = resBio
+	c.JSON(http.StatusOK, bio)
 }

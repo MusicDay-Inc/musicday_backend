@@ -14,6 +14,16 @@ type ReviewService struct {
 	user  repository.User
 }
 
+func (s *ReviewService) CountSongReviewsOf(userId uuid.UUID) (int32, error) {
+	amount, err := s.rev.CountReviewsOfUser(userId, true)
+	return amount, err
+}
+
+func (s *ReviewService) CountAlbumReviewsOf(userId uuid.UUID) (int32, error) {
+	amount, err := s.rev.CountReviewsOfUser(userId, false)
+	return amount, err
+}
+
 func (s *ReviewService) GetReviewsOfUserSubscriptions(clientId uuid.UUID, limit int, offset int) (res []core.ReviewOfUserDTO, err error) {
 	reviews, err := s.rev.GetReviewsOfUserSubscriptions(clientId, limit, offset)
 	if err != nil {

@@ -11,6 +11,20 @@ type ReviewRepository struct {
 	db *sqlx.DB
 }
 
+func (r ReviewRepository) CountReviewsOfUser(userId uuid.UUID, isToSongs bool) (res int32, err error) {
+	q := `
+	SELECT count(*)
+	FROM reviews
+         WHERE (user_id, is_song_reviewed) = ($1, $2);
+	`
+	logrus.Trace(formatQuery(q))
+	err = r.db.Get(&res, q, userId, isToSongs)
+	if err != nil {
+		return res, err
+	}
+	return
+}
+
 func (r ReviewRepository) GetReviewsOfUserSubscriptions(clientId uuid.UUID, limit int, offset int) (reviews []core.ReviewDAO, err error) {
 	q := `
 	SELECT id, user_id, is_song_reviewed, release_id, published_at, score, review_text

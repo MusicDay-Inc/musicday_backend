@@ -15,6 +15,22 @@ type UserService struct {
 	r repository.User
 }
 
+func (s *UserService) CreateBio(clientId uuid.UUID, bio string) (string, error) {
+	resBio, err := s.r.CreateBio(clientId, bio)
+	if err != nil {
+		return "", core.ErrAlreadyExists
+	}
+	return resBio, nil
+}
+
+func (s *UserService) GetBio(userId uuid.UUID) (string, error) {
+	bio, err := s.r.GetBio(userId)
+	if err != nil {
+		return "", core.ErrNotFound
+	}
+	return bio, nil
+}
+
 func (s *UserService) GetSubscriptions(userId uuid.UUID, limit int, offset int) (res []core.UserDTO, err error) {
 	ok := s.r.ExistsWithId(userId)
 	if !ok {

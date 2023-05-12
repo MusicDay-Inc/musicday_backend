@@ -13,6 +13,29 @@ type UserRepository struct {
 	db *sqlx.DB
 }
 
+func (r UserRepository) GetBio(userId uuid.UUID) (res string, err error) {
+	q := `
+	SELECT bio
+	FROM user_bios
+	WHERE user_id = $1;
+	`
+	logrus.Trace(formatQuery(q))
+	err = r.db.Get(&res, q, userId)
+	return res, err
+}
+
+func (r UserRepository) CreateBio(userId uuid.UUID, bio string) (string, error) {
+	q := `
+	INSERT INTO user_bios (user_id, bio) VALUES ($1, $2) 
+	`
+	logrus.Trace(formatQuery(q))
+	_, err := r.db.Exec(q, userId, bio)
+	if err != nil {
+		return "", err
+	}
+	return bio, nil
+}
+
 func (r UserRepository) GetSubscriptionsOf(userId uuid.UUID, limit int, offset int) (users []core.UserDAO, err error) {
 	q := `
 	SELECT id, gmail, username, nickname, is_registered, has_picture, subscribers_c, subscriptions_c

@@ -13,11 +13,18 @@ CREATE TABLE users
 
 CREATE TABLE subscriptions
 (
-    subscriber_id   UUID PRIMARY KEY not null,
-    subscription_id UUID             not null,
+    subscriber_id   UUID not null,
+    subscription_id UUID not null,
     constraint subscriber_fk foreign key (subscriber_id) references users (id),
     constraint subscription_fk foreign key (subscription_id) references users (id),
-    constraint subscription_unique UNIQUE (subscriber_id, subscription_id)
+    constraint subscription_pk PRIMARY KEY (subscriber_id, subscription_id)
+);
+
+CREATE TABLE user_bios
+(
+    user_id UUID PRIMARY KEY not null,
+    bio     VARCHAR(100),
+    constraint user_bio_fk foreign key (user_id) references users (id)
 );
 
 CREATE TABLE authors
@@ -77,26 +84,26 @@ CREATE TABLE reviews
     constraint user_review_unique UNIQUE (user_id, release_id)
 );
 
-CREATE TABLE stories
-(
-    id               UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    user_id          UUID      not null,
-    background_color INT       not null,
-    song_id          UUID      not null,
-    published_at     TIMESTAMP not null,
-    story_text       VARCHAR(1200),
-    constraint user_fk foreign key (user_id) references users (id)
-);
+-- CREATE TABLE stories
+-- (
+--     id               UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+--     user_id          UUID      not null,
+--     background_color INT       not null,
+--     song_id          UUID      not null,
+--     published_at     TIMESTAMP not null,
+--     story_text       VARCHAR(1200),
+--     constraint user_fk foreign key (user_id) references users (id)
+-- );
 
-CREATE TABLE user_likes
-(
-    user_id  UUID PRIMARY KEY not null,
-    story_id UUID             not null,
-    constraint user_fk foreign key (user_id) references users (id),
-    constraint story_fk foreign key (story_id) references users (id),
-    constraint user_story_unique UNIQUE (user_id, story_id)
-
-);
+-- CREATE TABLE user_likes
+-- (
+--     user_id  UUID PRIMARY KEY not null,
+--     story_id UUID             not null,
+--     constraint user_fk foreign key (user_id) references users (id),
+--     constraint story_fk foreign key (story_id) references users (id),
+--     constraint user_story_unique UNIQUE (user_id, story_id)
+--
+-- );
 
 insert into authors (id, name)
 VALUES ('11f3417e-0d40-4dd7-b0a8-44ab13c4163b', 'The Police');
