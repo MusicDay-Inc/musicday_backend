@@ -165,7 +165,7 @@ INSERT INTO songs (name, date, duration, author_id) VALUES ('Omgyjya-Switch7', '
 INSERT INTO songs (name, date, duration, author_id) VALUES ('Strotha Tynhe', '2001-10-22', '00:02:03', '075bf4b5-d8ce-4c00-967c-6593f575e025');
 INSERT INTO songs (name, date, duration, author_id) VALUES ('Gwely Mernans', '2001-10-22', '00:05:00', '075bf4b5-d8ce-4c00-967c-6593f575e025');
 INSERT INTO songs (name, date, duration, author_id) VALUES ('Bbydhyonchord', '2001-10-22', '00:02:21', '075bf4b5-d8ce-4c00-967c-6593f575e025');
-INSERT INTO songs (name, date, duration, author_id) VALUES ('Cock/Ver10', '2001-10-22', '00:05:17', '075bf4b5-d8ce-4c00-967c-6593f575e025');
+-- INSERT INTO songs (name, date, duration, author_id) VALUES ('Cock/Ver10', '2001-10-22', '00:05:17', '075bf4b5-d8ce-4c00-967c-6593f575e025');
 INSERT INTO songs (name, date, duration, author_id) VALUES ('Avril 14th', '2001-10-22', '00:02:05', '075bf4b5-d8ce-4c00-967c-6593f575e025');
 INSERT INTO songs (name, date, duration, author_id) VALUES ('Mt Saint Michel + Saint Michaels Mount', '2001-10-22', '00:08:02', '075bf4b5-d8ce-4c00-967c-6593f575e025');
 INSERT INTO songs (name, date, duration, author_id) VALUES ('Gwarek2', '2001-10-22', '00:06:38', '075bf4b5-d8ce-4c00-967c-6593f575e025');
@@ -191,8 +191,63 @@ INSERT INTO songs (name, date, duration, author_id) VALUES ('Nanou2', '2001-10-2
 
 
 insert into authors (id, name)
-VALUES ('075bf4b5-d8ce-4c00-967c-6593f575e025', 'Elvis Presley');
+VALUES ('7221c852-94e8-415d-bd4f-ccd09717b92a', 'Elvis Presley');
+INSERT INTO songs (name, date, duration, author_id) VALUES ('The Wonder of You', '1958-01-01', '00:02:34', '7221c852-94e8-415d-bd4f-ccd09717b92a');
 
+
+insert into authors (id, name)
+VALUES ('25dfe8b8-7e7e-4fb2-bad8-7f1edac31a63', 'Frenesí (フレネシ)');
+-- Frenesí (フレネシ)
+INSERT INTO albums (name, date, author_id)
+VALUES ('キュプラ (Cupra)', '2009-06-03', '25dfe8b8-7e7e-4fb2-bad8-7f1edac31a63');
+
+INSERT INTO songs (name, date, duration, author_id)
+VALUES ('Let It Happen', '2009-06-03', '00:07:46', '25dfe8b8-7e7e-4fb2-bad8-7f1edac31a63');
+INSERT INTO songs (name, date, duration, author_id) VALUES ('アセテート', '2009-06-03', '00:00:59', '25dfe8b8-7e7e-4fb2-bad8-7f1edac31a63');
+INSERT INTO songs (name, date, duration, author_id) VALUES ('nero', '2009-06-03', '00:04:12', '25dfe8b8-7e7e-4fb2-bad8-7f1edac31a63');
+INSERT INTO songs (name, date, duration, author_id) VALUES ('仮想過去', '2009-06-03', '00:02:41', '25dfe8b8-7e7e-4fb2-bad8-7f1edac31a63');
+INSERT INTO songs (name, date, duration, author_id) VALUES ('覆面調査員', '2009-06-03', '00:03:25', '25dfe8b8-7e7e-4fb2-bad8-7f1edac31a63');
+INSERT INTO songs (name, date, duration, author_id) VALUES ('スカイバストーキョー', '2009-06-03', '00:03:53', '25dfe8b8-7e7e-4fb2-bad8-7f1edac31a63');
+INSERT INTO songs (name, date, duration, author_id) VALUES ('スプロウル', '2009-06-03', '00:06:03', '25dfe8b8-7e7e-4fb2-bad8-7f1edac31a63');
+INSERT INTO songs (name, date, duration, author_id) VALUES ('ローウィッツアーク', '2009-06-03', '00:03:35', '25dfe8b8-7e7e-4fb2-bad8-7f1edac31a63');
+INSERT INTO songs (name, date, duration, author_id) VALUES ('わたしのイエスマン', '2009-06-03', '00:04:02', '25dfe8b8-7e7e-4fb2-bad8-7f1edac31a63');
+INSERT INTO songs (name, date, duration, author_id) VALUES ('砂と硝子', '2009-06-03', '00:03:20', '25dfe8b8-7e7e-4fb2-bad8-7f1edac31a63');
+INSERT INTO songs (name, date, duration, author_id) VALUES ('マージナル', '2009-06-03', '00:02:19', '25dfe8b8-7e7e-4fb2-bad8-7f1edac31a63');
+INSERT INTO songs (name, date, duration, author_id) VALUES ('サバラン', '2009-06-03', '00:03:56', '25dfe8b8-7e7e-4fb2-bad8-7f1edac31a63');
+INSERT INTO songs (name, date, duration, author_id) VALUES ('キュプラ', '2009-06-03', '00:02:29', '25dfe8b8-7e7e-4fb2-bad8-7f1edac31a63');
+INSERT INTO songs (name, date, duration, author_id) VALUES ('超臨界流体', '2009-06-03', '00:02:36', '25dfe8b8-7e7e-4fb2-bad8-7f1edac31a63');
+
+insert into authors (id, name)
+VALUES ('2ce6022f-6d6a-4c3c-bcee-2040de29981f', 'Молчат дома');
+
+INSERT INTO albums (name, date, author_id)
+VALUES ('Этажи', '2018-09-07', '2ce6022f-6d6a-4c3c-bcee-2040de29981f');
+INSERT INTO songs (name, date, duration, author_id) VALUES ('На дне', '2018-09-07', '00:04:07', '2ce6022f-6d6a-4c3c-bcee-2040de29981f');
+INSERT INTO songs (name, date, duration, author_id) VALUES ('Танцевать', '2018-09-07', '00:03:22', '2ce6022f-6d6a-4c3c-bcee-2040de29981f');
+INSERT INTO songs (name, date, duration, author_id) VALUES ('Фильмы', '2018-09-07', '00:04:17', '2ce6022f-6d6a-4c3c-bcee-2040de29981f');
+INSERT INTO songs (name, date, duration, author_id) VALUES ('Волны', '2018-09-07', '00:04:21', '2ce6022f-6d6a-4c3c-bcee-2040de29981f');
+INSERT INTO songs (name, date, duration, author_id) VALUES ('Тоска', '2018-09-07', '00:03:09', '2ce6022f-6d6a-4c3c-bcee-2040de29981f');
+INSERT INTO songs (name, date, duration, author_id) VALUES ('Прогноз', '2018-09-07', '00:03:04', '2ce6022f-6d6a-4c3c-bcee-2040de29981f');
+INSERT INTO songs (name, date, duration, author_id) VALUES ('Судно (Борис Рыжий)', '2018-09-07', '00:02:21', '2ce6022f-6d6a-4c3c-bcee-2040de29981f');
+INSERT INTO songs (name, date, duration, author_id) VALUES ('Коммерсанты', '2018-09-07', '00:03:49', '2ce6022f-6d6a-4c3c-bcee-2040de29981f');
+INSERT INTO songs (name, date, duration, author_id) VALUES ('Клетка', '2018-09-07', '00:04:43', '2ce6022f-6d6a-4c3c-bcee-2040de29981f');
+
+insert into authors (id, name)
+VALUES ('19cfcd2b-5dde-4065-ba64-0460598bc891', 'Death Grips');
+
+INSERT INTO albums (name, date, author_id)
+VALUES ('Government Plates', '2013-11-13', '19cfcd2b-5dde-4065-ba64-0460598bc891');
+INSERT INTO songs (name, date, duration, author_id) VALUES ('You Might Think He Loves You for Your Money but I Know What He Really Loves You for It’s Your Brand New Leopard Skin Pillbox Hat', '2013-11-13', '00:02:41', '19cfcd2b-5dde-4065-ba64-0460598bc891');
+INSERT INTO songs (name, date, duration, author_id) VALUES ('Anne Bonny', '2013-11-13', '00:03:27', '19cfcd2b-5dde-4065-ba64-0460598bc891');
+INSERT INTO songs (name, date, duration, author_id) VALUES ('Two Heavens', '2013-11-13', '00:03:02', '19cfcd2b-5dde-4065-ba64-0460598bc891');
+INSERT INTO songs (name, date, duration, author_id) VALUES ('This Is Violence Now (Don''t Get Me Wrong)', '2013-11-13', '00:02:38', '19cfcd2b-5dde-4065-ba64-0460598bc891');
+INSERT INTO songs (name, date, duration, author_id) VALUES ('Birds', '2013-11-13', '00:04:38', '19cfcd2b-5dde-4065-ba64-0460598bc891');
+INSERT INTO songs (name, date, duration, author_id) VALUES ('Feels Like a Wheel', '2013-11-13', '00:02:22', '19cfcd2b-5dde-4065-ba64-0460598bc891');
+INSERT INTO songs (name, date, duration, author_id) VALUES ('I''m Overflow', '2013-11-13', '00:03:09', '19cfcd2b-5dde-4065-ba64-0460598bc891');
+INSERT INTO songs (name, date, duration, author_id) VALUES ('Big House', '2013-11-13', '00:02:19', '19cfcd2b-5dde-4065-ba64-0460598bc891');
+INSERT INTO songs (name, date, duration, author_id) VALUES ('Government Plates', '2013-11-13', '00:02:42', '19cfcd2b-5dde-4065-ba64-0460598bc891');
+INSERT INTO songs (name, date, duration, author_id) VALUES ('Bootleg (Don''t Need Your Help)', '2013-11-13', '00:02:06', '19cfcd2b-5dde-4065-ba64-0460598bc891');
+-- INSERT INTO songs (name, date, duration, author_id) VALUES ('Whatever I Want (F*ck Who''s Watching)', '2013-11-13', '00:06:38', '19cfcd2b-5dde-4065-ba64-0460598bc891');
 
 UPDATE songs
 SET author = (SELECT name
@@ -214,14 +269,15 @@ SET song_amount =
          FROM album_songs
          WHERE a.id = album_songs.album_id);
 
-
--- SELECT s.*, SUM(s.duration)
--- FROM album_songs a_s
---          LEFT JOIN songs s on a_s.song_id = s.id
--- GROUP BY s.id;
 UPDATE albums a
 SET duration = (SELECT sq.album_duration
                 FROM (SELECT SUM(s.duration) album_duration, s.author_id
                       FROM songs s
                       GROUP BY s.author_id) sq
                 WHERE a.author_id = sq.author_id);
+
+-- SELECT s.*, SUM(s.duration)
+-- FROM album_songs a_s
+--          LEFT JOIN songs s on a_s.song_id = s.id
+-- GROUP BY s.id;
+
