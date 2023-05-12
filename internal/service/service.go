@@ -26,6 +26,7 @@ type User interface {
 	GetSubscriptions(userId uuid.UUID, limit int, offset int) ([]core.UserDTO, error)
 	GetBio(userId uuid.UUID) (string, error)
 	CreateBio(clientId uuid.UUID, bio string) (string, error)
+	UploadAvatar(clientId uuid.UUID) (core.UserDTO, error)
 }
 
 type Song interface {
@@ -37,6 +38,7 @@ type Album interface {
 	GetById(songId uuid.UUID) (core.Album, error)
 	GetSongsFromAlbum(id uuid.UUID) ([]core.Song, error)
 	SearchAlbumsWithReview(query string, userId uuid.UUID, limit int, offset int) ([]core.AlbumWithReviewDTO, error)
+	GetCoverId(srcId uuid.UUID) (uuid.UUID, error)
 }
 
 type Review interface {

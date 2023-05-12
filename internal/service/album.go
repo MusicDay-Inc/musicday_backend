@@ -10,6 +10,18 @@ type AlbumService struct {
 	r repository.Album
 }
 
+func (s AlbumService) GetCoverId(srcId uuid.UUID) (uuid.UUID, error) {
+	a, err := s.r.GetById(srcId)
+	if err == nil {
+		return a.Id, nil
+	}
+	aId, err := s.r.GetContainingSong(srcId)
+	if err != nil {
+		return uuid.UUID{}, err
+	}
+	return aId, nil
+}
+
 func (s AlbumService) SearchAlbumsWithReview(query string, userId uuid.UUID, limit int, offset int) (res []core.AlbumWithReviewDTO, err error) {
 	albums, err := s.r.SearchAlbumsWithReview(query, userId, limit, offset)
 	if err != nil {

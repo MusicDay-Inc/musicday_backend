@@ -316,11 +316,11 @@ func (r UserRepository) ChangeNickname(userId uuid.UUID, nickname string) (user 
 func (r UserRepository) InstallPicture(id uuid.UUID) (user core.UserDAO, err error) {
 	q := `
 	UPDATE users
-	SET (has_picture) = (true)
+	SET has_picture = true
 	WHERE id = $1
 	RETURNING *
 	`
 	logrus.Trace(formatQuery(q))
-	_, err = r.db.Exec(q, id)
+	err = r.db.Get(&user, q, id)
 	return
 }

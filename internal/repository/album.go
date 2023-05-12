@@ -11,6 +11,18 @@ type AlbumRepository struct {
 	db *sqlx.DB
 }
 
+func (r AlbumRepository) GetContainingSong(songId uuid.UUID) (id uuid.UUID, err error) {
+	q := `
+	SELECT album_id FROM album_songs WHERE song_id = $1
+	`
+	logrus.Trace(formatQuery(q))
+	err = r.db.Get(&id, q, songId)
+	if err != nil {
+		return id, err
+	}
+	return
+}
+
 func (r AlbumRepository) SearchAlbumsWithReview(searchReq string, userId uuid.UUID, limit int, offset int) (albums []core.AlbumWithReviewDAO, err error) {
 	q := `
 	SELECT albums.id AS "album_id", name, author, date, song_amount, duration, author_id, 

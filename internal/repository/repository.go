@@ -42,6 +42,7 @@ type Album interface {
 	GetById(album uuid.UUID) (core.AlbumDAO, error)
 	GetSongsFromAlbum(id uuid.UUID) ([]core.SongDAO, error)
 	SearchAlbumsWithReview(query string, userId uuid.UUID, limit int, offset int) ([]core.AlbumWithReviewDAO, error)
+	GetContainingSong(songId uuid.UUID) (uuid.UUID, error)
 }
 
 type Review interface {

@@ -56,6 +56,7 @@ func (h *Handler) InitRoutes() *gin.Engine {
 		action.POST("/nickname", h.changeNickname)
 		action.POST("/delete_review/:id", h.deleteReviewById)
 		action.POST("/bio", h.CreateClientBio)
+		action.POST("/avatar", h.PostAvatar)
 		// deleted
 		//action.POST("/post_story/:id", h.postStory)
 	}
@@ -71,6 +72,14 @@ func (h *Handler) InitRoutes() *gin.Engine {
 		library.GET("/songs/:id", h.UserSongReviews)
 		// все альбомы
 		library.GET("/albums/:id", h.UserAlbumReviews)
+	}
+	img := router.Group("/image", h.authenticateClient)
+	{
+		//library.GET("/release/:id", h.UserAllReviews)
+		//library.GET("/user/:id", h.UserAllReviews)
+		img.GET("/release/:id", h.getReleaseCover)
+		img.GET("/avatar/:id", h.getAvatar)
+		img.POST("/album/:id", h.uploadAlbumCover)
 	}
 	return router
 }

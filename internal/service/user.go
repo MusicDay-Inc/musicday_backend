@@ -15,6 +15,16 @@ type UserService struct {
 	r repository.User
 }
 
+func (s *UserService) UploadAvatar(clientId uuid.UUID) (core.UserDTO, error) {
+	user, err := s.r.InstallPicture(clientId)
+	if err != nil {
+		userPrev, _ := s.r.GetById(clientId)
+		return userPrev.ToDTO(), err
+	}
+	res := user.ToDomain()
+	return res.ToDTO(), nil
+}
+
 func (s *UserService) CreateBio(clientId uuid.UUID, bio string) (string, error) {
 	resBio, err := s.r.CreateBio(clientId, bio)
 	if err != nil {
