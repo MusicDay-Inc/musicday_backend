@@ -225,7 +225,15 @@ func (h *Handler) subscribe(c *gin.Context) {
 	}
 	updatedUserSubscription, err := h.services.User.Subscribe(clientId, userId)
 	if err != nil {
-		newErrorResponse(c, http.StatusBadRequest, core.CodeIncorrectBody, "already subscribed")
+		if errors.Is(err, core.ErrAlreadyExists) {
+			newErrorResponse(c, http.StatusBadRequest, core.CodeAlreadyExists, "already subscribed")
+			return
+		}
+		if errors.Is(err, core.ErrIncorrectBody) {
+			newErrorResponse(c, http.StatusBadRequest, core.CodeIncorrectBody, "can't subscribe to yourself")
+			return
+		}
+		newErrorResponse(c, http.StatusBadRequest, core.CodeIncorrectBody, core.ErrInternal.Error())
 		return
 	}
 	//c.JSON(http.StatusOK, updatedUserSubscription)
@@ -244,7 +252,15 @@ func (h *Handler) unsubscribe(c *gin.Context) {
 	updatedUserSubscription, err := h.services.User.Unsubscribe(clientId, userId)
 	if err != nil {
 		if errors.Is(err, core.ErrNotFound) {
-			newErrorResponse(c, http.StatusBadRequest, core.CodeNotFound, "already unsubscribed")
+			newErrorResponse(c, http.StatusNotFound, core.CodeNotFound, "incorrect subscription id")
+			return
+		}
+		if errors.Is(err, core.ErrAlreadyExists) {
+			newErrorResponse(c, http.StatusBadRequest, core.CodeAlreadyExists, "already unsubscribed")
+			return
+		}
+		if errors.Is(err, core.ErrIncorrectBody) {
+			newErrorResponse(c, http.StatusBadRequest, core.CodeIncorrectBody, "can't unsubscribe to yourself")
 			return
 		}
 		newErrorResponse(c, http.StatusInternalServerError, core.CodeInternalError, core.ErrInternal.Error())

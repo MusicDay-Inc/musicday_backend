@@ -37,37 +37,31 @@ func (h *Handler) InitRoutes() *gin.Engine {
 	// Профиль человека
 	profile := router.Group("/profile", h.authenticateClient)
 	{
-		// Done
 		profile.GET("/:id", h.getUserProfile)
 		profile.GET("/subscribers/:id", h.getUserSubscribers)
 		profile.GET("/subscriptions/:id", h.getUserSubscriptions)
 	}
-	// DONE!
 	search := router.Group("/search", h.authenticateClient)
 	{
 		search.GET("/song", h.SearchSongs)
 		search.GET("/album", h.SearchAlbums)
 		search.GET("/user", h.SearchUsers)
 	}
-	// DONE!
 	action := router.Group("/action", h.authenticateClient)
 	{
 		action.POST("/review/:id", h.reviewRelease)
 		action.POST("/subscribe/:id", h.subscribe)
+		action.POST("/unsubscribe/:id", h.unsubscribe)
 		action.POST("/username", h.changeUsername)
 		action.POST("/nickname", h.changeNickname)
 		action.POST("/delete_review/:id", h.deleteReviewById)
-		action.POST("/unsubscribe/:id", h.unsubscribe)
 		// deleted
 		//action.POST("/post_story/:id", h.postStory)
 	}
-	// DONE!
 	reviews := router.Group("/reviews", h.authenticateClient)
 	{
 		reviews.GET("/to_release/:id", h.ReviewsOfSubscriptions)
 	}
-
-	// DONE!
 	library := router.Group("/library", h.authenticateClient)
 	{
 		// все обзоры пользователя

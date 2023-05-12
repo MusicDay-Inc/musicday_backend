@@ -102,10 +102,16 @@ func (s *UserService) ChangeUsername(clientId uuid.UUID, username string) (core.
 }
 
 func (s *UserService) Subscribe(clientId uuid.UUID, userId uuid.UUID) (core.UserDTO, error) {
-	bad := s.r.IsSubscriptionExists(clientId, userId)
-	if bad {
-		user, err := s.r.GetById(userId)
-		return user.ToDTO(), err
+	user, err := s.r.GetById(userId)
+	if err != nil {
+		return user.ToDTO(), core.ErrNotFound
+	}
+	if clientId == userId {
+		return user.ToDTO(), core.ErrIncorrectBody
+	}
+	ok := !s.r.IsSubscriptionExists(clientId, userId)
+	if !ok {
+		return user.ToDTO(), core.ErrAlreadyExists
 	}
 	updatedUser, err := s.r.Subscribe(clientId, userId)
 	if err != nil {
@@ -115,10 +121,16 @@ func (s *UserService) Subscribe(clientId uuid.UUID, userId uuid.UUID) (core.User
 }
 
 func (s *UserService) Unsubscribe(clientId uuid.UUID, userId uuid.UUID) (core.UserDTO, error) {
+	user, err := s.r.GetById(userId)
+	if err != nil {
+		return user.ToDTO(), core.ErrNotFound
+	}
+	if clientId == userId {
+		return user.ToDTO(), core.ErrIncorrectBody
+	}
 	ok := s.r.IsSubscriptionExists(clientId, userId)
 	if !ok {
-		user, err := s.r.GetById(userId)
-		return user.ToDTO(), err
+		return user.ToDTO(), core.ErrAlreadyExists
 	}
 	updatedUser, err := s.r.Unsubscribe(clientId, userId)
 	if err != nil {
