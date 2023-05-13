@@ -73,7 +73,7 @@ func (h *Handler) InitRoutes() *gin.Engine {
 		// все альбомы
 		library.GET("/albums/:id", h.UserAlbumReviews)
 	}
-	img := router.Group("/image", h.authenticateClient)
+	img := router.Group("/image")
 	{
 		//library.GET("/release/:id", h.UserAllReviews)
 		//library.GET("/user/:id", h.UserAllReviews)
