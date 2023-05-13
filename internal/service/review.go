@@ -32,11 +32,36 @@ func (s *ReviewService) GetReviewsOfUserSubscriptions(clientId uuid.UUID, limit 
 	res = make([]core.ReviewOfUserDTO, len(reviews))
 	for i, review := range reviews {
 		rDomain := review.ToDomain()
-		userItem, errUser := s.user.GetById(rDomain.UserId)
-		if errUser != nil {
-			return make([]core.ReviewOfUserDTO, 0), errUser
+		if rDomain.IsSongReviewed {
+			song, errSong := s.song.GetById(rDomain.ReleaseId)
+			sD := song.ToDomain()
+			if errSong != nil {
+				logrus.Errorf("Unexpected error %v", errSong)
+				return make([]core.ReviewOfUserDTO, 0), errSong
+			}
+			userItem, errUser := s.user.GetById(rDomain.UserId)
+			if errUser != nil {
+				return make([]core.ReviewOfUserDTO, 0), errUser
+			}
+			rDTO := rDomain.ToUserDTO(userItem)
+			rDTO.Song = sD.ToDTO()
+			res[i] = rDTO
+		} else {
+			album, errAlbum := s.album.GetById(rDomain.ReleaseId)
+			aD := album.ToDomain()
+			if errAlbum != nil {
+				logrus.Errorf("Unexpected error %v", errAlbum)
+				return make([]core.ReviewOfUserDTO, 0), errAlbum
+			}
+			userItem, errUser := s.user.GetById(rDomain.UserId)
+			if errUser != nil {
+				return make([]core.ReviewOfUserDTO, 0), errUser
+			}
+			rDTO := rDomain.ToUserDTO(userItem)
+			rDTO.Album = aD.ToDTO()
+			res[i] = rDTO
 		}
-		res[i] = rDomain.ToUserDTO(userItem)
+
 	}
 	return res, nil
 }

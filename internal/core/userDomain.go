@@ -39,7 +39,7 @@ type Review struct {
 }
 
 func (r *Review) ValidateScore() bool {
-	return r.Score > 0 && r.Score <= 10
+	return r.Score > 0 && r.Score <= 5
 }
 
 func (r *Review) ToEmptyDTO() (review ReviewDTO) {
