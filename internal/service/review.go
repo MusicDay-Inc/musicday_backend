@@ -66,7 +66,20 @@ func (s *ReviewService) GetReviewsOfUserSubscriptions(clientId uuid.UUID, limit 
 	return res, nil
 }
 
-func (s *ReviewService) GetAlbumReviewsOfUser(userId uuid.UUID, limit int, offset int) (res []core.ReviewDTO, err error) {
+func (s *ReviewService) GetAlbumReviewsOfUser(userId uuid.UUID, limit int, offset int, sortParam string, orderParam string) (res []core.ReviewDTO, err error) {
+	var (
+		param string
+	)
+	if sortParam == "score" {
+		param += "score"
+	} else {
+		param += "published_at"
+	}
+	if orderParam == "asc" {
+		param += " " + "asc"
+	} else {
+		param += " " + "desc"
+	}
 	reviews, err := s.rev.GetAlbumReviewsFromUser(userId, limit, offset)
 	if err != nil {
 		return
@@ -83,8 +96,22 @@ func (s *ReviewService) GetAlbumReviewsOfUser(userId uuid.UUID, limit int, offse
 	return res, nil
 }
 
-func (s *ReviewService) GetAllUserReviews(userId uuid.UUID, limit int, offset int) (res []core.ReviewDTO, err error) {
-	reviews, err := s.rev.GetReviewsFromUser(userId, limit, offset)
+func (s *ReviewService) GetAllUserReviews(userId uuid.UUID, limit int, offset int, sortParam string, orderParam string) (res []core.ReviewDTO, err error) {
+	var (
+		reviews []core.ReviewDAO
+		param   string
+	)
+	if sortParam == "score" {
+		param += "score"
+	} else {
+		param += "published_at"
+	}
+	if orderParam == "asc" {
+		param += " " + "asc"
+	} else {
+		param += " " + "desc"
+	}
+	reviews, err = s.rev.GetReviewsFromUser(userId, limit, offset, param)
 	if err != nil {
 		return
 	}
@@ -108,8 +135,21 @@ func (s *ReviewService) GetAllUserReviews(userId uuid.UUID, limit int, offset in
 	return res, nil
 }
 
-func (s *ReviewService) GetSongReviewsOfUser(userId uuid.UUID, limit int, offset int) (res []core.ReviewDTO, err error) {
-	reviews, err := s.rev.GetSongReviewsFromUser(userId, limit, offset)
+func (s *ReviewService) GetSongReviewsOfUser(userId uuid.UUID, limit int, offset int, sortParam string, orderParam string) (res []core.ReviewDTO, err error) {
+	var (
+		param string
+	)
+	if sortParam == "score" {
+		param += "score"
+	} else {
+		param += "published_at"
+	}
+	if orderParam == "asc" {
+		param += " " + "asc"
+	} else {
+		param += " " + "desc"
+	}
+	reviews, err := s.rev.GetSongReviewsFromUser(userId, limit, offset, param)
 	if err != nil {
 		return
 	}

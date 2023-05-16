@@ -18,6 +18,9 @@ func (h *Handler) UserAllReviews(c *gin.Context) {
 	// TODO In the future add ascending/descending param
 	limitP := c.Query("limit")
 	offsetP := c.Query("offset")
+	sortByParam := c.Query("sort_by")
+	orderParam := c.Query("order")
+
 	limit, err := strconv.Atoi(limitP)
 	if err != nil {
 		newErrorResponse(c, http.StatusBadRequest, core.CodeIncorrectBody, "couldn't get limit from parameter")
@@ -32,7 +35,7 @@ func (h *Handler) UserAllReviews(c *gin.Context) {
 		newErrorResponse(c, http.StatusBadRequest, core.CodeIncorrectBody, "limit is too big")
 		return
 	}
-	reviews, err := h.services.Review.GetAllUserReviews(userId, limit, offset)
+	reviews, err := h.services.Review.GetAllUserReviews(userId, limit, offset, sortByParam, orderParam)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, core.CodeInternalError, core.ErrInternal.Error())
 		return
@@ -49,6 +52,9 @@ func (h *Handler) UserSongReviews(c *gin.Context) {
 	}
 	limitP := c.Query("limit")
 	offsetP := c.Query("offset")
+	sortByParam := c.Query("sort_by")
+	orderParam := c.Query("order")
+
 	limit, err := strconv.Atoi(limitP)
 	if err != nil {
 		newErrorResponse(c, http.StatusBadRequest, core.CodeIncorrectBody, "couldn't get limit from parameter")
@@ -63,7 +69,7 @@ func (h *Handler) UserSongReviews(c *gin.Context) {
 		newErrorResponse(c, http.StatusBadRequest, core.CodeIncorrectBody, "limit is too big")
 		return
 	}
-	reviews, err := h.services.Review.GetSongReviewsOfUser(userId, limit, offset)
+	reviews, err := h.services.Review.GetSongReviewsOfUser(userId, limit, offset, sortByParam, orderParam)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, core.CodeInternalError, core.ErrInternal.Error())
 		return
@@ -80,6 +86,9 @@ func (h *Handler) UserAlbumReviews(c *gin.Context) {
 	}
 	limitP := c.Query("limit")
 	offsetP := c.Query("offset")
+	sortByParam := c.Query("sort_by")
+	orderParam := c.Query("order")
+
 	limit, err := strconv.Atoi(limitP)
 	if err != nil {
 		newErrorResponse(c, http.StatusBadRequest, core.CodeIncorrectBody, "couldn't get limit from parameter")
@@ -94,7 +103,7 @@ func (h *Handler) UserAlbumReviews(c *gin.Context) {
 		newErrorResponse(c, http.StatusBadRequest, core.CodeIncorrectBody, "limit is too big")
 		return
 	}
-	reviews, err := h.services.Review.GetAlbumReviewsOfUser(userId, limit, offset)
+	reviews, err := h.services.Review.GetAlbumReviewsOfUser(userId, limit, offset, sortByParam, orderParam)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, core.CodeInternalError, core.ErrInternal.Error())
 		return

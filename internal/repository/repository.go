@@ -54,9 +54,9 @@ type Review interface {
 	UpdateReview(review core.Review) (core.ReviewDAO, error)
 	GetSubscriptionReviews(releaseId uuid.UUID, clientId uuid.UUID) ([]core.ReviewDAO, error)
 	Delete(id uuid.UUID) error
-	GetSongReviewsFromUser(userId uuid.UUID, limit int, offset int) ([]core.ReviewDAO, error)
+	GetSongReviewsFromUser(userId uuid.UUID, limit int, offset int, param string) ([]core.ReviewDAO, error)
 	GetAlbumReviewsFromUser(userId uuid.UUID, limit int, offset int) ([]core.ReviewDAO, error)
-	GetReviewsFromUser(userId uuid.UUID, limit int, offset int) ([]core.ReviewDAO, error)
+	GetReviewsFromUser(userId uuid.UUID, limit int, offset int, param string) ([]core.ReviewDAO, error)
 	GetReviewsOfUserSubscriptions(clientId uuid.UUID, limit int, offset int) ([]core.ReviewDAO, error)
 	CountReviewsOfUser(userId uuid.UUID, isToSongs bool) (int32, error)
 }

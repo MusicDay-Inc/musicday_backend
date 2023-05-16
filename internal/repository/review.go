@@ -42,12 +42,15 @@ func (r ReviewRepository) GetReviewsOfUserSubscriptions(clientId uuid.UUID, limi
 	return
 }
 
-func (r ReviewRepository) GetReviewsFromUser(userId uuid.UUID, limit int, offset int) (reviews []core.ReviewDAO, err error) {
+func (r ReviewRepository) GetReviewsFromUser(userId uuid.UUID, limit int, offset int, param string) (reviews []core.ReviewDAO, err error) {
+	//var q string
+	//var sortColumn string
 	q := `
-	SELECT * FROM reviews WHERE user_id = $1
-	ORDER BY published_at DESC 
-	LIMIT $2 OFFSET $3
-	`
+		SELECT * FROM reviews WHERE user_id = $1
+		ORDER BY ` + param + `
+		LIMIT $2 OFFSET $3
+		`
+	//published_at
 	logrus.Trace(formatQuery(q))
 	err = r.db.Select(&reviews, q, userId, limit, offset)
 	if err != nil {
@@ -70,10 +73,10 @@ func (r ReviewRepository) GetAlbumReviewsFromUser(userId uuid.UUID, limit int, o
 	return
 }
 
-func (r ReviewRepository) GetSongReviewsFromUser(userId uuid.UUID, limit int, offset int) (reviews []core.ReviewDAO, err error) {
+func (r ReviewRepository) GetSongReviewsFromUser(userId uuid.UUID, limit int, offset int, param string) (reviews []core.ReviewDAO, err error) {
 	q := `
 	SELECT * FROM reviews WHERE (user_id, is_song_reviewed) = ($1, true)
-	ORDER BY published_at DESC
+	ORDER BY ` + param + `
 	LIMIT $2 OFFSET $3
 	`
 	logrus.Trace(formatQuery(q))
