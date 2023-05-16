@@ -22,7 +22,7 @@ http://134.0.119.220:8000/
 ## Строение репозитория:
 
 ### Точка входа в программу и инициализация конфигураций
-**[main.go](https://github.com/musicday/server/tree/main/cmd/app)**
+**[main.go](https://github.com/MusicDay-Inc/musicday_backend/blob/main/cmd/app/main.go)**
 > В данном файле запускается вся прогамма:
 > 
 > Инициализируется logrus (библеотека логирования)
@@ -31,7 +31,7 @@ http://134.0.119.220:8000/
 > 
 > Инициализируются все три слоя чистой арихтектуры ссылаясь 
 > друг на друга
-```go
+```gotemplate
 repos := repository.New(db)
 services := service.NewService(repos)
 handlers := transport.NewHandler(services)
