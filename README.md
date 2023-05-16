@@ -39,7 +39,7 @@ handlers := transport.NewHandler(services)
 > Запускается сервер на 8000 порту
 
 ### Коллекция моделей сущностей с которыми аппелирует программа, а также паттерны DTO DAO для них
-**[сore/](https://github.com/MusicDay-Inc/musicday_backend/blob/main/core/)**
+**[сore/](https://github.com/MusicDay-Inc/musicday_backend/blob/main/internal/core/)**
 >Коллекция моделей сущностей с которыми аппелирует программа, 
 > а также паттерны DTO DAO для них
 ```gotemplate
@@ -68,7 +68,7 @@ return
 ```
 
 ### Транспортный слой програмым
-**[transport/](https://github.com/MusicDay-Inc/musicday_backend/blob/main/transport/)**
+**[transport/](https://github.com/MusicDay-Inc/musicday_backend/blob/main/internal/transport/)**
 > Код (логика) связанная с принямием http запросов по определенным эндпоинтами (хэндлеры), 
 > а также обращение в слой бизнес логики (/service). Например:
 ```go
@@ -110,7 +110,7 @@ func (h *Handler) InitRoutes() *gin.Engine {
 ```
 
 ### Сервисный слой (слой бизнес-логики)
-**[service/](https://github.com/MusicDay-Inc/musicday_backend/blob/main/service/)**
+**[service/](https://github.com/MusicDay-Inc/musicday_backend/blob/main/internal/service/)**
 > Код связанный с основной логикой обработки различных данных, 
 > ее проверка, провекра относительно других сущностей, аккомуляция данных и другое
 >
@@ -118,7 +118,7 @@ func (h *Handler) InitRoutes() *gin.Engine {
 
 
 ### Слой репозитория (слой бращения к хранилищу данных)
-**[repository/](https://github.com/MusicDay-Inc/musicday_backend/blob/main/repository/)**
+**[repository/](https://github.com/MusicDay-Inc/musicday_backend/blob/main/internal/repository/)**
 > Код связанный с получаение изменением и записью данных в БД (postgreSQL)
 > Данный слой использует библиотеку sqlx и обращения к БД SQL запросами:
 > 
