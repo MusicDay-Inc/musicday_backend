@@ -2,8 +2,15 @@ package transport
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/sirupsen/logrus"
+	"image"
+	"image/jpeg"
+	"image/png"
+	"io"
 	"io/ioutil"
 	"net/http"
+	"os"
+	"path/filepath"
 	"server/internal/core"
 )
 
@@ -70,7 +77,59 @@ import (
 //		return
 //	}
 //
-// TODO
+// TODO Prev version
+//func (h *Handler) PostAvatar(c *gin.Context) {
+//	clientId, err := h.getClientId(c)
+//	if err != nil {
+//		newErrorResponse(c, http.StatusInternalServerError, core.CodeInternalError, "couldn't get clientId from context")
+//		return
+//	}
+//
+//	file, err := c.FormFile("picture")
+//	if err != nil {
+//		c.String(http.StatusBadRequest, "Failed to get file")
+//		return
+//	}
+//	// Save the file to the server
+//	if err = c.SaveUploadedFile(file, "./img/"+clientId.String()+".jpeg"); err != nil {
+//		c.String(http.StatusInternalServerError, "Failed to save file")
+//		return
+//	}
+//	user, err := h.services.User.UploadAvatar(clientId)
+//	if err != nil {
+//		newErrorResponse(c, http.StatusInternalServerError, core.CodeInternalError, core.ErrInternal.Error())
+//		return
+//	}
+//	//c.Data(http.StatusOK, "application/octet-stream", data)
+//	c.JSON(http.StatusOK, user)
+//	return
+//}
+//
+//func (h *Handler) getReleaseCover(c *gin.Context) {
+//	srcId := h.parseUUIDFromParam(c)
+//	coverId, err := h.services.Album.GetCoverId(srcId)
+//	if err != nil {
+//		s, errS := h.services.Song.GetById(srcId)
+//		if errS != nil {
+//			newErrorResponse(c, http.StatusBadRequest, core.CodeIncorrectBody, "incorrect release id")
+//			return
+//		}
+//		coverId = s.Id
+//	}
+//	// TODO read by buffer
+//	imageBytes, err := ioutil.ReadFile("./img/" + coverId.String() + ".jpeg")
+//	if err != nil {
+//		newErrorResponse(c, http.StatusInternalServerError, core.CodeInternalError, "Can't read file")
+//		return
+//	}
+//	// Set the appropriate HTTP headers
+//	c.Header("Content-Type", "application/octet-stream")
+//	c.Header("Content-Disposition", "attachment; filename=cover.jpeg")
+//	// Write the image data to the response body
+//	c.Data(http.StatusOK, "application/octet-stream", imageBytes)
+//}
+
+// TODO New
 func (h *Handler) PostAvatar(c *gin.Context) {
 	clientId, err := h.getClientId(c)
 	if err != nil {
@@ -78,16 +137,69 @@ func (h *Handler) PostAvatar(c *gin.Context) {
 		return
 	}
 
-	file, err := c.FormFile("picture")
+	//file, err := c.FormFile("picture")
+	//if err != nil {
+	//	c.String(http.StatusBadRequest, "Failed to get file")
+	//	return
+	//}
+	dest := "./img/" + clientId.String() + ".jpeg"
+	file, header, err := c.Request.FormFile("picture")
 	if err != nil {
-		c.String(http.StatusBadRequest, "Failed to get file")
+		newErrorResponse(c, http.StatusBadRequest, core.CodeIncorrectBody, "incorrect couldn't get file from the form")
 		return
 	}
+	// Determine the file extension
+	ext := filepath.Ext(header.Filename)
+	var img image.Image
+	resFile, errCreate := os.Create(dest)
+	if errCreate != nil {
+		logrus.Error(errCreate)
+		newErrorResponse(c, http.StatusInternalServerError, core.CodeInternalError, "couldn't create file")
+		return
+	}
+
+	if ext != ".jpeg" && ext != ".jpg" {
+		if ext == ".png" {
+			img, err = png.Decode(file)
+			if err != nil {
+				logrus.Error(err)
+				newErrorResponse(c, http.StatusInternalServerError, core.CodeInternalError, "couldn't decode png file")
+				return
+			}
+			var opt jpeg.Options
+			// Качество
+			opt.Quality = 95
+			if err = jpeg.Encode(resFile, img, &opt); err != nil {
+				logrus.Error(err)
+				newErrorResponse(c, http.StatusInternalServerError, core.CodeInternalError, "couldn't encode to jpeg")
+				return
+			}
+
+			user, errUsr := h.services.User.UploadAvatar(clientId)
+			if errUsr != nil {
+				newErrorResponse(c, http.StatusInternalServerError, core.CodeInternalError, core.ErrInternal.Error())
+				return
+			}
+			//c.Data(http.StatusOK, "application/octet-stream", data)
+			c.JSON(http.StatusOK, user)
+			return
+			//err := jpeg.Encode(w, img, &jpeg.Options{Quality: jpegCompression})
+		} else {
+			newErrorResponse(c, http.StatusBadRequest, core.CodeIncorrectBody, "incorrect file format")
+			return
+		}
+	}
+
 	// Save the file to the server
-	if err = c.SaveUploadedFile(file, "./img/"+clientId.String()+".jpeg"); err != nil {
-		c.String(http.StatusInternalServerError, "Failed to save file")
+	//if err = c.SaveUploadedFile(file, "./img/"+clientId.String()+".jpeg"); err != nil {
+	//	c.String(http.StatusInternalServerError, "Failed to save file")
+	//	return
+	//}
+	if _, errC := io.Copy(resFile, file); errC != nil {
+		newErrorResponse(c, http.StatusInternalServerError, core.CodeInternalError, core.ErrInternal.Error())
 		return
 	}
+
 	user, err := h.services.User.UploadAvatar(clientId)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, core.CodeInternalError, core.ErrInternal.Error())
