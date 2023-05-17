@@ -57,6 +57,7 @@ func (h *Handler) InitRoutes() *gin.Engine {
 		action.POST("/delete_review/:id", h.deleteReviewById)
 		action.POST("/bio", h.CreateClientBio)
 		action.POST("/avatar", h.PostAvatar)
+		action.POST("/player_id/:id", h.postPlayerId)
 		// deleted
 		//action.POST("/post_story/:id", h.postStory)
 	}

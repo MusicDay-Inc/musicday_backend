@@ -31,6 +31,8 @@ type User interface {
 	GetSubscriptionsOf(userId uuid.UUID, limit int, offset int) ([]core.UserDAO, error)
 	GetBio(userId uuid.UUID) (string, error)
 	CreateBio(userId uuid.UUID, bio string) (string, error)
+	InstallAppID(clientId uuid.UUID, playerID uuid.UUID) error
+	GetPlayerID(userId uuid.UUID) (string, error)
 }
 
 type Song interface {

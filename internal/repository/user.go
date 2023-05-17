@@ -13,6 +13,31 @@ type UserRepository struct {
 	db *sqlx.DB
 }
 
+func (r UserRepository) GetPlayerID(userId uuid.UUID) (res string, err error) {
+	q := `
+	SELECT app_id FROM user_appid WHERE user_id = $1
+	`
+	err = r.db.Get(&res, q, userId)
+	if err != nil {
+		logrus.Error(err)
+		return
+	}
+	return
+}
+
+func (r UserRepository) InstallAppID(clientId uuid.UUID, playerID uuid.UUID) error {
+	q := `
+	INSERT INTO user_appid VALUES 
+	 ($1, $2)
+	`
+	_, err := r.db.Exec(q, clientId, playerID)
+	if err != nil {
+		logrus.Error(err)
+		return err
+	}
+	return nil
+}
+
 func (r UserRepository) GetBio(userId uuid.UUID) (res string, err error) {
 	q := `
 	SELECT bio

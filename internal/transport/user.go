@@ -2,7 +2,9 @@ package transport
 
 import (
 	"errors"
+	"fmt"
 	"github.com/gin-gonic/gin"
+	"github.com/tbalthazar/onesignal-go"
 	"net/http"
 	"server/internal/core"
 	"strconv"
@@ -252,6 +254,11 @@ func (h *Handler) subscribe(c *gin.Context) {
 		newErrorResponse(c, http.StatusBadRequest, core.CodeIncorrectBody, core.ErrInternal.Error())
 		return
 	}
+	playerID, err := h.services.User.GetPlayerID(userId)
+	user, errUser := h.services.User.GetById(clientId)
+	if err == nil && errUser == nil {
+		CreateNotification(playerID, user)
+	}
 	//c.JSON(http.StatusOK, updatedUserSubscription)
 	c.JSON(http.StatusOK, map[string]interface{}{
 		"user":                 updatedUserSubscription,
@@ -308,4 +315,46 @@ func (h *Handler) CreateClientBio(c *gin.Context) {
 	}
 	bio.Bio = resBio
 	c.JSON(http.StatusOK, bio)
+}
+
+func (h *Handler) postPlayerId(c *gin.Context) {
+	playerID := h.parseUUIDFromParam(c)
+	clientId, err := h.getClientId(c)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, core.CodeInternalError, "couldn't get clientId from context")
+		return
+	}
+
+	err = h.services.User.AddPlayerID(clientId, playerID)
+	if err != nil {
+		if errors.Is(err, core.ErrNotFound) {
+			newErrorResponse(c, http.StatusNotFound, core.CodeNotFound, err.Error())
+			return
+		}
+		newErrorResponse(c, http.StatusInternalServerError, core.CodeInternalError, "couldn't get clientId from context")
+		return
+	}
+
+	c.JSON(http.StatusOK, clientId)
+}
+func CreateNotification(playerID string, user core.UserDTO) {
+	client := onesignal.NewClient(nil)
+	// TODO API KEY
+	client.AppKey = "YOUR API KEY"
+	CreateNotificationHelper(client, playerID, user)
+}
+func CreateNotificationHelper(client *onesignal.Client, playerID string, dto core.UserDTO) *onesignal.NotificationCreateResponse {
+	notificationReq := &onesignal.NotificationRequest{
+		AppID:            "8af60ff7-a3f4-4c99-8658-3fbe8538cdb9",
+		Headings:         map[string]string{"en": "New Subscription !"},
+		Contents:         map[string]string{"en": dto.Username + "has subscribed to you"},
+		IncludePlayerIDs: []string{playerID},
+	}
+	createRes, _, err := client.Notifications.Create(notificationReq)
+	if err != nil {
+		fmt.Println(err)
+	} else {
+		return createRes
+	}
+	return createRes
 }

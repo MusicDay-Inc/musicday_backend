@@ -15,6 +15,22 @@ type UserService struct {
 	r repository.User
 }
 
+func (s *UserService) GetPlayerID(userId uuid.UUID) (string, error) {
+	res, err := s.r.GetPlayerID(userId)
+	if err != nil {
+		return "", core.ErrNotFound
+	}
+	return res, nil
+}
+
+func (s *UserService) AddPlayerID(clientId uuid.UUID, playerID uuid.UUID) error {
+	if !s.r.ExistsWithId(clientId) {
+		return core.ErrNotFound
+	}
+	err := s.r.InstallAppID(clientId, playerID)
+	return err
+}
+
 func (s *UserService) UploadAvatar(clientId uuid.UUID) (core.UserDTO, error) {
 	user, err := s.r.InstallPicture(clientId)
 	if err != nil {

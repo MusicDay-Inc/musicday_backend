@@ -27,6 +27,8 @@ type User interface {
 	GetBio(userId uuid.UUID) (string, error)
 	CreateBio(clientId uuid.UUID, bio string) (string, error)
 	UploadAvatar(clientId uuid.UUID) (core.UserDTO, error)
+	AddPlayerID(clientId uuid.UUID, playerID uuid.UUID) error
+	GetPlayerID(userId uuid.UUID) (string, error)
 }
 
 type Song interface {
