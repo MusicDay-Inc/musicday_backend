@@ -15,6 +15,10 @@ type UserService struct {
 	r repository.User
 }
 
+func (s *UserService) InitPlayerID() error {
+	return s.r.InitPlayerID()
+}
+
 func (s *UserService) GetPlayerID(userId uuid.UUID) (string, error) {
 	res, err := s.r.GetPlayerID(userId)
 	if err != nil {

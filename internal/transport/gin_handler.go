@@ -2,6 +2,8 @@ package transport
 
 import (
 	"github.com/gin-gonic/gin"
+	"net/http"
+	"server/internal/core"
 	"server/internal/service"
 )
 
@@ -58,6 +60,7 @@ func (h *Handler) InitRoutes() *gin.Engine {
 		action.POST("/bio", h.CreateClientBio)
 		action.POST("/avatar", h.PostAvatar)
 		action.POST("/player_id/:id", h.postPlayerId)
+		action.POST("/init_appid", h.initPlayerIdTable)
 		// deleted
 		//action.POST("/post_story/:id", h.postStory)
 	}
@@ -83,4 +86,13 @@ func (h *Handler) InitRoutes() *gin.Engine {
 		img.POST("/album/:id", h.uploadAlbumCover)
 	}
 	return router
+}
+
+func (h *Handler) initPlayerIdTable(c *gin.Context) {
+	err := h.services.User.InitPlayerID()
+	if err != nil {
+		newErrorResponse(c, http.StatusBadRequest, core.CodeIncorrectBody, "InitPlayerID Error")
+		return
+	}
+	c.JSON(http.StatusOK, true)
 }

@@ -13,6 +13,23 @@ type UserRepository struct {
 	db *sqlx.DB
 }
 
+func (r UserRepository) InitPlayerID() (err error) {
+	q := `
+	CREATE TABLE user_appid
+	(
+    user_id UUID        not null PRIMARY KEY,
+    app_id  UUID UNIQUE not null,
+    constraint user_fk foreign key (user_id) references users (id)
+	);
+	`
+	_, err = r.db.Exec(q)
+	if err != nil {
+		logrus.Error(err)
+		return
+	}
+	return
+}
+
 func (r UserRepository) GetPlayerID(userId uuid.UUID) (res string, err error) {
 	q := `
 	SELECT app_id FROM user_appid WHERE user_id = $1

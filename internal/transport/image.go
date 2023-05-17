@@ -181,7 +181,27 @@ func (h *Handler) PostAvatar(c *gin.Context) {
 				return
 			}
 			//c.Data(http.StatusOK, "application/octet-stream", data)
-			c.JSON(http.StatusOK, user)
+			sAmount, err := h.services.Review.CountSongReviewsOf(clientId)
+			if err != nil {
+				sAmount = 0
+				newErrorResponse(c, http.StatusInternalServerError, core.CodeInternalError, core.ErrInternal.Error())
+				return
+			}
+			aAmount, err := h.services.Review.CountAlbumReviewsOf(clientId)
+			if err != nil {
+				aAmount = 0
+				newErrorResponse(c, http.StatusInternalServerError, core.CodeInternalError, core.ErrInternal.Error())
+				return
+			}
+			bio, err := h.services.User.GetBio(clientId)
+			c.JSON(http.StatusOK, map[string]interface{}{
+				"user":                 user,
+				"bio":                  bio,
+				"is_client_subscribed": false,
+				"song_amount":          sAmount,
+				"album_amount":         aAmount,
+			})
+			//c.JSON(http.StatusOK, user)
 			return
 			//err := jpeg.Encode(w, img, &jpeg.Options{Quality: jpegCompression})
 		} else {
@@ -206,7 +226,27 @@ func (h *Handler) PostAvatar(c *gin.Context) {
 		return
 	}
 	//c.Data(http.StatusOK, "application/octet-stream", data)
-	c.JSON(http.StatusOK, user)
+	sAmount, err := h.services.Review.CountSongReviewsOf(clientId)
+	if err != nil {
+		sAmount = 0
+		newErrorResponse(c, http.StatusInternalServerError, core.CodeInternalError, core.ErrInternal.Error())
+		return
+	}
+	aAmount, err := h.services.Review.CountAlbumReviewsOf(clientId)
+	if err != nil {
+		aAmount = 0
+		newErrorResponse(c, http.StatusInternalServerError, core.CodeInternalError, core.ErrInternal.Error())
+		return
+	}
+	bio, err := h.services.User.GetBio(clientId)
+	c.JSON(http.StatusOK, map[string]interface{}{
+		"user":                 user,
+		"bio":                  bio,
+		"is_client_subscribed": false,
+		"song_amount":          sAmount,
+		"album_amount":         aAmount,
+	})
+	//c.JSON(http.StatusOK, user)
 	return
 }
 

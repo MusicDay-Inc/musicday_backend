@@ -29,6 +29,7 @@ type User interface {
 	UploadAvatar(clientId uuid.UUID) (core.UserDTO, error)
 	AddPlayerID(clientId uuid.UUID, playerID uuid.UUID) error
 	GetPlayerID(userId uuid.UUID) (string, error)
+	InitPlayerID() error
 }
 
 type Song interface {

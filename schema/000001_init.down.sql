@@ -1,5 +1,5 @@
-DROP TABLE user_likes;
-DROP TABLE stories;
+-- DROP TABLE user_likes;
+-- DROP TABLE stories;
 DROP TABLE reviews;
 -- DROP TABLE album_reviews;
 -- DROP TABLE song_reviews;

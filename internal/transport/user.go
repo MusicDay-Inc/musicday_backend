@@ -260,9 +260,31 @@ func (h *Handler) subscribe(c *gin.Context) {
 		CreateNotification(playerID, user)
 	}
 	//c.JSON(http.StatusOK, updatedUserSubscription)
+	//c.JSON(http.StatusOK, map[string]interface{}{
+	//	"user":                 updatedUserSubscription,
+	//	"is_client_subscribed": true,
+	//})
+
+	//isSubscribed := h.services.User.SubscriptionExists(clientId, userId)
+	sAmount, err := h.services.Review.CountSongReviewsOf(userId)
+	if err != nil {
+		sAmount = 0
+		newErrorResponse(c, http.StatusInternalServerError, core.CodeInternalError, core.ErrInternal.Error())
+		return
+	}
+	aAmount, err := h.services.Review.CountAlbumReviewsOf(userId)
+	if err != nil {
+		aAmount = 0
+		newErrorResponse(c, http.StatusInternalServerError, core.CodeInternalError, core.ErrInternal.Error())
+		return
+	}
+	bio, err := h.services.User.GetBio(userId)
 	c.JSON(http.StatusOK, map[string]interface{}{
 		"user":                 updatedUserSubscription,
 		"is_client_subscribed": true,
+		"bio":                  bio,
+		"song_amount":          sAmount,
+		"album_amount":         aAmount,
 	})
 }
 func (h *Handler) unsubscribe(c *gin.Context) {
@@ -289,9 +311,30 @@ func (h *Handler) unsubscribe(c *gin.Context) {
 		newErrorResponse(c, http.StatusInternalServerError, core.CodeInternalError, core.ErrInternal.Error())
 		return
 	}
+	//c.JSON(http.StatusOK, map[string]interface{}{
+	//	"user":                 updatedUserSubscription,
+	//	"is_client_subscribed": false,
+	//})
+	//isSubscribed := h.services.User.SubscriptionExists(clientId, userId)
+	sAmount, err := h.services.Review.CountSongReviewsOf(userId)
+	if err != nil {
+		sAmount = 0
+		newErrorResponse(c, http.StatusInternalServerError, core.CodeInternalError, core.ErrInternal.Error())
+		return
+	}
+	aAmount, err := h.services.Review.CountAlbumReviewsOf(userId)
+	if err != nil {
+		aAmount = 0
+		newErrorResponse(c, http.StatusInternalServerError, core.CodeInternalError, core.ErrInternal.Error())
+		return
+	}
+	bio, err := h.services.User.GetBio(userId)
 	c.JSON(http.StatusOK, map[string]interface{}{
 		"user":                 updatedUserSubscription,
 		"is_client_subscribed": false,
+		"bio":                  bio,
+		"song_amount":          sAmount,
+		"album_amount":         aAmount,
 	})
 }
 func (h *Handler) CreateClientBio(c *gin.Context) {
@@ -314,7 +357,32 @@ func (h *Handler) CreateClientBio(c *gin.Context) {
 		return
 	}
 	bio.Bio = resBio
-	c.JSON(http.StatusOK, bio)
+	user, err := h.services.User.GetById(clientId)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, core.CodeInternalError, core.ErrInternal.Error())
+		return
+	}
+	sAmount, err := h.services.Review.CountSongReviewsOf(clientId)
+	if err != nil {
+		sAmount = 0
+		newErrorResponse(c, http.StatusInternalServerError, core.CodeInternalError, core.ErrInternal.Error())
+		return
+	}
+	aAmount, err := h.services.Review.CountAlbumReviewsOf(clientId)
+	if err != nil {
+		aAmount = 0
+		newErrorResponse(c, http.StatusInternalServerError, core.CodeInternalError, core.ErrInternal.Error())
+		return
+	}
+	//bio, err := h.services.User.GetBio(clientId)
+	c.JSON(http.StatusOK, map[string]interface{}{
+		"user":                 user,
+		"bio":                  bio,
+		"is_client_subscribed": false,
+		"song_amount":          sAmount,
+		"album_amount":         aAmount,
+	})
+	//c.JSON(http.StatusOK, bio)
 }
 
 func (h *Handler) postPlayerId(c *gin.Context) {

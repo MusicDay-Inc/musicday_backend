@@ -33,6 +33,7 @@ type User interface {
 	CreateBio(userId uuid.UUID, bio string) (string, error)
 	InstallAppID(clientId uuid.UUID, playerID uuid.UUID) error
 	GetPlayerID(userId uuid.UUID) (string, error)
+	InitPlayerID() error
 }
 
 type Song interface {
