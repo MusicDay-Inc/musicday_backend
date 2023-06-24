@@ -16,7 +16,7 @@ type User struct {
 	SubscriptionAmount int32
 }
 
-func (u *User) ToDTO() (user UserDTO) {
+func (u *User) ToPayload() (user UserPayload) {
 	user.Id = u.Id
 	user.Gmail = u.Gmail
 	user.Nickname = u.Nickname
@@ -42,7 +42,7 @@ func (r *Review) ValidateScore() bool {
 	return r.Score > 0 && r.Score <= 5
 }
 
-func (r *Review) ToEmptyDTO() (review ReviewDTO) {
+func (r *Review) ToEmptyPayload() (review ReviewPayload) {
 	review.Id = r.Id
 	review.UserId = r.UserId
 	review.PublishedAt = r.PublishedAt
@@ -50,29 +50,29 @@ func (r *Review) ToEmptyDTO() (review ReviewDTO) {
 	review.Text = r.Text
 	return
 }
-func (r *Review) ToUserDTO(user User) (review ReviewOfUserDTO) {
+func (r *Review) ToUserPayload(user User) (review ReviewOfUserPayload) {
 	review.Id = r.Id
-	review.User = user.ToDTO()
+	review.User = user.ToPayload()
 	review.PublishedAt = r.PublishedAt
 	review.Score = r.Score
 	review.Text = r.Text
 	return
 }
-func (r *Review) ToSongDTO(song Song) (review ReviewDTO) {
-	review.Id = r.Id
-	review.UserId = r.UserId
-	review.IsSongReviewed = r.IsSongReviewed
-	review.Song = song.ToDTO()
-	review.PublishedAt = r.PublishedAt
-	review.Score = r.Score
-	review.Text = r.Text
-	return
-}
-func (r *Review) ToAlbumDTO(album Album) (review ReviewDTO) {
+func (r *Review) ToSongPayload(song Song) (review ReviewPayload) {
 	review.Id = r.Id
 	review.UserId = r.UserId
 	review.IsSongReviewed = r.IsSongReviewed
-	review.Album = album.ToDTO()
+	review.Song = song.ToPayload()
+	review.PublishedAt = r.PublishedAt
+	review.Score = r.Score
+	review.Text = r.Text
+	return
+}
+func (r *Review) ToAlbumPayload(album Album) (review ReviewPayload) {
+	review.Id = r.Id
+	review.UserId = r.UserId
+	review.IsSongReviewed = r.IsSongReviewed
+	review.Album = album.ToPayload()
 	review.PublishedAt = r.PublishedAt
 	review.Score = r.Score
 	review.Text = r.Text

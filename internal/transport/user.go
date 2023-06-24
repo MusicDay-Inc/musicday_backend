@@ -196,7 +196,7 @@ func (h *Handler) changeUsername(c *gin.Context) {
 		newErrorResponse(c, http.StatusInternalServerError, core.CodeInternalError, "couldn't get clientId from context")
 		return
 	}
-	var u core.UserDTO
+	var u core.UserPayload
 	if !bindRequestBody(c, &u) {
 		return
 	}
@@ -209,7 +209,7 @@ func (h *Handler) changeUsername(c *gin.Context) {
 		newErrorResponse(c, http.StatusBadRequest, core.CodeIncorrectBody, err.Error())
 		return
 	}
-	c.JSON(http.StatusOK, newUser.ToDTO())
+	c.JSON(http.StatusOK, newUser.ToPayload())
 }
 
 func (h *Handler) changeNickname(c *gin.Context) {
@@ -218,7 +218,7 @@ func (h *Handler) changeNickname(c *gin.Context) {
 		newErrorResponse(c, http.StatusInternalServerError, core.CodeInternalError, "couldn't get clientId from context")
 		return
 	}
-	var u core.UserDTO
+	var u core.UserPayload
 	if !bindRequestBody(c, &u) {
 		return
 	}
@@ -231,7 +231,7 @@ func (h *Handler) changeNickname(c *gin.Context) {
 		newErrorResponse(c, http.StatusBadRequest, core.CodeIncorrectBody, err.Error())
 		return
 	}
-	c.JSON(http.StatusOK, newUser.ToDTO())
+	c.JSON(http.StatusOK, newUser.ToPayload())
 }
 
 func (h *Handler) subscribe(c *gin.Context) {
@@ -405,13 +405,13 @@ func (h *Handler) postPlayerId(c *gin.Context) {
 
 	c.JSON(http.StatusOK, clientId)
 }
-func CreateNotification(playerID string, user core.UserDTO) {
+func CreateNotification(playerID string, user core.UserPayload) {
 	client := onesignal.NewClient(nil)
 	// TODO API KEY
 	client.AppKey = "YOUR API KEY"
 	CreateNotificationHelper(client, playerID, user)
 }
-func CreateNotificationHelper(client *onesignal.Client, playerID string, dto core.UserDTO) *onesignal.NotificationCreateResponse {
+func CreateNotificationHelper(client *onesignal.Client, playerID string, dto core.UserPayload) *onesignal.NotificationCreateResponse {
 	notificationReq := &onesignal.NotificationRequest{
 		AppID:            "8af60ff7-a3f4-4c99-8658-3fbe8538cdb9",
 		Headings:         map[string]string{"en": "New Subscription !"},

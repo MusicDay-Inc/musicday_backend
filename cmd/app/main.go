@@ -3,7 +3,6 @@ package main
 import (
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
-	"server/internal/local"
 	"server/internal/repository"
 	"server/internal/service"
 	"server/internal/transport"
@@ -14,7 +13,7 @@ func main() {
 	logrus.SetFormatter(new(logrus.JSONFormatter))
 	initViperConfig()
 
-	srv := new(local.Server)
+	srv := new(transport.Server)
 
 	//handlers := new(transport.Handler)
 	// Инциализируем подклбчение к Google Oauth2 API

@@ -118,7 +118,7 @@ func (h *Handler) reviewRelease(c *gin.Context) {
 		newErrorResponse(c, http.StatusInternalServerError, core.CodeInternalError, "couldn't get clientId from context")
 		return
 	}
-	var reviewInput core.ReviewDTO
+	var reviewInput core.ReviewPayload
 	if !bindRequestBody(c, &reviewInput) {
 		return
 	}

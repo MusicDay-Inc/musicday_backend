@@ -21,9 +21,9 @@ func (h *Handler) getAlbumById(c *gin.Context) {
 		return
 	}
 	review, err := h.services.GetReviewToRelease(a.Id, userId)
-	c.JSON(http.StatusOK, core.AlbumWithReviewDTO{
-		AlbumDTO:  a.ToDTO(),
-		ReviewDTO: review.ToEmptyDTO(),
+	c.JSON(http.StatusOK, core.AlbumWithReviewPayload{
+		AlbumPayload:  a.ToPayload(),
+		ReviewPayload: review.ToEmptyPayload(),
 	})
 }
 
@@ -43,12 +43,12 @@ func (h *Handler) getAlbumWitSongsById(c *gin.Context) {
 	songs, err := h.services.Album.GetSongsFromAlbum(albumId)
 	review, err := h.services.GetReviewToRelease(a.Id, userId)
 	type response struct {
-		core.AlbumDTO  `json:"album,omitempty"`
-		core.ReviewDTO `json:"review,omitempty"`
+		core.AlbumPayload  `json:"album,omitempty"`
+		core.ReviewPayload `json:"review,omitempty"`
 	}
 	c.JSON(http.StatusOK, response{
-		AlbumDTO:  a.ToFullDTO(songs),
-		ReviewDTO: review.ToEmptyDTO(),
+		AlbumPayload:  a.ToFullPayload(songs),
+		ReviewPayload: review.ToEmptyPayload(),
 	})
 }
 

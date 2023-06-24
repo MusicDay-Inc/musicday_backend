@@ -24,13 +24,13 @@ func (h *Handler) getSongById(c *gin.Context) {
 
 	review, err := h.services.Review.GetReviewToRelease(s.Id, userId)
 	//c.JSON(http.StatusOK, core.SongWithReviewDTO{
-	//	SongDTO:   s.ToDTO(),
-	//	ReviewDTO: review.ToEmptyDTO(),
+	//	SongPayload:   s.ToPayload(),
+	//	ReviewPayload: review.ToEmptyPayload(),
 	//})
 
 	c.JSON(http.StatusOK, core.SongWithReviewDTO{
-		SongDTO:   s.ToDTO(),
-		ReviewDTO: review.ToEmptyDTO(),
+		SongPayload:   s.ToPayload(),
+		ReviewPayload: review.ToEmptyPayload(),
 	})
 }
 

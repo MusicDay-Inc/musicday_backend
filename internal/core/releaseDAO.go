@@ -58,28 +58,3 @@ func (a *AlbumDAO) ToDomain() (res Album) {
 	res.Duration = a.DurationTime.Sub(zeroTime)
 	return
 }
-
-// TODO DELETE
-
-//func (s *SongDAO) ToReleaseDomain() (r Release) {
-//	r.Id = s.Id
-//	r.IsAlbum = false
-//	r.Name = s.Name
-//	r.Author = s.Author
-//	r.Date = s.Date
-//	r.SongAmount = -1
-//	r.Duration = s.DurationTime.Sub(zeroTime)
-//	//r.DurationTime = s.DurationTime
-//	return
-//}
-
-//func (a *AlbumDAO) ToReleaseDomain() (r Release) {
-//	r.Id = a.Id
-//	r.IsAlbum = true
-//	r.Name = a.Name
-//	r.Author = a.Author
-//	r.Date = a.Date
-//	r.SongAmount = a.SongAmount
-//	r.Duration = a.DurationTime.Sub(zeroTime)
-//	return
-//}

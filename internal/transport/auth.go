@@ -68,9 +68,9 @@ func (h *Handler) signUp(c *gin.Context) {
 	}
 
 	type response struct {
-		core.UserDTO
+		core.UserPayload
 		core.JWT
 	}
 
-	c.JSON(http.StatusOK, response{UserDTO: newUser.ToDTO(), JWT: jwt})
+	c.JSON(http.StatusOK, response{UserPayload: newUser.ToPayload(), JWT: jwt})
 }

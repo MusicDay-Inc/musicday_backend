@@ -22,17 +22,17 @@ func (s AlbumService) GetCoverId(srcId uuid.UUID) (uuid.UUID, error) {
 	return aId, nil
 }
 
-func (s AlbumService) SearchAlbumsWithReview(query string, userId uuid.UUID, limit int, offset int) (res []core.AlbumWithReviewDTO, err error) {
+func (s AlbumService) SearchAlbumsWithReview(query string, userId uuid.UUID, limit int, offset int) (res []core.AlbumWithReviewPayload, err error) {
 	albums, err := s.r.SearchAlbumsWithReview(query, userId, limit, offset)
 	if err != nil {
 		return
 	}
-	res = make([]core.AlbumWithReviewDTO, len(albums))
+	res = make([]core.AlbumWithReviewPayload, len(albums))
 	for i, album := range albums {
 		sDomain, rDomain := album.AlbumDAO.ToDomain(), album.ReviewNullableDAO.ToDomain()
-		res[i] = core.AlbumWithReviewDTO{
-			AlbumDTO:  sDomain.ToDTO(),
-			ReviewDTO: rDomain.ToEmptyDTO(),
+		res[i] = core.AlbumWithReviewPayload{
+			AlbumPayload:  sDomain.ToPayload(),
+			ReviewPayload: rDomain.ToEmptyPayload(),
 		}
 	}
 	return res, nil

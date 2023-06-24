@@ -24,12 +24,12 @@ func (s *ReviewService) CountAlbumReviewsOf(userId uuid.UUID) (int32, error) {
 	return amount, err
 }
 
-func (s *ReviewService) GetReviewsOfUserSubscriptions(clientId uuid.UUID, limit int, offset int) (res []core.ReviewOfUserDTO, err error) {
+func (s *ReviewService) GetReviewsOfUserSubscriptions(clientId uuid.UUID, limit int, offset int) (res []core.ReviewOfUserPayload, err error) {
 	reviews, err := s.rev.GetReviewsOfUserSubscriptions(clientId, limit, offset)
 	if err != nil {
 		return
 	}
-	res = make([]core.ReviewOfUserDTO, len(reviews))
+	res = make([]core.ReviewOfUserPayload, len(reviews))
 	for i, review := range reviews {
 		rDomain := review.ToDomain()
 		if rDomain.IsSongReviewed {
@@ -37,28 +37,28 @@ func (s *ReviewService) GetReviewsOfUserSubscriptions(clientId uuid.UUID, limit 
 			sD := song.ToDomain()
 			if errSong != nil {
 				logrus.Errorf("Unexpected error %v", errSong)
-				return make([]core.ReviewOfUserDTO, 0), errSong
+				return make([]core.ReviewOfUserPayload, 0), errSong
 			}
 			userItem, errUser := s.user.GetById(rDomain.UserId)
 			if errUser != nil {
-				return make([]core.ReviewOfUserDTO, 0), errUser
+				return make([]core.ReviewOfUserPayload, 0), errUser
 			}
-			rDTO := rDomain.ToUserDTO(userItem)
-			rDTO.Song = sD.ToDTO()
+			rDTO := rDomain.ToUserPayload(userItem)
+			rDTO.Song = sD.ToPayload()
 			res[i] = rDTO
 		} else {
 			album, errAlbum := s.album.GetById(rDomain.ReleaseId)
 			aD := album.ToDomain()
 			if errAlbum != nil {
 				logrus.Errorf("Unexpected error %v", errAlbum)
-				return make([]core.ReviewOfUserDTO, 0), errAlbum
+				return make([]core.ReviewOfUserPayload, 0), errAlbum
 			}
 			userItem, errUser := s.user.GetById(rDomain.UserId)
 			if errUser != nil {
-				return make([]core.ReviewOfUserDTO, 0), errUser
+				return make([]core.ReviewOfUserPayload, 0), errUser
 			}
-			rDTO := rDomain.ToUserDTO(userItem)
-			rDTO.Album = aD.ToDTO()
+			rDTO := rDomain.ToUserPayload(userItem)
+			rDTO.Album = aD.ToPayload()
 			res[i] = rDTO
 		}
 
@@ -66,7 +66,7 @@ func (s *ReviewService) GetReviewsOfUserSubscriptions(clientId uuid.UUID, limit 
 	return res, nil
 }
 
-func (s *ReviewService) GetAlbumReviewsOfUser(userId uuid.UUID, limit int, offset int, sortParam string, orderParam string) (res []core.ReviewDTO, err error) {
+func (s *ReviewService) GetAlbumReviewsOfUser(userId uuid.UUID, limit int, offset int, sortParam string, orderParam string) (res []core.ReviewPayload, err error) {
 	var (
 		param string
 	)
@@ -84,19 +84,19 @@ func (s *ReviewService) GetAlbumReviewsOfUser(userId uuid.UUID, limit int, offse
 	if err != nil {
 		return
 	}
-	res = make([]core.ReviewDTO, len(reviews))
+	res = make([]core.ReviewPayload, len(reviews))
 	for i, review := range reviews {
 		rDomain := review.ToDomain()
 		album, errSong := s.album.GetById(rDomain.ReleaseId)
 		if errSong != nil {
 			logrus.Errorf("Unexpected error %v", errSong)
 		}
-		res[i] = rDomain.ToAlbumDTO(album.ToDomain())
+		res[i] = rDomain.ToAlbumPayload(album.ToDomain())
 	}
 	return res, nil
 }
 
-func (s *ReviewService) GetAllUserReviews(userId uuid.UUID, limit int, offset int, sortParam string, orderParam string) (res []core.ReviewDTO, err error) {
+func (s *ReviewService) GetAllUserReviews(userId uuid.UUID, limit int, offset int, sortParam string, orderParam string) (res []core.ReviewPayload, err error) {
 	var (
 		reviews []core.ReviewDAO
 		param   string
@@ -115,7 +115,7 @@ func (s *ReviewService) GetAllUserReviews(userId uuid.UUID, limit int, offset in
 	if err != nil {
 		return
 	}
-	res = make([]core.ReviewDTO, len(reviews))
+	res = make([]core.ReviewPayload, len(reviews))
 	for i, review := range reviews {
 		rDomain := review.ToDomain()
 		if rDomain.IsSongReviewed {
@@ -123,19 +123,19 @@ func (s *ReviewService) GetAllUserReviews(userId uuid.UUID, limit int, offset in
 			if errSong != nil {
 				logrus.Errorf("Unexpected error %v", errSong)
 			}
-			res[i] = rDomain.ToSongDTO(song.ToDomain())
+			res[i] = rDomain.ToSongPayload(song.ToDomain())
 		} else {
 			album, errSong := s.album.GetById(rDomain.ReleaseId)
 			if errSong != nil {
 				logrus.Errorf("Unexpected error %v", errSong)
 			}
-			res[i] = rDomain.ToAlbumDTO(album.ToDomain())
+			res[i] = rDomain.ToAlbumPayload(album.ToDomain())
 		}
 	}
 	return res, nil
 }
 
-func (s *ReviewService) GetSongReviewsOfUser(userId uuid.UUID, limit int, offset int, sortParam string, orderParam string) (res []core.ReviewDTO, err error) {
+func (s *ReviewService) GetSongReviewsOfUser(userId uuid.UUID, limit int, offset int, sortParam string, orderParam string) (res []core.ReviewPayload, err error) {
 	var (
 		param string
 	)
@@ -153,71 +153,71 @@ func (s *ReviewService) GetSongReviewsOfUser(userId uuid.UUID, limit int, offset
 	if err != nil {
 		return
 	}
-	res = make([]core.ReviewDTO, len(reviews))
+	res = make([]core.ReviewPayload, len(reviews))
 	for i, review := range reviews {
 		rDomain := review.ToDomain()
 		song, errSong := s.song.GetById(rDomain.ReleaseId)
 		if errSong != nil {
 			logrus.Errorf("Unexpected error %v", errSong)
 		}
-		res[i] = rDomain.ToSongDTO(song.ToDomain())
+		res[i] = rDomain.ToSongPayload(song.ToDomain())
 	}
 	return res, nil
 }
 
-func (s *ReviewService) DeleteReviewFromUser(userId uuid.UUID, reviewId uuid.UUID) (core.ReviewDTO, error) {
+func (s *ReviewService) DeleteReviewFromUser(userId uuid.UUID, reviewId uuid.UUID) (core.ReviewPayload, error) {
 	exists, err := s.rev.ExistsFromUser(userId, reviewId)
 	if err != nil {
-		return core.ReviewDTO{}, core.ErrInternal
+		return core.ReviewPayload{}, core.ErrInternal
 	}
 	if !exists {
-		return core.ReviewDTO{}, core.ErrNotFound
+		return core.ReviewPayload{}, core.ErrNotFound
 	}
 	r, err := s.rev.GetById(reviewId)
 	if err != nil {
-		return core.ReviewDTO{}, core.ErrNotFound
+		return core.ReviewPayload{}, core.ErrNotFound
 	}
 	err = s.rev.Delete(reviewId)
 	if err != nil {
-		return core.ReviewDTO{}, core.ErrInternal
+		return core.ReviewPayload{}, core.ErrInternal
 	}
 	if r.IsSongReviewed {
 		song, errS := s.song.GetById(r.ReleaseId)
 		sD := song.ToDomain()
 		if errS != nil {
-			return core.ReviewDTO{}, core.ErrInternal
+			return core.ReviewPayload{}, core.ErrInternal
 		}
-		return core.ReviewDTO{Song: sD.ToDTO()}, nil
+		return core.ReviewPayload{Song: sD.ToPayload()}, nil
 	} else {
 		a, errA := s.album.GetById(r.ReleaseId)
 		aD := a.ToDomain()
 		if errA != nil {
-			return core.ReviewDTO{}, core.ErrInternal
+			return core.ReviewPayload{}, core.ErrInternal
 		}
-		return core.ReviewDTO{Album: aD.ToDTO()}, nil
+		return core.ReviewPayload{Album: aD.ToPayload()}, nil
 	}
 }
 
-func (s *ReviewService) GetSubscriptionReviews(releaseId uuid.UUID, clientId uuid.UUID, limit int, offset int) (res []core.ReviewOfUserDTO, err error) {
+func (s *ReviewService) GetSubscriptionReviews(releaseId uuid.UUID, clientId uuid.UUID, limit int, offset int) (res []core.ReviewOfUserPayload, err error) {
 	reviews, err := s.rev.GetSubscriptionReviews(releaseId, clientId)
 	if err != nil {
 		return
 	}
-	res = make([]core.ReviewOfUserDTO, len(reviews))
+	res = make([]core.ReviewOfUserPayload, len(reviews))
 	for i, review := range reviews {
 		rDomain := review.ToDomain()
 		userItem, errUser := s.user.GetById(rDomain.UserId)
 		if errUser != nil {
-			return make([]core.ReviewOfUserDTO, 0), errUser
+			return make([]core.ReviewOfUserPayload, 0), errUser
 		}
-		res[i] = rDomain.ToUserDTO(userItem)
+		res[i] = rDomain.ToUserPayload(userItem)
 	}
 	return res, nil
 }
 
-func (s *ReviewService) PostReview(reviewReq core.Review) (core.ReviewDTO, error) {
+func (s *ReviewService) PostReview(reviewReq core.Review) (core.ReviewPayload, error) {
 	if !reviewReq.ValidateScore() {
-		return core.ReviewDTO{}, core.ErrIncorrectBody
+		return core.ReviewPayload{}, core.ErrIncorrectBody
 	}
 	albumFromRequest, err := s.album.GetById(reviewReq.ReleaseId)
 	if err != nil {
@@ -226,33 +226,33 @@ func (s *ReviewService) PostReview(reviewReq core.Review) (core.ReviewDTO, error
 	songFromRequest, err := s.song.GetById(reviewReq.ReleaseId)
 	if err != nil {
 		if reviewReq.IsSongReviewed {
-			return core.ReviewDTO{}, core.ErrNotFound
+			return core.ReviewPayload{}, core.ErrNotFound
 		}
 	}
 	exists, err := s.rev.ExistsToRelease(reviewReq.UserId, reviewReq.ReleaseId)
 	if err != nil {
-		return core.ReviewDTO{}, core.ErrInternal
+		return core.ReviewPayload{}, core.ErrInternal
 	}
 	if exists {
 		updateRes, errUpdate := s.rev.UpdateReview(reviewReq)
 		if errUpdate != nil {
-			return core.ReviewDTO{}, core.ErrInternal
+			return core.ReviewPayload{}, core.ErrInternal
 		}
 		resDomain := updateRes.ToDomain()
 		if resDomain.IsSongReviewed {
-			return resDomain.ToSongDTO(songFromRequest.ToDomain()), nil
+			return resDomain.ToSongPayload(songFromRequest.ToDomain()), nil
 		}
-		return resDomain.ToAlbumDTO(albumFromRequest.ToDomain()), nil
+		return resDomain.ToAlbumPayload(albumFromRequest.ToDomain()), nil
 	}
 	insertRes, err := s.rev.InsertReview(reviewReq)
 	if err != nil {
-		return core.ReviewDTO{}, err
+		return core.ReviewPayload{}, err
 	}
 	res := insertRes.ToDomain()
 	if reviewReq.IsSongReviewed {
-		return res.ToSongDTO(songFromRequest.ToDomain()), nil
+		return res.ToSongPayload(songFromRequest.ToDomain()), nil
 	}
-	return res.ToAlbumDTO(albumFromRequest.ToDomain()), nil
+	return res.ToAlbumPayload(albumFromRequest.ToDomain()), nil
 }
 
 func (s *ReviewService) GetReviewToRelease(releaseId uuid.UUID, userId uuid.UUID) (core.Review, error) {

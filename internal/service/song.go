@@ -19,8 +19,8 @@ func (s SongService) SearchSongsWithReview(searchReq string, userId uuid.UUID, l
 	for i, song := range songs {
 		sDomain, rDomain := song.SongDAO.ToDomain(), song.ReviewNullableDAO.ToDomain()
 		res[i] = core.SongWithReviewDTO{
-			SongDTO:   sDomain.ToDTO(),
-			ReviewDTO: rDomain.ToEmptyDTO(),
+			SongPayload:   sDomain.ToPayload(),
+			ReviewPayload: rDomain.ToEmptyPayload(),
 		}
 	}
 	return res, nil

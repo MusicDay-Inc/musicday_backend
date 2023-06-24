@@ -14,19 +14,19 @@ type Token interface {
 
 type User interface {
 	RegisterUser(userId uuid.UUID, user core.User) (core.User, error)
-	Subscribe(clientId uuid.UUID, userId uuid.UUID) (core.UserDTO, error)
+	Subscribe(clientId uuid.UUID, userId uuid.UUID) (core.UserPayload, error)
 	ChangeUsername(clientId uuid.UUID, username string) (core.User, error)
 	ChangeNickname(clientId uuid.UUID, nickname string) (core.User, error)
-	SearchUsers(query string, clientId uuid.UUID, limit int, offset int) ([]core.UserDTO, error)
+	SearchUsers(query string, clientId uuid.UUID, limit int, offset int) ([]core.UserPayload, error)
 	Exists(id uuid.UUID) bool
-	GetById(id uuid.UUID) (core.UserDTO, error)
+	GetById(id uuid.UUID) (core.UserPayload, error)
 	SubscriptionExists(clientId uuid.UUID, userId uuid.UUID) bool
-	Unsubscribe(clientId uuid.UUID, userId uuid.UUID) (core.UserDTO, error)
-	GetSubscribers(userId uuid.UUID, limit int, offset int) ([]core.UserDTO, error)
-	GetSubscriptions(userId uuid.UUID, limit int, offset int) ([]core.UserDTO, error)
+	Unsubscribe(clientId uuid.UUID, userId uuid.UUID) (core.UserPayload, error)
+	GetSubscribers(userId uuid.UUID, limit int, offset int) ([]core.UserPayload, error)
+	GetSubscriptions(userId uuid.UUID, limit int, offset int) ([]core.UserPayload, error)
 	GetBio(userId uuid.UUID) (string, error)
 	CreateBio(clientId uuid.UUID, bio string) (string, error)
-	UploadAvatar(clientId uuid.UUID) (core.UserDTO, error)
+	UploadAvatar(clientId uuid.UUID) (core.UserPayload, error)
 	AddPlayerID(clientId uuid.UUID, playerID uuid.UUID) error
 	GetPlayerID(userId uuid.UUID) (string, error)
 	InitPlayerID() error
@@ -40,20 +40,20 @@ type Song interface {
 type Album interface {
 	GetById(songId uuid.UUID) (core.Album, error)
 	GetSongsFromAlbum(id uuid.UUID) ([]core.Song, error)
-	SearchAlbumsWithReview(query string, userId uuid.UUID, limit int, offset int) ([]core.AlbumWithReviewDTO, error)
+	SearchAlbumsWithReview(query string, userId uuid.UUID, limit int, offset int) ([]core.AlbumWithReviewPayload, error)
 	GetCoverId(srcId uuid.UUID) (uuid.UUID, error)
 }
 
 type Review interface {
 	//GetById(id uuid.UUID) (core.Review, error)
 	GetReviewToRelease(releaseId uuid.UUID, userId uuid.UUID) (core.Review, error)
-	PostReview(review core.Review) (core.ReviewDTO, error)
-	GetSubscriptionReviews(releaseId uuid.UUID, clientId uuid.UUID, limit int, offset int) ([]core.ReviewOfUserDTO, error)
-	DeleteReviewFromUser(userId uuid.UUID, reviewId uuid.UUID) (core.ReviewDTO, error)
-	GetAllUserReviews(userId uuid.UUID, limit int, offset int, param string, orderParam string) ([]core.ReviewDTO, error)
-	GetSongReviewsOfUser(userId uuid.UUID, limit int, offset int, param string, orderParam string) ([]core.ReviewDTO, error)
-	GetAlbumReviewsOfUser(userId uuid.UUID, limit int, offset int, param string, orderParam string) ([]core.ReviewDTO, error)
-	GetReviewsOfUserSubscriptions(clientId uuid.UUID, limit int, offset int) ([]core.ReviewOfUserDTO, error)
+	PostReview(review core.Review) (core.ReviewPayload, error)
+	GetSubscriptionReviews(releaseId uuid.UUID, clientId uuid.UUID, limit int, offset int) ([]core.ReviewOfUserPayload, error)
+	DeleteReviewFromUser(userId uuid.UUID, reviewId uuid.UUID) (core.ReviewPayload, error)
+	GetAllUserReviews(userId uuid.UUID, limit int, offset int, param string, orderParam string) ([]core.ReviewPayload, error)
+	GetSongReviewsOfUser(userId uuid.UUID, limit int, offset int, param string, orderParam string) ([]core.ReviewPayload, error)
+	GetAlbumReviewsOfUser(userId uuid.UUID, limit int, offset int, param string, orderParam string) ([]core.ReviewPayload, error)
+	GetReviewsOfUserSubscriptions(clientId uuid.UUID, limit int, offset int) ([]core.ReviewOfUserPayload, error)
 	CountSongReviewsOf(userId uuid.UUID) (int32, error)
 	CountAlbumReviewsOf(userId uuid.UUID) (int32, error)
 }
