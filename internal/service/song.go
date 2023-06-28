@@ -10,20 +10,12 @@ type SongService struct {
 	r repository.Song
 }
 
-func (s SongService) SearchSongsWithReview(searchReq string, userId uuid.UUID, limit int, offset int) (res []core.SongWithReviewDTO, err error) {
+func (s SongService) SearchSongsWithReview(searchReq string, userId uuid.UUID, limit int, offset int) (res []core.SongWithReview, err error) {
 	songs, err := s.r.SearchSongsWithReview(searchReq, userId, limit, offset)
 	if err != nil {
 		return
 	}
-	res = make([]core.SongWithReviewDTO, len(songs))
-	for i, song := range songs {
-		sDomain, rDomain := song.SongDAO.ToDomain(), song.ReviewNullableDAO.ToDomain()
-		res[i] = core.SongWithReviewDTO{
-			SongPayload:   sDomain.ToPayload(),
-			ReviewPayload: rDomain.ToEmptyPayload(),
-		}
-	}
-	return res, nil
+	return songs, nil
 }
 
 func (s SongService) GetById(songId uuid.UUID) (core.Song, error) {
@@ -31,7 +23,7 @@ func (s SongService) GetById(songId uuid.UUID) (core.Song, error) {
 	if err != nil {
 		return core.Song{}, err
 	}
-	return song.ToDomain(), nil
+	return song, nil
 }
 
 func NewSongService(songRepo repository.Song) *SongService {

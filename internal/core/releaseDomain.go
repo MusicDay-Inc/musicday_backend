@@ -13,6 +13,17 @@ type Song struct {
 	Duration time.Duration
 }
 
+type SongWithReview struct {
+	Song
+	Review
+}
+
+func (a *SongWithReview) ToPayload() (res SongWithReviewPayload) {
+	res.SongPayload = a.Song.ToPayload()
+	res.ReviewPayload = a.Review.ToEmptyPayload()
+	return
+}
+
 // TODO add validation if will be used for search?
 // or just ignore fields exept Id
 func (s *Song) ToDAO() (res SongDAO) {
@@ -41,6 +52,17 @@ type Album struct {
 	Date       time.Time
 	SongAmount int
 	Duration   time.Duration
+}
+
+type AlbumWithReview struct {
+	Album
+	Review
+}
+
+func (a *AlbumWithReview) ToPayload() (res AlbumWithReviewPayload) {
+	res.AlbumPayload = a.Album.ToPayload()
+	res.ReviewPayload = a.Review.ToEmptyPayload()
+	return
 }
 
 // TODO add validation if will be used for search?

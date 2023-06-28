@@ -78,7 +78,11 @@ func (r UserRepository) CreateBio(userId uuid.UUID, bio string) (string, error) 
 	return bio, nil
 }
 
-func (r UserRepository) GetSubscriptionsOf(userId uuid.UUID, limit int, offset int) (users []core.UserDAO, err error) {
+func (r UserRepository) GetSubscriptionsOf(userId uuid.UUID, limit int, offset int) ([]core.User, error) {
+	var (
+		users []core.UserDAO
+		err   error
+	)
 	q := `
 	SELECT id, gmail, username, nickname, is_registered, has_picture, subscribers_c, subscriptions_c
 	FROM users
@@ -89,10 +93,18 @@ func (r UserRepository) GetSubscriptionsOf(userId uuid.UUID, limit int, offset i
 	`
 	logrus.Trace(formatQuery(q))
 	err = r.db.Select(&users, q, userId, limit, offset)
-	return
+	res := make([]core.User, len(users))
+	for i, v := range users {
+		res[i] = v.ToDomain()
+	}
+	return res, err
 }
 
-func (r UserRepository) GetSubscribers(userId uuid.UUID, limit int, offset int) (users []core.UserDAO, err error) {
+func (r UserRepository) GetSubscribers(userId uuid.UUID, limit int, offset int) ([]core.User, error) {
+	var (
+		users []core.UserDAO
+		err   error
+	)
 	q := `
 	SELECT id, gmail, username, nickname, is_registered, has_picture, subscribers_c, subscriptions_c
 	FROM users
@@ -103,7 +115,11 @@ func (r UserRepository) GetSubscribers(userId uuid.UUID, limit int, offset int) 
 	`
 	logrus.Trace(formatQuery(q))
 	err = r.db.Select(&users, q, userId, limit, offset)
-	return
+	res := make([]core.User, len(users))
+	for i, v := range users {
+		res[i] = v.ToDomain()
+	}
+	return res, err
 }
 
 func (r UserRepository) IsSubscriptionExists(clientId uuid.UUID, userId uuid.UUID) (res bool) {
@@ -134,7 +150,8 @@ func (r UserRepository) ExistsWithId(id uuid.UUID) (res bool) {
 	return res
 }
 
-func (r UserRepository) SearchUsers(query string, clientId uuid.UUID, limit int, offset int) (users []core.UserDAO, err error) {
+func (r UserRepository) SearchUsers(query string, clientId uuid.UUID, limit int, offset int) (res []core.User, err error) {
+	var users []core.UserDAO
 	q := `
 	SELECT *
 		FROM users
@@ -144,6 +161,10 @@ func (r UserRepository) SearchUsers(query string, clientId uuid.UUID, limit int,
 	`
 	logrus.Trace(formatQuery(q))
 	err = r.db.Select(&users, q, query, limit, offset)
+	res = make([]core.User, len(users))
+	for i, user := range users {
+		res[i] = user.ToDomain()
+	}
 	return
 }
 
@@ -292,16 +313,17 @@ func (r UserRepository) GetById(userId uuid.UUID) (core.User, error) {
 	return user.ToDomain(), nil
 }
 
-func (r UserRepository) GetByUsername(username string) (user core.UserDAO, err error) {
+func (r UserRepository) GetByUsername(username string) (res core.User, err error) {
+	var user core.UserDAO
 	q := `
 	SELECT * FROM users WHERE username = $1
 	`
 	logrus.Trace(formatQuery(q))
 	err = r.db.Get(&user, q, username)
 	if err != nil {
-		return core.UserDAO{}, err
+		return core.User{}, err
 	}
-	return user, nil
+	return user.ToDomain(), nil
 }
 
 func (r UserRepository) GetByGmail(gmail string) (core.User, error) {
@@ -319,7 +341,11 @@ func (r UserRepository) GetByGmail(gmail string) (core.User, error) {
 	return user.ToDomain(), nil
 }
 
-func (r UserRepository) Register(u core.User) (user core.UserDAO, err error) {
+func (r UserRepository) Register(u core.User) (core.User, error) {
+	var (
+		user core.UserDAO
+		err  error
+	)
 	q := `
 	UPDATE users
 	SET (username, nickname, is_registered) = ($1, $2, true)
@@ -330,10 +356,11 @@ func (r UserRepository) Register(u core.User) (user core.UserDAO, err error) {
 	//row := r.db.QueryRow(q, u.Username, u.Nickname, u.Id)
 	//err = row.Scan(&user)
 	err = r.db.Get(&user, q, u.Username, u.Nickname, u.Id)
-	return user, err
+	return user.ToDomain(), err
 }
 
-func (r UserRepository) ChangeUsername(userId uuid.UUID, username string) (user core.UserDAO, err error) {
+func (r UserRepository) ChangeUsername(userId uuid.UUID, username string) (core.User, error) {
+	var user core.UserDAO
 	q := `
 	UPDATE users
 	SET username = $1
@@ -341,10 +368,14 @@ func (r UserRepository) ChangeUsername(userId uuid.UUID, username string) (user 
 	RETURNING *
 	`
 	logrus.Trace(formatQuery(q))
-	err = r.db.Get(&user, q, username, userId)
-	return
+	err := r.db.Get(&user, q, username, userId)
+	return user.ToDomain(), err
 }
-func (r UserRepository) ChangeNickname(userId uuid.UUID, nickname string) (user core.UserDAO, err error) {
+func (r UserRepository) ChangeNickname(userId uuid.UUID, nickname string) (core.User, error) {
+	var (
+		user core.UserDAO
+		err  error
+	)
 	q := `
 	UPDATE users
 	SET nickname = $1
@@ -353,9 +384,13 @@ func (r UserRepository) ChangeNickname(userId uuid.UUID, nickname string) (user 
 	`
 	logrus.Trace(formatQuery(q))
 	err = r.db.Get(&user, q, nickname, userId)
-	return
+	return user.ToDomain(), err
 }
-func (r UserRepository) InstallPicture(id uuid.UUID) (user core.UserDAO, err error) {
+func (r UserRepository) InstallPicture(id uuid.UUID) (core.User, error) {
+	var (
+		user core.UserDAO
+		err  error
+	)
 	q := `
 	UPDATE users
 	SET has_picture = true
@@ -364,5 +399,5 @@ func (r UserRepository) InstallPicture(id uuid.UUID) (user core.UserDAO, err err
 	`
 	logrus.Trace(formatQuery(q))
 	err = r.db.Get(&user, q, id)
-	return
+	return user.ToDomain(), err
 }

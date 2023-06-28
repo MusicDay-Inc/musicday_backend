@@ -12,7 +12,7 @@ type SongPayload struct {
 	Date     time.Time     `json:"date,omitempty"`
 	Duration time.Duration `json:"duration,omitempty"`
 }
-type SongWithReviewDTO struct {
+type SongWithReviewPayload struct {
 	SongPayload   `json:"song,omitempty"`
 	ReviewPayload `json:"review,omitempty"`
 }

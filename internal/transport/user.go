@@ -75,7 +75,11 @@ func (h *Handler) getUserSubscribers(c *gin.Context) {
 		newErrorResponse(c, http.StatusInternalServerError, core.CodeInternalError, err.Error())
 		return
 	}
-	c.JSON(http.StatusOK, subscribers)
+	res := make([]core.UserPayload, len(subscribers))
+	for i, v := range subscribers {
+		res[i] = v.ToPayload()
+	}
+	c.JSON(http.StatusOK, res)
 }
 
 func (h *Handler) getUserSubscriptions(c *gin.Context) {
@@ -106,7 +110,11 @@ func (h *Handler) getUserSubscriptions(c *gin.Context) {
 		newErrorResponse(c, http.StatusInternalServerError, core.CodeInternalError, err.Error())
 		return
 	}
-	c.JSON(http.StatusOK, subscribers)
+	res := make([]core.UserPayload, len(subscribers))
+	for i, v := range subscribers {
+		res[i] = v.ToPayload()
+	}
+	c.JSON(http.StatusOK, res)
 }
 
 func (h *Handler) getUserProfile(c *gin.Context) {
@@ -145,7 +153,7 @@ func (h *Handler) getUserProfile(c *gin.Context) {
 	}
 	bio, err := h.services.User.GetBio(userId)
 	c.JSON(http.StatusOK, map[string]interface{}{
-		"user":                 user,
+		"user":                 user.ToPayload(),
 		"is_client_subscribed": isSubscribed,
 		"bio":                  bio,
 		"song_amount":          sAmount,
@@ -180,10 +188,14 @@ func (h *Handler) SearchUsers(c *gin.Context) {
 		newErrorResponse(c, http.StatusBadRequest, core.CodeIncorrectBody, "search string is too long")
 		return
 	}
-	res, err := h.services.User.SearchUsers(query, clientId, limit, offset)
+	users, err := h.services.User.SearchUsers(query, clientId, limit, offset)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, core.CodeInternalError, "server search error")
 		return
+	}
+	res := make([]core.UserPayload, len(users))
+	for i, user := range users {
+		res[i] = user.ToPayload()
 	}
 	c.JSON(http.StatusOK, res)
 }
@@ -254,10 +266,12 @@ func (h *Handler) subscribe(c *gin.Context) {
 		newErrorResponse(c, http.StatusBadRequest, core.CodeIncorrectBody, core.ErrInternal.Error())
 		return
 	}
+
+	// TODO to service
 	playerID, err := h.services.User.GetPlayerID(userId)
 	user, errUser := h.services.User.GetById(clientId)
 	if err == nil && errUser == nil {
-		CreateNotification(playerID, user)
+		CreateNotification(playerID, user.ToPayload())
 	}
 	//c.JSON(http.StatusOK, updatedUserSubscription)
 	//c.JSON(http.StatusOK, map[string]interface{}{
@@ -280,7 +294,7 @@ func (h *Handler) subscribe(c *gin.Context) {
 	}
 	bio, err := h.services.User.GetBio(userId)
 	c.JSON(http.StatusOK, map[string]interface{}{
-		"user":                 updatedUserSubscription,
+		"user":                 updatedUserSubscription.ToPayload(),
 		"is_client_subscribed": true,
 		"bio":                  bio,
 		"song_amount":          sAmount,
@@ -330,7 +344,7 @@ func (h *Handler) unsubscribe(c *gin.Context) {
 	}
 	bio, err := h.services.User.GetBio(userId)
 	c.JSON(http.StatusOK, map[string]interface{}{
-		"user":                 updatedUserSubscription,
+		"user":                 updatedUserSubscription.ToPayload(),
 		"is_client_subscribed": false,
 		"bio":                  bio,
 		"song_amount":          sAmount,
@@ -376,7 +390,7 @@ func (h *Handler) CreateClientBio(c *gin.Context) {
 	}
 	//bio, err := h.services.User.GetBio(clientId)
 	c.JSON(http.StatusOK, map[string]interface{}{
-		"user":                 user,
+		"user":                 user.ToPayload(),
 		"bio":                  bio,
 		"is_client_subscribed": false,
 		"song_amount":          sAmount,

@@ -80,10 +80,14 @@ func (h *Handler) SearchAlbums(c *gin.Context) {
 		newErrorResponse(c, http.StatusBadRequest, core.CodeIncorrectBody, "search string is too long")
 		return
 	}
-	res, err := h.services.Album.SearchAlbumsWithReview(query, userId, limit, offset)
+	albums, err := h.services.Album.SearchAlbumsWithReview(query, userId, limit, offset)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, core.CodeInternalError, "server search error")
 		return
+	}
+	res := make([]core.AlbumWithReviewPayload, len(albums))
+	for i, v := range albums {
+		res[i] = v.ToPayload()
 	}
 	c.JSON(http.StatusOK, res)
 }

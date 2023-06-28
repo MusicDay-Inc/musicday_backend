@@ -11,7 +11,11 @@ type SongRepository struct {
 	db *sqlx.DB
 }
 
-func (r SongRepository) SearchSongsWithReview(searchReq string, userId uuid.UUID, limit int, offset int) (songs []core.SongWithReviewDAO, err error) {
+func (r SongRepository) SearchSongsWithReview(searchReq string, userId uuid.UUID, limit int, offset int) ([]core.SongWithReview, error) {
+	var (
+		songs []core.SongWithReviewDAO
+		err   error
+	)
 	q := `
 	SELECT songs.id AS "song_id", songs.author, songs.name, 
 	       songs.date, songs.duration, songs.author_id, 
@@ -27,27 +31,35 @@ func (r SongRepository) SearchSongsWithReview(searchReq string, userId uuid.UUID
 	err = r.db.Select(&songs, q, userId, searchReq, limit, offset)
 	if err != nil {
 		logrus.Error(err)
-		return songs, err
+		return []core.SongWithReview{}, err
 	}
 	for i, swr := range songs {
 		songs[i].SongDAO.Id = swr.SongId
 		songs[i].ReviewNullableDAO.Id = swr.ReviewId
 	}
-	return songs, nil
+	res := make([]core.SongWithReview, len(songs))
+	for i, v := range songs {
+		res[i] = v.ToDomain()
+	}
+	return res, nil
 }
 
 func NewSongRepository(db *sqlx.DB) *SongRepository {
 	return &SongRepository{db: db}
 }
 
-func (r SongRepository) GetById(songId uuid.UUID) (song core.SongDAO, err error) {
+func (r SongRepository) GetById(songId uuid.UUID) (core.Song, error) {
+	var (
+		song core.SongDAO
+		err  error
+	)
 	q := `
 	SELECT * FROM songs WHERE id = $1
 	`
 	logrus.Trace(formatQuery(q))
 	err = r.db.Get(&song, q, songId)
 	if err != nil {
-		return song, err
+		return core.Song{}, err
 	}
-	return
+	return song.ToDomain(), err
 }

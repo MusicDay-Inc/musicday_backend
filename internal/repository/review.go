@@ -25,7 +25,11 @@ func (r ReviewRepository) CountReviewsOfUser(userId uuid.UUID, isToSongs bool) (
 	return
 }
 
-func (r ReviewRepository) GetReviewsOfUserSubscriptions(clientId uuid.UUID, limit int, offset int) (reviews []core.ReviewDAO, err error) {
+func (r ReviewRepository) GetReviewsOfUserSubscriptions(clientId uuid.UUID, limit int, offset int) ([]core.Review, error) {
+	var (
+		reviews []core.ReviewDAO
+		err     error
+	)
 	q := `
 	SELECT id, user_id, is_song_reviewed, release_id, published_at, score, review_text
 	FROM reviews
@@ -37,14 +41,22 @@ func (r ReviewRepository) GetReviewsOfUserSubscriptions(clientId uuid.UUID, limi
 	logrus.Trace(formatQuery(q))
 	err = r.db.Select(&reviews, q, clientId, limit, offset)
 	if err != nil {
-		return reviews, err
+		return []core.Review{}, err
 	}
-	return
+	res := make([]core.Review, len(reviews))
+	for j, v := range reviews {
+		res[j] = v.ToDomain()
+	}
+	return res, nil
 }
 
-func (r ReviewRepository) GetReviewsFromUser(userId uuid.UUID, limit int, offset int, param string) (reviews []core.ReviewDAO, err error) {
+func (r ReviewRepository) GetReviewsFromUser(userId uuid.UUID, limit int, offset int, param string) ([]core.Review, error) {
 	//var q string
 	//var sortColumn string
+	var (
+		reviews []core.ReviewDAO
+		err     error
+	)
 	q := `
 		SELECT * FROM reviews WHERE user_id = $1
 		ORDER BY ` + param + `
@@ -54,12 +66,20 @@ func (r ReviewRepository) GetReviewsFromUser(userId uuid.UUID, limit int, offset
 	logrus.Trace(formatQuery(q))
 	err = r.db.Select(&reviews, q, userId, limit, offset)
 	if err != nil {
-		return reviews, err
+		return []core.Review{}, err
 	}
-	return
+	res := make([]core.Review, len(reviews))
+	for j, v := range reviews {
+		res[j] = v.ToDomain()
+	}
+	return res, nil
 }
 
-func (r ReviewRepository) GetAlbumReviewsFromUser(userId uuid.UUID, limit int, offset int) (reviews []core.ReviewDAO, err error) {
+func (r ReviewRepository) GetAlbumReviewsFromUser(userId uuid.UUID, limit int, offset int) ([]core.Review, error) {
+	var (
+		reviews []core.ReviewDAO
+		err     error
+	)
 	q := `
 	SELECT * FROM reviews WHERE (user_id, is_song_reviewed) = ($1, false)
 	ORDER BY published_at DESC
@@ -68,12 +88,20 @@ func (r ReviewRepository) GetAlbumReviewsFromUser(userId uuid.UUID, limit int, o
 	logrus.Trace(formatQuery(q))
 	err = r.db.Select(&reviews, q, userId, limit, offset)
 	if err != nil {
-		return reviews, err
+		return []core.Review{}, err
 	}
-	return
+	res := make([]core.Review, len(reviews))
+	for j, v := range reviews {
+		res[j] = v.ToDomain()
+	}
+	return res, nil
 }
 
-func (r ReviewRepository) GetSongReviewsFromUser(userId uuid.UUID, limit int, offset int, param string) (reviews []core.ReviewDAO, err error) {
+func (r ReviewRepository) GetSongReviewsFromUser(userId uuid.UUID, limit int, offset int, param string) ([]core.Review, error) {
+	var (
+		reviews []core.ReviewDAO
+		err     error
+	)
 	q := `
 	SELECT * FROM reviews WHERE (user_id, is_song_reviewed) = ($1, true)
 	ORDER BY ` + param + `
@@ -82,9 +110,13 @@ func (r ReviewRepository) GetSongReviewsFromUser(userId uuid.UUID, limit int, of
 	logrus.Trace(formatQuery(q))
 	err = r.db.Select(&reviews, q, userId, limit, offset)
 	if err != nil {
-		return reviews, err
+		return []core.Review{}, err
 	}
-	return
+	res := make([]core.Review, len(reviews))
+	for j, v := range reviews {
+		res[j] = v.ToDomain()
+	}
+	return res, nil
 }
 
 func (r ReviewRepository) Delete(id uuid.UUID) error {
@@ -96,7 +128,11 @@ func (r ReviewRepository) Delete(id uuid.UUID) error {
 	return err
 }
 
-func (r ReviewRepository) GetSubscriptionReviews(releaseId uuid.UUID, clientId uuid.UUID) (reviews []core.ReviewDAO, err error) {
+func (r ReviewRepository) GetSubscriptionReviews(releaseId uuid.UUID, clientId uuid.UUID) ([]core.Review, error) {
+	var (
+		reviews []core.ReviewDAO
+		err     error
+	)
 	q := `
 	SELECT id, user_id, is_song_reviewed, release_id, published_at, score, review_text
 	FROM reviews
@@ -109,12 +145,20 @@ func (r ReviewRepository) GetSubscriptionReviews(releaseId uuid.UUID, clientId u
 	err = r.db.Select(&reviews, q, clientId, releaseId)
 	if err != nil {
 		logrus.Error(err)
-		return reviews, err
+		return []core.Review{}, err
 	}
-	return reviews, nil
+	res := make([]core.Review, len(reviews))
+	for i, v := range reviews {
+		res[i] = v.ToDomain()
+	}
+	return res, nil
 }
 
-func (r ReviewRepository) UpdateReview(review core.Review) (res core.ReviewDAO, err error) {
+func (r ReviewRepository) UpdateReview(review core.Review) (core.Review, error) {
+	var (
+		res core.ReviewDAO
+		err error
+	)
 	q := `
 	UPDATE reviews
 	SET (published_at,
@@ -129,7 +173,7 @@ func (r ReviewRepository) UpdateReview(review core.Review) (res core.ReviewDAO, 
 	if err != nil {
 		logrus.Error(err)
 	}
-	return
+	return res.ToDomain(), nil
 }
 func (r ReviewRepository) ExistsFromUser(userId uuid.UUID, reviewId uuid.UUID) (res bool, err error) {
 	q := `
@@ -159,7 +203,11 @@ func (r ReviewRepository) ExistsToRelease(userId uuid.UUID, releaseId uuid.UUID)
 	return res, err
 }
 
-func (r ReviewRepository) InsertReview(review core.Review) (res core.ReviewDAO, err error) {
+func (r ReviewRepository) InsertReview(review core.Review) (core.Review, error) {
+	var (
+		res core.ReviewDAO
+		err error
+	)
 	q := `
 	INSERT INTO reviews 
 	    (user_id, 
@@ -182,31 +230,39 @@ func (r ReviewRepository) InsertReview(review core.Review) (res core.ReviewDAO, 
 	if err != nil {
 		logrus.Error(err)
 	}
-	return
+	return res.ToDomain(), err
 }
 
-func (r ReviewRepository) GetById(id uuid.UUID) (review core.ReviewDAO, err error) {
+func (r ReviewRepository) GetById(id uuid.UUID) (core.Review, error) {
+	var (
+		review core.ReviewDAO
+		err    error
+	)
 	q := `
 	SELECT * FROM reviews WHERE id = $1
 	`
 	logrus.Trace(formatQuery(q))
 	err = r.db.Get(&review, q, id)
 	if err != nil {
-		return review, err
+		return core.Review{}, err
 	}
-	return
+	return review.ToDomain(), nil
 }
 
-func (r ReviewRepository) GetReviewToRelease(releaseId uuid.UUID, userId uuid.UUID) (review core.ReviewDAO, err error) {
+func (r ReviewRepository) GetReviewToRelease(releaseId uuid.UUID, userId uuid.UUID) (core.Review, error) {
+	var (
+		review core.ReviewDAO
+		err    error
+	)
 	q := `
 	SELECT * FROM reviews WHERE (user_id, release_id) = ($1, $2)
 	`
 	logrus.Trace(formatQuery(q))
 	err = r.db.Get(&review, q, userId, releaseId)
 	if err != nil {
-		return review, err
+		return core.Review{}, err
 	}
-	return
+	return review.ToDomain(), nil
 }
 
 func NewReviewRepository(db *sqlx.DB) *ReviewRepository {

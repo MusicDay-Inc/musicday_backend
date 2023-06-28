@@ -35,14 +35,14 @@ func (s *UserService) AddPlayerID(clientId uuid.UUID, playerID uuid.UUID) error 
 	return err
 }
 
-func (s *UserService) UploadAvatar(clientId uuid.UUID) (core.UserPayload, error) {
+func (s *UserService) UploadAvatar(clientId uuid.UUID) (core.User, error) {
 	user, err := s.r.InstallPicture(clientId)
 	if err != nil {
 		userPrev, _ := s.r.GetById(clientId)
-		return userPrev.ToPayload(), err
+		return userPrev, err
 	}
-	res := user.ToDomain()
-	return res.ToPayload(), nil
+	res := user
+	return res, nil
 }
 
 func (s *UserService) CreateBio(clientId uuid.UUID, bio string) (string, error) {
@@ -61,64 +61,46 @@ func (s *UserService) GetBio(userId uuid.UUID) (string, error) {
 	return bio, nil
 }
 
-func (s *UserService) GetSubscriptions(userId uuid.UUID, limit int, offset int) (res []core.UserPayload, err error) {
+func (s *UserService) GetSubscriptions(userId uuid.UUID, limit int, offset int) (res []core.User, err error) {
 	ok := s.r.ExistsWithId(userId)
 	if !ok {
-		return []core.UserPayload{}, core.ErrNotFound
+		return []core.User{}, core.ErrNotFound
 	}
-	users, err := s.r.GetSubscriptionsOf(userId, limit, offset)
+	res, err = s.r.GetSubscriptionsOf(userId, limit, offset)
 	if err != nil {
 		return
-	}
-	res = make([]core.UserPayload, len(users))
-	for i, user := range users {
-		uDomain := user.ToDomain()
-		res[i] = uDomain.ToPayload()
 	}
 	return res, nil
 }
 
-func (s *UserService) GetSubscribers(userId uuid.UUID, limit int, offset int) (res []core.UserPayload, err error) {
+func (s *UserService) GetSubscribers(userId uuid.UUID, limit int, offset int) (res []core.User, err error) {
 	ok := s.r.ExistsWithId(userId)
 	if !ok {
-		return []core.UserPayload{}, core.ErrNotFound
+		return []core.User{}, core.ErrNotFound
 	}
-	users, err := s.r.GetSubscribers(userId, limit, offset)
-	if err != nil {
-		return
-	}
-	res = make([]core.UserPayload, len(users))
-	for i, user := range users {
-		uDomain := user.ToDomain()
-		res[i] = uDomain.ToPayload()
-	}
-	return res, nil
+	res, err = s.r.GetSubscribers(userId, limit, offset)
+	return
 }
 
 func (s *UserService) SubscriptionExists(clientId uuid.UUID, userId uuid.UUID) bool {
 	return s.r.IsSubscriptionExists(clientId, userId)
 }
 
-func (s *UserService) GetById(id uuid.UUID) (core.UserPayload, error) {
+func (s *UserService) GetById(id uuid.UUID) (core.User, error) {
 	user, err := s.r.GetById(id)
-	return user.ToPayload(), err
+	return user, err
 }
 
 func (s *UserService) Exists(id uuid.UUID) bool {
 	return s.r.ExistsWithId(id)
 }
 
-func (s *UserService) SearchUsers(query string, clientId uuid.UUID, limit int, offset int) (res []core.UserPayload, err error) {
+func (s *UserService) SearchUsers(query string, clientId uuid.UUID, limit int, offset int) (res []core.User, err error) {
 	users, err := s.r.SearchUsers(query, clientId, limit, offset)
 	if err != nil {
 		return
 	}
-	res = make([]core.UserPayload, len(users))
-	for i, user := range users {
-		uDomain := user.ToDomain()
-		res[i] = uDomain.ToPayload()
-	}
-	return res, nil
+	return users, nil
 }
 
 func (s *UserService) ChangeNickname(clientId uuid.UUID, nickname string) (core.User, error) {
@@ -129,7 +111,7 @@ func (s *UserService) ChangeNickname(clientId uuid.UUID, nickname string) (core.
 	if err != nil {
 		return core.User{}, core.ErrInternal
 	}
-	return newClient.ToDomain(), nil
+	return newClient, nil
 }
 
 func (s *UserService) ChangeUsername(clientId uuid.UUID, username string) (core.User, error) {
@@ -144,45 +126,45 @@ func (s *UserService) ChangeUsername(clientId uuid.UUID, username string) (core.
 	if err != nil {
 		return core.User{}, core.ErrInternal
 	}
-	return newClient.ToDomain(), nil
+	return newClient, nil
 }
 
-func (s *UserService) Subscribe(clientId uuid.UUID, userId uuid.UUID) (core.UserPayload, error) {
+func (s *UserService) Subscribe(clientId uuid.UUID, userId uuid.UUID) (core.User, error) {
 	user, err := s.r.GetById(userId)
 	if err != nil {
-		return user.ToPayload(), core.ErrNotFound
+		return user, core.ErrNotFound
 	}
 	if clientId == userId {
-		return user.ToPayload(), core.ErrIncorrectBody
+		return user, core.ErrIncorrectBody
 	}
 	ok := !s.r.IsSubscriptionExists(clientId, userId)
 	if !ok {
-		return user.ToPayload(), core.ErrAlreadyExists
+		return user, core.ErrAlreadyExists
 	}
 	updatedUser, err := s.r.Subscribe(clientId, userId)
 	if err != nil {
-		return core.UserPayload{}, err
+		return core.User{}, err
 	}
-	return updatedUser.ToPayload(), nil
+	return updatedUser, nil
 }
 
-func (s *UserService) Unsubscribe(clientId uuid.UUID, userId uuid.UUID) (core.UserPayload, error) {
+func (s *UserService) Unsubscribe(clientId uuid.UUID, userId uuid.UUID) (core.User, error) {
 	user, err := s.r.GetById(userId)
 	if err != nil {
-		return user.ToPayload(), core.ErrNotFound
+		return user, core.ErrNotFound
 	}
 	if clientId == userId {
-		return user.ToPayload(), core.ErrIncorrectBody
+		return user, core.ErrIncorrectBody
 	}
 	ok := s.r.IsSubscriptionExists(clientId, userId)
 	if !ok {
-		return user.ToPayload(), core.ErrAlreadyExists
+		return user, core.ErrAlreadyExists
 	}
 	updatedUser, err := s.r.Unsubscribe(clientId, userId)
 	if err != nil {
-		return core.UserPayload{}, err
+		return core.User{}, err
 	}
-	return updatedUser.ToPayload(), nil
+	return updatedUser, nil
 }
 
 func NewUserService(repository repository.User) *UserService {
@@ -197,7 +179,7 @@ func (s *UserService) RegisterUser(id uuid.UUID, user core.User) (core.User, err
 
 	user.Id = id
 	u, err := s.r.Register(user)
-	return u.ToDomain(), err
+	return u, err
 }
 
 func (s *UserService) validateUserFields(user core.User) (bool, error) {

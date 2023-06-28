@@ -23,12 +23,12 @@ func (h *Handler) getSongById(c *gin.Context) {
 	}
 
 	review, err := h.services.Review.GetReviewToRelease(s.Id, userId)
-	//c.JSON(http.StatusOK, core.SongWithReviewDTO{
+	//c.JSON(http.StatusOK, core.SongWithReviewPayload{
 	//	SongPayload:   s.ToPayload(),
 	//	ReviewPayload: review.ToEmptyPayload(),
 	//})
 
-	c.JSON(http.StatusOK, core.SongWithReviewDTO{
+	c.JSON(http.StatusOK, core.SongWithReviewPayload{
 		SongPayload:   s.ToPayload(),
 		ReviewPayload: review.ToEmptyPayload(),
 	})
@@ -62,10 +62,14 @@ func (h *Handler) SearchSongs(c *gin.Context) {
 		newErrorResponse(c, http.StatusBadRequest, core.CodeIncorrectBody, "search string is too long")
 		return
 	}
-	res, err := h.services.Song.SearchSongsWithReview(query, userId, limit, offset)
+	swr, err := h.services.Song.SearchSongsWithReview(query, userId, limit, offset)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, core.CodeInternalError, "server search error")
 		return
+	}
+	res := make([]core.SongWithReviewPayload, len(swr))
+	for i, v := range swr {
+		res[i] = v.ToPayload()
 	}
 	c.JSON(http.StatusOK, res)
 }

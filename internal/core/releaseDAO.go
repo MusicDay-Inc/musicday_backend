@@ -23,6 +23,12 @@ type SongWithReviewDAO struct {
 	ReviewId uuid.UUID `db:"review_id"`
 }
 
+func (s *SongWithReviewDAO) ToDomain() (res SongWithReview) {
+	res.Review = s.ReviewNullableDAO.ToDomain()
+	res.Song = s.SongDAO.ToDomain()
+	return
+}
+
 func (s *SongDAO) ToDomain() (res Song) {
 	res.Id = s.Id
 	res.Author = s.Author
@@ -47,6 +53,12 @@ type AlbumWithReviewDAO struct {
 	ReviewNullableDAO
 	AlbumId  uuid.UUID `db:"album_id"`
 	ReviewId uuid.UUID `db:"review_id"`
+}
+
+func (s *AlbumWithReviewDAO) ToDomain() (res AlbumWithReview) {
+	res.Review = s.ReviewNullableDAO.ToDomain()
+	res.Album = s.AlbumDAO.ToDomain()
+	return
 }
 
 func (a *AlbumDAO) ToDomain() (res Album) {

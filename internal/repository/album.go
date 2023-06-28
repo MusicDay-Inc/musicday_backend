@@ -23,7 +23,12 @@ func (r AlbumRepository) GetContainingSong(songId uuid.UUID) (id uuid.UUID, err 
 	return
 }
 
-func (r AlbumRepository) SearchAlbumsWithReview(searchReq string, userId uuid.UUID, limit int, offset int) (albums []core.AlbumWithReviewDAO, err error) {
+func (r AlbumRepository) SearchAlbumsWithReview(searchReq string, userId uuid.UUID, limit int, offset int) ([]core.AlbumWithReview, error) {
+	var (
+		albums []core.AlbumWithReviewDAO
+		err    error
+		res    []core.AlbumWithReview
+	)
 	q := `
 	SELECT albums.id AS "album_id", name, author, date, song_amount, duration, author_id, 
 	       reviews.id AS "review_id", user_id, is_song_reviewed, release_id, published_at, score, review_text
@@ -37,46 +42,56 @@ func (r AlbumRepository) SearchAlbumsWithReview(searchReq string, userId uuid.UU
 	err = r.db.Select(&albums, q, userId, searchReq, limit, offset)
 	if err != nil {
 		logrus.Error(err)
-		return albums, err
+		return res, err
 	}
+	res = make([]core.AlbumWithReview, len(albums))
 	for i, awr := range albums {
-		albums[i].AlbumDAO.Id = awr.AlbumId
-		albums[i].ReviewNullableDAO.Id = awr.ReviewId
+		res[i] = awr.ToDomain()
+		res[i].Album.Id = awr.AlbumId
+		res[i].Review.Id = awr.ReviewId
 	}
-	return albums, nil
+	return res, nil
 }
 
-func (r AlbumRepository) GetSongsFromAlbum(id uuid.UUID) ([]core.SongDAO, error) {
+func (r AlbumRepository) GetSongsFromAlbum(id uuid.UUID) ([]core.Song, error) {
+	var (
+		songs []core.SongDAO
+		err   error
+	)
 	q := `
 	SELECT id, author, name, date, duration, author_id
 	from (SELECT song_id FROM album_songs WHERE album_id = $1) sq
          JOIN songs s on id = sq.song_id;
 	`
-	var (
-		songs []core.SongDAO
-		err   error
-	)
 	logrus.Trace(formatQuery(q))
 	err = r.db.Select(&songs, q, id)
 	if err != nil {
 		logrus.Error(err)
-		return songs, err
+		return []core.Song{}, err
 	}
-	return songs, nil
+	res := make([]core.Song, len(songs))
+	for i, v := range songs {
+		res[i] = v.ToDomain()
+	}
+	return res, nil
 }
 
 func NewAlbumRepository(database *sqlx.DB) *AlbumRepository {
 	return &AlbumRepository{db: database}
 }
 
-func (r AlbumRepository) GetById(albumId uuid.UUID) (album core.AlbumDAO, err error) {
+func (r AlbumRepository) GetById(albumId uuid.UUID) (core.Album, error) {
+	var (
+		album core.AlbumDAO
+		err   error
+	)
 	q := `
 	SELECT * FROM albums WHERE id = $1
 	`
 	logrus.Trace(formatQuery(q))
 	err = r.db.Get(&album, q, albumId)
 	if err != nil {
-		return album, err
+		return core.Album{}, err
 	}
-	return
+	return album.ToDomain(), nil
 }

@@ -195,7 +195,7 @@ func (h *Handler) PostAvatar(c *gin.Context) {
 			}
 			bio, err := h.services.User.GetBio(clientId)
 			c.JSON(http.StatusOK, map[string]interface{}{
-				"user":                 user,
+				"user":                 user.ToPayload(),
 				"bio":                  bio,
 				"is_client_subscribed": false,
 				"song_amount":          sAmount,
@@ -240,7 +240,7 @@ func (h *Handler) PostAvatar(c *gin.Context) {
 	}
 	bio, err := h.services.User.GetBio(clientId)
 	c.JSON(http.StatusOK, map[string]interface{}{
-		"user":                 user,
+		"user":                 user.ToPayload(),
 		"bio":                  bio,
 		"is_client_subscribed": false,
 		"song_amount":          sAmount,

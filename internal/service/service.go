@@ -14,19 +14,19 @@ type Token interface {
 
 type User interface {
 	RegisterUser(userId uuid.UUID, user core.User) (core.User, error)
-	Subscribe(clientId uuid.UUID, userId uuid.UUID) (core.UserPayload, error)
+	Subscribe(clientId uuid.UUID, userId uuid.UUID) (core.User, error)
 	ChangeUsername(clientId uuid.UUID, username string) (core.User, error)
 	ChangeNickname(clientId uuid.UUID, nickname string) (core.User, error)
-	SearchUsers(query string, clientId uuid.UUID, limit int, offset int) ([]core.UserPayload, error)
+	SearchUsers(query string, clientId uuid.UUID, limit int, offset int) ([]core.User, error)
 	Exists(id uuid.UUID) bool
-	GetById(id uuid.UUID) (core.UserPayload, error)
+	GetById(id uuid.UUID) (core.User, error)
 	SubscriptionExists(clientId uuid.UUID, userId uuid.UUID) bool
-	Unsubscribe(clientId uuid.UUID, userId uuid.UUID) (core.UserPayload, error)
-	GetSubscribers(userId uuid.UUID, limit int, offset int) ([]core.UserPayload, error)
-	GetSubscriptions(userId uuid.UUID, limit int, offset int) ([]core.UserPayload, error)
+	Unsubscribe(clientId uuid.UUID, userId uuid.UUID) (core.User, error)
+	GetSubscribers(userId uuid.UUID, limit int, offset int) ([]core.User, error)
+	GetSubscriptions(userId uuid.UUID, limit int, offset int) ([]core.User, error)
 	GetBio(userId uuid.UUID) (string, error)
 	CreateBio(clientId uuid.UUID, bio string) (string, error)
-	UploadAvatar(clientId uuid.UUID) (core.UserPayload, error)
+	UploadAvatar(clientId uuid.UUID) (core.User, error)
 	AddPlayerID(clientId uuid.UUID, playerID uuid.UUID) error
 	GetPlayerID(userId uuid.UUID) (string, error)
 	InitPlayerID() error
@@ -34,13 +34,13 @@ type User interface {
 
 type Song interface {
 	GetById(songId uuid.UUID) (core.Song, error)
-	SearchSongsWithReview(searchReq string, userId uuid.UUID, limit int, offset int) ([]core.SongWithReviewDTO, error)
+	SearchSongsWithReview(searchReq string, userId uuid.UUID, limit int, offset int) ([]core.SongWithReview, error)
 }
 
 type Album interface {
 	GetById(songId uuid.UUID) (core.Album, error)
 	GetSongsFromAlbum(id uuid.UUID) ([]core.Song, error)
-	SearchAlbumsWithReview(query string, userId uuid.UUID, limit int, offset int) ([]core.AlbumWithReviewPayload, error)
+	SearchAlbumsWithReview(query string, userId uuid.UUID, limit int, offset int) ([]core.AlbumWithReview, error)
 	GetCoverId(srcId uuid.UUID) (uuid.UUID, error)
 }
 
